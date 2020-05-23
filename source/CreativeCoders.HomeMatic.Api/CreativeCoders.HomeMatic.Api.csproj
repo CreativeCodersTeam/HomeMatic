@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Authors>CreativeCoders</Authors>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj" />
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="9.0.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Authors>CreativeCoders</Authors>
+        <LangVersion>latest</LangVersion>
+        <UseWPF>true</UseWPF>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.10.0" />
+      <PackageReference Include="CreativeCoders.Mvvm.Skeletor" Version="0.10.0" />
+      <PackageReference Include="Dirkster.AvalonDock" Version="4.20.0" />
+      <PackageReference Include="Fluent.Ribbon" Version="8.0.0-alpha0077" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Explorer.Localizations\CreativeCoders.HomeMatic.Tools.Explorer.Localizations.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers" />
+    </ItemGroup>
+
+</Project>
