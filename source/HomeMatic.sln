@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_build", "_build", "{3E115441-C1BA-4467-BE02-8BB6C1020488}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "..\build\_build.csproj", "{6391D531-E617-4AFA-A2F0-1D114E350072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{6391D531-E617-4AFA-A2F0-1D114E350072}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Core", "CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj", "{33773A69-F53A-4BC8-B3B9-564C8C9B0E23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Core", "CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj", "{33773A69-F53A-4BC8-B3B9-564C8C9B0E23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.XmlRpc", "CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj", "{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.XmlRpc", "CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj", "{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Api", "CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj", "{389F2F84-07C6-43AE-9BA6-0F9417B6456B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Api", "CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj", "{389F2F84-07C6-43AE-9BA6-0F9417B6456B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C578D401-ED17-48D7-B94D-1E56B9273022}"
 EndProject
@@ -16,11 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{13FED5D5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HomeMaticExplorer", "HomeMaticExplorer", "{9B654F62-B722-453B-ABF5-6E9852BBF51B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTestApp", "Samples\ConsoleTestApp\ConsoleTestApp.csproj", "{9727EEBD-33C4-449D-BFAE-E210FF91ED81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTestApp", "Samples\ConsoleTestApp\ConsoleTestApp.csproj", "{9727EEBD-33C4-449D-BFAE-E210FF91ED81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Explorer", "Tools\HomeMaticExplorer\CreativeCoders.HomeMatic.Tools.Explorer\CreativeCoders.HomeMatic.Tools.Explorer.csproj", "{26667ED0-69AA-482C-B6B4-46E7C0A2A972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Tools.Explorer", "Tools\HomeMaticExplorer\CreativeCoders.HomeMatic.Tools.Explorer\CreativeCoders.HomeMatic.Tools.Explorer.csproj", "{26667ED0-69AA-482C-B6B4-46E7C0A2A972}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Explorer.Localizations", "Tools\HomeMaticExplorer\CreativeCoders.HomeMatic.Tools.Explorer.Localizations\CreativeCoders.HomeMatic.Tools.Explorer.Localizations.csproj", "{96792CF6-5019-4326-BD9D-D8CA95CFBF21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Tools.Explorer.Localizations", "Tools\HomeMaticExplorer\CreativeCoders.HomeMatic.Tools.Explorer.Localizations\CreativeCoders.HomeMatic.Tools.Explorer.Localizations.csproj", "{96792CF6-5019-4326-BD9D-D8CA95CFBF21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,11 +58,17 @@ Global
 		{96792CF6-5019-4326-BD9D-D8CA95CFBF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96792CF6-5019-4326-BD9D-D8CA95CFBF21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6391D531-E617-4AFA-A2F0-1D114E350072} = {3E115441-C1BA-4467-BE02-8BB6C1020488}
 		{9B654F62-B722-453B-ABF5-6E9852BBF51B} = {13FED5D5-41CE-4DB5-A0FD-5A1EB5FBEF51}
 		{9727EEBD-33C4-449D-BFAE-E210FF91ED81} = {C578D401-ED17-48D7-B94D-1E56B9273022}
 		{26667ED0-69AA-482C-B6B4-46E7C0A2A972} = {9B654F62-B722-453B-ABF5-6E9852BBF51B}
 		{96792CF6-5019-4326-BD9D-D8CA95CFBF21} = {9B654F62-B722-453B-ABF5-6E9852BBF51B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E5E58EB-0096-4ED2-B1DE-D7FC5951CAB7}
 	EndGlobalSection
 EndGlobal

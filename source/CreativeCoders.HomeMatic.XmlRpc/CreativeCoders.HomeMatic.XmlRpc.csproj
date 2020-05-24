@@ -2,15 +2,15 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Authors>CreativeCoders</Authors>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.Core" Version="0.10.0" />
-      <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.10.0" />
-      <PackageReference Include="CreativeCoders.Reactive.Messaging" Version="0.10.0" />
+      <PackageReference Include="CreativeCoders.Core" Version="0.11.0-unstable0002" />
+      <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.11.0-unstable0002" />
+      <PackageReference Include="CreativeCoders.Reactive.Messaging" Version="0.11.0-unstable0002" />
     </ItemGroup>
 
     <ItemGroup>
