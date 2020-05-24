@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
@@ -10,11 +8,9 @@ using CreativeCoders.Di;
 using CreativeCoders.Di.SimpleInjector;
 using CreativeCoders.DynamicCode.Proxying;
 using CreativeCoders.HomeMatic.Api;
-using CreativeCoders.HomeMatic.Api.Values;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.HomeMatic.XmlRpc.Server;
-using CreativeCoders.HomeMatic.XmlRpc.Server.Messages;
 using CreativeCoders.Net;
 using CreativeCoders.Net.Http;
 using CreativeCoders.Net.Servers.Http.AspNetCore;
@@ -92,11 +88,11 @@ namespace ConsoleTestApp
             var ccuXmlRpcServer =
                 new CcuXmlRpcEventServer(xmlRpcServer);
             
-            var eventReceiver = new CcuEventReceiver();
-            eventReceiver.EventMessageTopic
-                .Register<HomeMaticEventMessage>()
-                .SubscribeOn(new TaskPoolScheduler(new TaskFactory()))
-                .Subscribe(msg => Console.WriteLine($"{msg.Address}.{msg.ValueKey} = {msg.Value}"));
+            //var eventReceiver = new CcuEventReceiver();
+            //eventReceiver.EventMessageTopic
+            //    .Register<HomeMaticEventMessage>()
+            //    .SubscribeOn(new TaskPoolScheduler(new TaskFactory()))
+            //    .Subscribe(msg => Console.WriteLine($"{msg.Address}.{msg.ValueKey} = {msg.Value}"));
             
             StartServer(ccuXmlRpcServer, homeMaticXmlRpcApi);
             
