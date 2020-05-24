@@ -24,7 +24,7 @@ namespace CreativeCoders.HomeMatic.Tools.Explorer.ViewModels
             AddCcuCommand = new AsyncSimpleRelayCommand(OnExecuteAddCcu);
         }
 
-        private async Task OnExecuteAddCcu()
+        private Task OnExecuteAddCcu()
         {
             var addCcuViewModel = _classFactory.Create<AddCcuViewModel>();
 
@@ -32,6 +32,8 @@ namespace CreativeCoders.HomeMatic.Tools.Explorer.ViewModels
             {
                 
             }
+
+            return Task.CompletedTask;
         }
 
         public ICommand AddCcuCommand { get; }
