@@ -18,16 +18,12 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server
         
         private readonly IXmlRpcServer _xmlRpcServer;
         
-        private readonly IMessenger _messenger;
-
         private IList<ICcuEventHandler> _eventHandlers;
 
         public CcuXmlRpcEventServer(IXmlRpcServer xmlRpcServer)
         {
             _xmlRpcServer = xmlRpcServer;
 
-            _messenger = Messenger.Default;
-            
             _xmlRpcServer.Methods.RegisterMethods(string.Empty, this);
             
             _eventHandlers = new ConcurrentList<ICcuEventHandler>();
