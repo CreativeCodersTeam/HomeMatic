@@ -9,10 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.12.0-unstable0009" />
-      <PackageReference Include="CreativeCoders.Logging.Console" Version="0.12.0-unstable0009" />
-      <PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="0.12.0-unstable0009" />
-      <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.12.0-unstable0009" />
+      <PackageReference Include="CreativeCoders.Di.MsServiceProvider" Version="0.13.0" />
+      <PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.13.0" />
+      <PackageReference Include="CreativeCoders.Logging.Console" Version="0.13.0" />
+      <PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="0.13.0" />
+      <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.13.0" />
     </ItemGroup>
 
     <ItemGroup>

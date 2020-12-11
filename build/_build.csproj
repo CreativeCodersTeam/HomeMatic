@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CreativeCoders.NukeBuild" Version="0.12.0-unstable0009" />
-    <PackageReference Include="NuGet.CommandLine" Version="5.5.1">
+    <PackageReference Include="CreativeCoders.NukeBuild" Version="0.13.0" />
+    <PackageReference Include="NuGet.CommandLine" Version="5.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

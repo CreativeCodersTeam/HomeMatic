@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Di;
-using CreativeCoders.Di.SimpleInjector;
+using CreativeCoders.Di.MsServiceProvider;
 using CreativeCoders.DynamicCode.Proxying;
 using CreativeCoders.HomeMatic.Api;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.HomeMatic.XmlRpc.Server;
 using CreativeCoders.Net;
-using CreativeCoders.Net.Http;
 using CreativeCoders.Net.Servers.Http.AspNetCore;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using CreativeCoders.Net.XmlRpc.Server;
-using SimpleInjector;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleTestApp
 {
@@ -60,12 +58,14 @@ namespace ConsoleTestApp
 
         private static IDiContainer CreateDiContainer()
         {
-            var containerBuilder = new SimpleInjectorDiContainerBuilder(new Container());
+            var serviceCollection = new ServiceCollection() as IServiceCollection;
+            var containerBuilder = new ServiceProviderDiContainerBuilder(serviceCollection);
+            //var containerBuilder = new SimpleInjectorDiContainerBuilder(new Container());
 
             containerBuilder.AddTransient<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>, XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
             containerBuilder.AddTransient(typeof(IProxyBuilder<>), typeof(ProxyBuilder<>));
-            containerBuilder.AddTransient<IHttpClient, HttpClientEx>();
-            containerBuilder.AddTransient(c => new HttpClient());
+            
+            serviceCollection.AddHttpClient();
 
             return containerBuilder.Build();
         }
