@@ -60,7 +60,6 @@ namespace ConsoleTestApp
         {
             var serviceCollection = new ServiceCollection() as IServiceCollection;
             var containerBuilder = new ServiceProviderDiContainerBuilder(serviceCollection);
-            //var containerBuilder = new SimpleInjectorDiContainerBuilder(new Container());
 
             containerBuilder.AddTransient<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>, XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
             containerBuilder.AddTransient(typeof(IProxyBuilder<>), typeof(ProxyBuilder<>));
@@ -82,7 +81,10 @@ namespace ConsoleTestApp
                 AllowSynchronousIO = true
             };
 
-            var xmlRpcServer = new XmlRpcServer(httpServer, new XmlRpcServerMethods(), Encoding.GetEncoding("iso-8859-1"));
+            var xmlRpcServer = new XmlRpcServer(httpServer)
+            {
+                Encoding = Encoding.GetEncoding("iso-8859-1")
+            };
             xmlRpcServer.Urls.Add(XmlRpcUrl);
             
             var ccuXmlRpcServer =

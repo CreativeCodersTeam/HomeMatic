@@ -16,7 +16,7 @@ using Nuke.Common.Tools.GitVersion;
 [SuppressMessage("ReSharper", "ConvertToAutoProperty")]
 class Build : NukeBuild, IBuildInfo
 {
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main () => Execute<Build>(x => x.RunBuild);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -105,7 +105,7 @@ class Build : NukeBuild, IBuildInfo
         .DependsOn(CreateNuGetPackages)
         .Executes(PushToNuGet);
 
-    Configuration IBuildInfo.Configuration => Configuration;
+    string IBuildInfo.Configuration => Configuration;
 
     Solution IBuildInfo.Solution => Solution;
 

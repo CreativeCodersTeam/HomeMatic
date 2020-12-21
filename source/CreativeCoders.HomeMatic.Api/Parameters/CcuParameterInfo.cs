@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CreativeCoders.HomeMatic.Api.Core.Parameters;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using JetBrains.Annotations;
 

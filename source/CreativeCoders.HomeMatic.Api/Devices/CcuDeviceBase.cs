@@ -1,4 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Core.Devices;
+﻿using CreativeCoders.HomeMatic.Api.Core.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using JetBrains.Annotations;
 

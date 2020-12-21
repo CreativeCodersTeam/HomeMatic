@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
+using CreativeCoders.HomeMatic.Api.Core.Devices;
+using CreativeCoders.HomeMatic.Api.Core.Parameters;
+using CreativeCoders.HomeMatic.Core;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core
+namespace CreativeCoders.HomeMatic.Api.Core
 {
     [PublicAPI]
     public interface ICcuConnection
@@ -37,7 +38,7 @@ namespace CreativeCoders.HomeMatic.Core
 
         Task<Dictionary<string, ICcuParameterInfo>> GetParameterInfoAsync(string deviceAddress, string paramSetKey);
 
-        Task<IEnumerable<IBidcosInterface>> GetBidcosInterfacesAsync();
+        Task<IEnumerable<IBidcosInterfaceInfo>> GetBidcosInterfacesAsync();
 
         Task WriteParamsetAsync(string deviceAddress, string paramSetKey, IDictionary<string, object> paramSet);
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Core.Values;
+using CreativeCoders.HomeMatic.Api.Core.Values;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using JetBrains.Annotations;
 
@@ -16,7 +16,7 @@ namespace CreativeCoders.HomeMatic.Api.Values
         {
         }
 
-        public CcuValueIo(IHomeMaticXmlRpcApi homeMaticXmlRpcApi, ICcuValueAddress valueAddress)
+        public CcuValueIo(IHomeMaticXmlRpcApi homeMaticXmlRpcApi, CcuValueAddress valueAddress)
         {
             Ensure.IsNotNull(homeMaticXmlRpcApi, nameof(homeMaticXmlRpcApi));
             Ensure.IsNotNull(valueAddress, nameof(valueAddress));
@@ -45,7 +45,7 @@ namespace CreativeCoders.HomeMatic.Api.Values
             return _homeMaticXmlRpcApi.GetValueAsync<T>(ValueAddress.DeviceAddress, ValueAddress.ValueKey);
         }
         
-        public ICcuValueAddress ValueAddress { get; }
+        public CcuValueAddress ValueAddress { get; set; }
     }
 
     [PublicAPI]
@@ -58,7 +58,7 @@ namespace CreativeCoders.HomeMatic.Api.Values
         {
         }
 
-        public CcuValueIo(IHomeMaticXmlRpcApi homeMaticXmlRpcApi, ICcuValueAddress valueAddress)
+        public CcuValueIo(IHomeMaticXmlRpcApi homeMaticXmlRpcApi, CcuValueAddress valueAddress)
         {
             Ensure.IsNotNull(homeMaticXmlRpcApi, nameof(homeMaticXmlRpcApi));
             Ensure.IsNotNull(valueAddress, nameof(valueAddress));
@@ -97,6 +97,6 @@ namespace CreativeCoders.HomeMatic.Api.Values
             return _homeMaticXmlRpcApi.GetValueAsync<T>(ValueAddress.DeviceAddress, ValueAddress.ValueKey);
         }
         
-        public ICcuValueAddress ValueAddress { get; }
+        public CcuValueAddress ValueAddress { get; set; }
     }
 }

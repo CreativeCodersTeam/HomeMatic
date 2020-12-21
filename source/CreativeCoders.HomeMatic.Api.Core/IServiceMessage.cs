@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core
+namespace CreativeCoders.HomeMatic.Api.Core
 {
     [PublicAPI]
     public interface IServiceMessage

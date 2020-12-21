@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using CreativeCoders.HomeMatic.Core.Parameters;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Parameters
+namespace CreativeCoders.HomeMatic.Api.Core.Parameters
 {
     [PublicAPI]
     public interface ICcuParameterInfo

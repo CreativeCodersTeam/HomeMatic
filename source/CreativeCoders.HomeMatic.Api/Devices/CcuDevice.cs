@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CreativeCoders.HomeMatic.Api.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Client;

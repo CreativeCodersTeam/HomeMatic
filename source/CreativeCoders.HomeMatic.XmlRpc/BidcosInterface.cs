@@ -1,11 +1,10 @@
-﻿using CreativeCoders.HomeMatic.Core;
-using CreativeCoders.Net.XmlRpc.Definition;
+﻿using CreativeCoders.Net.XmlRpc.Definition;
 using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.XmlRpc
 {
     [PublicAPI]
-    public class BidcosInterface : IBidcosInterface
+    public class BidcosInterface
     {
         [XmlRpcStructMember("ADDRESS", DefaultValue = "")]
         public string Address { get; set; } = string.Empty;
