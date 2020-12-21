@@ -31,12 +31,15 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server
 
         public async Task StartAsync()
         {
-            if (string.IsNullOrWhiteSpace(ServerUrl))
+            if (!string.IsNullOrWhiteSpace(ServerUrl))
+            {
+                _xmlRpcServer.Urls.Add(ServerUrl);
+            }
+
+            if (_xmlRpcServer.Urls.Count == 0)
             {
                 throw new InvalidOperationException("No Url for HTTP server specified");
             }
-            
-            _xmlRpcServer.Urls.Add(ServerUrl);
             
             await _xmlRpcServer.StartAsync().ConfigureAwait(false);
         }
