@@ -1,4 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Core;
+﻿using CreativeCoders.HomeMatic.Api.Core;
 
 namespace CreativeCoders.HomeMatic.Api
 {

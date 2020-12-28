@@ -4,12 +4,11 @@
 		<OutputType>Library</OutputType>
 		<TargetFramework>net5.0</TargetFramework>
 		<Authors>CreativeCoders</Authors>
-		<Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
+		<Description>Base classes and interfaces for HomeMatic API</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CreativeCoders.Core" Version="0.14.1" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.14.1" />
 	</ItemGroup>
 
 	<ItemGroup>

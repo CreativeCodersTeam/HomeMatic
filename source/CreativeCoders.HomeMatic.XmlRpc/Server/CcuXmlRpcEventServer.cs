@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Logging;
-using CreativeCoders.Core.Messaging;
 using CreativeCoders.Core.Threading;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Model;
@@ -12,22 +12,18 @@ using JetBrains.Annotations;
 namespace CreativeCoders.HomeMatic.XmlRpc.Server
 {
     [PublicAPI]
-    public class CcuXmlRpcEventServer
+    public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     {
         private static readonly ILogger Log = LogManager.GetLogger<CcuXmlRpcEventServer>();
         
         private readonly IXmlRpcServer _xmlRpcServer;
         
-        private readonly IMessenger _messenger;
-
         private IList<ICcuEventHandler> _eventHandlers;
 
         public CcuXmlRpcEventServer(IXmlRpcServer xmlRpcServer)
         {
             _xmlRpcServer = xmlRpcServer;
 
-            _messenger = Messenger.Default;
-            
             _xmlRpcServer.Methods.RegisterMethods(string.Empty, this);
             
             _eventHandlers = new ConcurrentList<ICcuEventHandler>();
@@ -35,6 +31,16 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server
 
         public async Task StartAsync()
         {
+            if (!string.IsNullOrWhiteSpace(ServerUrl))
+            {
+                _xmlRpcServer.Urls.Add(ServerUrl);
+            }
+
+            if (_xmlRpcServer.Urls.Count == 0)
+            {
+                throw new InvalidOperationException("No Url for HTTP server specified");
+            }
+            
             await _xmlRpcServer.StartAsync().ConfigureAwait(false);
         }
 
@@ -101,5 +107,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server
             
             return string.Empty;
         }
+
+        public string ServerUrl { get; set; }
     }
 }

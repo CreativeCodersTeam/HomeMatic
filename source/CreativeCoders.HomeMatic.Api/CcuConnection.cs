@@ -3,11 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
+using CreativeCoders.HomeMatic.Api.Core;
+using CreativeCoders.HomeMatic.Api.Core.Devices;
+using CreativeCoders.HomeMatic.Api.Core.Parameters;
 using CreativeCoders.HomeMatic.Api.Devices;
 using CreativeCoders.HomeMatic.Api.Parameters;
 using CreativeCoders.HomeMatic.Core;
-using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using JetBrains.Annotations;
 
@@ -139,9 +140,13 @@ namespace CreativeCoders.HomeMatic.Api
                 key => (ICcuParameterInfo) ParameterInfoCreator.Create(parameterDescription[key]));
         }
 
-        public async Task<IEnumerable<IBidcosInterface>> GetBidcosInterfacesAsync()
+        public async Task<IEnumerable<IBidcosInterfaceInfo>> GetBidcosInterfacesAsync()
         {
-            return await XmlRpcApi.ListBidcosInterfacesAsync();
+            var bidcosInterfaces = await XmlRpcApi
+                .ListBidcosInterfacesAsync();
+
+            return bidcosInterfaces
+                .Select(BidcosInterfaceInfoCreator.Create);
         }
 
         public Task WriteParamsetAsync(string deviceAddress, string paramSetKey, IDictionary<string, object> paramSet)

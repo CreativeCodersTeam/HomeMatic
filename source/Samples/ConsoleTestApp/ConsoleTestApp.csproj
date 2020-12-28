@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-        <Authors>CreativeCoders</Authors>
-        <LangVersion>latest</LangVersion>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<Authors>CreativeCoders</Authors>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.11.0" />
-      <PackageReference Include="CreativeCoders.Logging.Console" Version="0.11.0" />
-      <PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="0.11.0" />
-      <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.11.0" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CreativeCoders.Di.MsServiceProvider" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Logging.Console" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.14.1" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj" />
-      <ProjectReference Include="..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj" />
+		<ProjectReference Include="..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+	</ItemGroup>
 
 </Project>

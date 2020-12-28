@@ -1,19 +1,18 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Core.Values;
 
-namespace CreativeCoders.HomeMatic.Api.Values
+namespace CreativeCoders.HomeMatic.Api.Core.Values
 {
-    public class CcuValueAddress : ICcuValueAddress
+    public class CcuValueAddress
     {
         public CcuValueAddress(string deviceAddress, string valueKey)
         {
-            Ensure.IsNotNullOrWhitespace(deviceAddress, nameof(deviceAddress));
-            Ensure.IsNotNullOrWhitespace(valueKey, nameof(valueKey));
+            Ensure.IsNotNullOrEmpty(deviceAddress, nameof(deviceAddress));
+            Ensure.IsNotNullOrEmpty(valueKey, nameof(valueKey));
             
             DeviceAddress = deviceAddress;
             ValueKey = valueKey;
         }
-
+        
         public string DeviceAddress { get; }
         
         public string ValueKey { get; }

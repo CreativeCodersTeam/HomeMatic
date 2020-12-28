@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using CreativeCoders.Core;
 using CreativeCoders.DynamicCode.Proxying;
 using CreativeCoders.Net.Http;
@@ -10,36 +11,47 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client
     [PublicAPI]
     public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
     {
-        private readonly IProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
+        private readonly IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
         
-        private readonly IClassFactory<IHttpClient> _httpClientFactory;
-
         private string _url;
 
-        public HomeMaticXmlRpcApiBuilder(IProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder, IClassFactory<IHttpClient> httpClientFactory)
+        public HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder)
         {
+            Ensure.IsNotNull(proxyBuilder, nameof(proxyBuilder));
+            
             _proxyBuilder = proxyBuilder;
-            _httpClientFactory = httpClientFactory;
+        }
+
+        private HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder, string url) : this(proxyBuilder)
+        {
+            Ensure.IsNotNullOrWhitespace(url, nameof(url));
+            
+            _url = url;
         }
 
         public static IHomeMaticXmlRpcApiBuilder Create()
         {
-            var httpClient = new HttpClient();
-            
             return new HomeMaticXmlRpcApiBuilder(
-                new ProxyBuilder<IHomeMaticXmlRpcApi>(), 
-                new DelegateClassFactory<IHttpClient>(() => new HttpClientEx(httpClient)));
+                new XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>(
+                    new ProxyBuilder<IHomeMaticXmlRpcApi>(),
+                    new DelegateHttpClientFactory(_ => new HttpClient())));
         }
-        
+
         public IHomeMaticXmlRpcApiBuilder ForUrl(string url)
         {
-            _url = url;
-            return this;
+            Ensure.IsNotNullOrWhitespace(url, nameof(url));
+
+            return new HomeMaticXmlRpcApiBuilder(_proxyBuilder, url);
         }
 
         public IHomeMaticXmlRpcApi Build()
         {
-            return new XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>(_proxyBuilder, _httpClientFactory)
+            if (string.IsNullOrWhiteSpace(_url))
+            {
+                throw new InvalidOperationException("No url specified");
+            }
+            
+            return _proxyBuilder
                 .ForUrl(_url)
                 .Build();
         }

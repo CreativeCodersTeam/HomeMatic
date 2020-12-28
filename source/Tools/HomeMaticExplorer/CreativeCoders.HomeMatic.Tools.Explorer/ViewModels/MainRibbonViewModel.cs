@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
 using CreativeCoders.Core;
-using CreativeCoders.Di;
 using CreativeCoders.Mvvm;
 using CreativeCoders.Mvvm.Commands;
 using CreativeCoders.Mvvm.Skeletor.Infrastructure;

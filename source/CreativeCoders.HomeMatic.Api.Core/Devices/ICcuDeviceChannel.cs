@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using CreativeCoders.HomeMatic.Core.Devices;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Devices
+namespace CreativeCoders.HomeMatic.Api.Core.Devices
 {
     [PublicAPI]
     public interface ICcuDeviceChannel : ICcuDeviceBase

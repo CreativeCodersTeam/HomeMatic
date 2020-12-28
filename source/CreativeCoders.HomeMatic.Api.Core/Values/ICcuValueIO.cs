@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Values
+namespace CreativeCoders.HomeMatic.Api.Core.Values
 {
     [PublicAPI]
     public interface ICcuValueIo
@@ -14,7 +14,7 @@ namespace CreativeCoders.HomeMatic.Core.Values
 
         Task<T> ReadAsync<T>();
         
-        ICcuValueAddress ValueAddress { get; }
+        CcuValueAddress ValueAddress { get; set; }
     }
     
     [PublicAPI]
@@ -24,6 +24,6 @@ namespace CreativeCoders.HomeMatic.Core.Values
 
         Task<T> ReadAsync();
         
-        ICcuValueAddress ValueAddress { get; }
+        CcuValueAddress ValueAddress { get; set; }
     }
 }
