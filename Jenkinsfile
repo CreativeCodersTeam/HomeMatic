@@ -7,6 +7,10 @@ pipeline {
         githubPush()
     }
 
+    options {
+        disableConcurrentBuilds()
+    }
+
     environment {
         NUGET_DEV_API_KEY = credentials('nuget.dev.apikey')
         NUGET_ORG_API_KEY = credentials('nuget.org.apikey')
