@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.14.0-unstable0015" />
+		<PackageReference Include="CreativeCoders.Core" Version="0.14.1" />
 	</ItemGroup>
 
 	<ItemGroup>

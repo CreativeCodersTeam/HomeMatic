@@ -14,7 +14,7 @@
 		<PackageReference Include="Nuke.Common" Version="5.0.2" />
 		<PackageReference Include="GitVersion.CommandLine.DotNetCore" Version="5.0.1" />
 		<PackageDownload Include="GitVersion.Tool" Version="[5.1.1]" />
-		<PackageReference Include="CreativeCoders.NukeBuild" Version="0.14.0-unstable0015" />
+		<PackageReference Include="CreativeCoders.NukeBuild" Version="0.14.1" />
 	</ItemGroup>
 
 </Project>
