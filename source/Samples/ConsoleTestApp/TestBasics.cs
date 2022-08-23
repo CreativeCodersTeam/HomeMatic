@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
-using CreativeCoders.Core;
+using CreativeCoders.Core.Collections;
 using CreativeCoders.Di;
 using CreativeCoders.Di.MsServiceProvider;
 using CreativeCoders.DynamicCode.Proxying;

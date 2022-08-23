@@ -2,13 +2,13 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<Authors>CreativeCoders</Authors>
 		<Description>Base classes and interfaces for HomeMatic API</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Core" Version="0.62.0" />
 	</ItemGroup>
 
 	<ItemGroup>
