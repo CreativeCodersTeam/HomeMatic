@@ -2,14 +2,14 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<Authors>CreativeCoders</Authors>
 		<Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.14.1" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.14.1" />
+		<PackageReference Include="CreativeCoders.Core" Version="0.62.0" />
+		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.62.0" />
 	</ItemGroup>
 
 	<ItemGroup>

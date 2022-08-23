@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CreativeCoders.Core;
+using CreativeCoders.Core.Collections;
 using CreativeCoders.Core.Logging;
 using CreativeCoders.Core.Threading;
 using CreativeCoders.Net.XmlRpc.Definition;

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<Authors>CreativeCoders</Authors>
 		<UseWPF>true</UseWPF>
 		<NeutralLanguage>en-US</NeutralLanguage>
@@ -17,10 +17,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.14.1" />
-		<PackageReference Include="CreativeCoders.Mvvm.Skeletor" Version="0.14.1" />
-		<PackageReference Include="Dirkster.AvalonDock" Version="4.50.1" />
-		<PackageReference Include="Fluent.Ribbon" Version="8.0.3" />
+		<PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.62.0" />
+		<PackageReference Include="CreativeCoders.Mvvm.Skeletor" Version="0.62.0" />
+		<PackageReference Include="Dirkster.AvalonDock" Version="4.70.2" />
+		<PackageReference Include="Fluent.Ribbon" Version="9.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
