@@ -37,7 +37,7 @@ class Build : NukeBuild, IBuildInfo
 
     AbsolutePath SourceDirectory => RootDirectory / "source";
 
-    AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
+    AbsolutePath ArtifactsDirectory => RootDirectory / ".artifacts";
 
     AbsolutePath TestBaseDirectory => RootDirectory / ".tests";
 
