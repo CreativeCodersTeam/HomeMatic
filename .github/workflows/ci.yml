@@ -33,13 +33,13 @@ jobs:
         shell: pwsh
         run: ./build.ps1 CreateNuGetPackages
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Unit Tests Checks
-          path: .tests/results/*.trx
-          reporter: dotnet-trx
+      #- name: Test Report
+      #  uses: dorny/test-reporter@v1
+      #  if: success() || failure()
+      #  with:
+      #    name: Unit Tests Checks
+      #    path: .tests/results/*.trx
+      #    reporter: dotnet-trx
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
