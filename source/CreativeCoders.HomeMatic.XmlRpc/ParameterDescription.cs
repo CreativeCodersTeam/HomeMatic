@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Converters;
 using CreativeCoders.Net.XmlRpc.Definition;
@@ -40,6 +41,6 @@ namespace CreativeCoders.HomeMatic.XmlRpc
         public IEnumerable<string> ValuesList { get; set; }
 
         [XmlRpcStructMember("SPECIAL")]
-        public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = new Dictionary<string, object>[0];
+        public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = Array.Empty<Dictionary<string, object>>();
     }
 }
