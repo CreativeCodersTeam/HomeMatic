@@ -5,6 +5,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Authors>CreativeCoders</Authors>
 		<Description>Base classes and enums for HomeMatic CCU RPC</Description>
+		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

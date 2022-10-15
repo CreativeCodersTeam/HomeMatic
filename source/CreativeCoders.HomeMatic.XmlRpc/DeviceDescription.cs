@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Converters;
@@ -18,7 +19,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc
         public string DeviceType { get; set; }
 
         [XmlRpcStructMember("CHILDREN")]
-        public string[] Children { get; set; } = new string[0];
+        public string[] Children { get; set; } = Array.Empty<string>();
 
         [XmlRpcStructMember("PARENT", Required = true)]
         public string Parent { get; set; }
@@ -39,7 +40,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc
         public string Interface { get; set; } = string.Empty;
 
         [XmlRpcStructMember("PARAMSETS", DefaultValue = new string[0])]
-        public string[] ParamSets { get; set; } = new string[0];
+        public string[] ParamSets { get; set; } = Array.Empty<string>();
 
         [XmlRpcStructMember("RX_MODE", DefaultValue = RxMode.None, Converter = typeof(FlagsMemberValueConverter<RxMode>))]
         public RxMode RxMode { get; set; }

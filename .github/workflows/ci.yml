@@ -1,0 +1,57 @@
+name: CI pipeline
+
+on: [push, pull_request]
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  NUKE_TELEMETRY_OPTOUT: 1
+
+jobs:
+  build:
+    name: CI/CD build
+    runs-on: windows-latest
+    permissions:
+      packages: write
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+          source-url: https://nuget.pkg.github.com/CreativeCodersTeam/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Prepare environment
+        run: |
+          dotnet tool install --global GitVersion.Tool
+
+      - name: Build Solution
+        shell: pwsh
+        run: ./build.ps1 CreateNuGetPackages
+
+      #- name: Test Report
+      #  uses: dorny/test-reporter@v1
+      #  if: success() || failure()
+      #  with:
+      #    name: Unit Tests Checks
+      #    path: .tests/results/*.trx
+      #    reporter: dotnet-trx
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          name: Coverage Report
+          path: .tests/coverage_report/*.*
+
+      - name: Publish the package to GPR
+        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v')
+        run: dotnet nuget push .artifacts/**/*.nupkg --skip-duplicate -k ${{secrets.GITHUB_TOKEN}}
+
+      - name: Publish the package to nuget.org
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: dotnet nuget push .artifacts/**/*.nupkg --skip-duplicate -k ${{secrets.NUGET_ORG_TOKEN}} -s nuget.org

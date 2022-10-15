@@ -11,7 +11,6 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.GitVersion;
 
 [PublicAPI]
-[CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
 [SuppressMessage("ReSharper", "ConvertToAutoProperty")]
 class Build : NukeBuild, IBuildInfo
@@ -37,7 +36,17 @@ class Build : NukeBuild, IBuildInfo
 
     AbsolutePath SourceDirectory => RootDirectory / "source";
 
-    AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
+    AbsolutePath ArtifactsDirectory => RootDirectory / ".artifacts";
+
+    AbsolutePath TestBaseDirectory => RootDirectory / ".tests";
+
+    AbsolutePath TestResultsDirectory => TestBaseDirectory / "results";
+
+    AbsolutePath TestProjectsBasePath => SourceDirectory / "UnitTests";
+
+    AbsolutePath CoverageDirectory => TestBaseDirectory / "coverage";
+
+    AbsolutePath TempNukeDirectory => RootDirectory / ".nuke" / "temp";
 
     const string PackageProjectUrl = "https://github.com/CreativeCodersTeam/HomeMatic";
 
@@ -55,11 +64,15 @@ class Build : NukeBuild, IBuildInfo
 
     Target Test => _ => _
         .After(Compile)
-        .UseBuildAction<UnitTestAction>(this,
+        .UseBuildAction<DotNetTestAction>(this,
             x => x
-                .SetUnitTestsBasePath("UnitTests")
+                .SetTestProjectsBaseDirectory(TestProjectsBasePath)
                 .SetProjectsPattern("**/*.csproj")
-                .SetResultsDirectory(ArtifactsDirectory / "test_results"));
+                .SetResultsDirectory(TestResultsDirectory)
+                .UseLogger("trx")
+                .SetResultFileExt("trx")
+                .EnableCoverage()
+                .SetCoverageDirectory(CoverageDirectory));
 
     Target Pack => _ => _
         .After(Compile)
@@ -87,23 +100,23 @@ class Build : NukeBuild, IBuildInfo
     Target RunBuild => _ => _
         .DependsOn(Clean)
         .DependsOn(Restore)
-        .Executes(Compile);
+        .DependsOn(Compile);
 
     Target RunTest => _ => _
         .DependsOn(RunBuild)
-        .Executes(Test);
+        .DependsOn(Test);
 
     Target CreateNuGetPackages => _ => _
         .DependsOn(RunTest)
-        .Executes(Pack);
+        .DependsOn(Pack);
 
     Target DeployToDevNuGet => _ => _
         .DependsOn(CreateNuGetPackages)
-        .Executes(PushToDevNuGet);
+        .DependsOn(PushToDevNuGet);
 
     Target DeployToNuGet => _ => _
         .DependsOn(CreateNuGetPackages)
-        .Executes(PushToNuGet);
+        .DependsOn(PushToNuGet);
 
     string IBuildInfo.Configuration => Configuration;
 

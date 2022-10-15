@@ -5,6 +5,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Authors>CreativeCoders</Authors>
 		<Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
+		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

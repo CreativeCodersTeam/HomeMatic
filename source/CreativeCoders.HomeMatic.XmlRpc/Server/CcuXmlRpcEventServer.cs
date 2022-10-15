@@ -70,7 +70,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server
         {
             Log.Debug($"List devices for InterfaceId = {interfaceId}");
             
-            return Task.FromResult(new XmlRpcValue[0] as IEnumerable<XmlRpcValue>);
+            return Task.FromResult(Array.Empty<XmlRpcValue>() as IEnumerable<XmlRpcValue>);
         }
 
         [XmlRpcMethod("newDevices")]
