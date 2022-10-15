@@ -5,7 +5,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace></RootNamespace>
 		<IsPackable>False</IsPackable>
-		<NoWarn>CS0649;CS0169</NoWarn>
+		<NoWarn>CS0649;CS0169;IDE0079</NoWarn>
 		<NukeRootDirectory>..</NukeRootDirectory>
 		<NukeScriptDirectory>..</NukeScriptDirectory>
 	</PropertyGroup>

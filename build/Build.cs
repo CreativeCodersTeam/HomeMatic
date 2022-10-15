@@ -11,7 +11,6 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tools.GitVersion;
 
 [PublicAPI]
-[CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
 [SuppressMessage("ReSharper", "ConvertToAutoProperty")]
 class Build : NukeBuild, IBuildInfo
