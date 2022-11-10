@@ -1,16 +1,15 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Api.Core.Devices
+namespace CreativeCoders.HomeMatic.Api.Core.Devices;
+
+[PublicAPI]
+public interface IBidcosInterfaceInfo
 {
-    [PublicAPI]
-    public interface IBidcosInterfaceInfo
-    {
-        string Address { get; }
+    string Address { get; }
         
-        string Description { get; }
+    string Description { get; }
         
-        bool IsConnected { get; }
+    bool IsConnected { get; }
         
-        bool IsDefault { get; }
-    }
+    bool IsDefault { get; }
 }

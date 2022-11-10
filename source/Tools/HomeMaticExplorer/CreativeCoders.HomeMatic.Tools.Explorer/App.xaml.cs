@@ -1,10 +1,9 @@
-﻿namespace CreativeCoders.HomeMatic.Tools.Explorer
+﻿namespace CreativeCoders.HomeMatic.Tools.Explorer;
+
+/// <inheritdoc />
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App
-    {
-    }
 }

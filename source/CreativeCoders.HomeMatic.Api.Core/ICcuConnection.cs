@@ -5,47 +5,46 @@ using CreativeCoders.HomeMatic.Api.Core.Parameters;
 using CreativeCoders.HomeMatic.Core;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Api.Core
+namespace CreativeCoders.HomeMatic.Api.Core;
+
+[PublicAPI]
+public interface ICcuConnection
 {
-    [PublicAPI]
-    public interface ICcuConnection
-    {
-        Task<IEnumerable<ICcuDeviceInfo>> GetDeviceInfosAsync();
+    Task<IEnumerable<ICcuDeviceInfo>> GetDeviceInfosAsync();
 
-        Task<ICcuDeviceInfo> GetDeviceInfoAsync(string deviceAddress);
+    Task<ICcuDeviceInfo> GetDeviceInfoAsync(string deviceAddress);
 
-        Task<IEnumerable<ICcuDevice>> GetDevicesAsync();
+    Task<IEnumerable<ICcuDevice>> GetDevicesAsync();
 
-        Task<ICcuDevice> GetDeviceAsync(string deviceAddress);
+    Task<ICcuDevice> GetDeviceAsync(string deviceAddress);
 
-        Task<object> ReadValueAsync(string deviceAddress, string valueKey);
+    Task<object> ReadValueAsync(string deviceAddress, string valueKey);
         
-        Task<T> ReadValueAsync<T>(string deviceAddress, string valueKey);
+    Task<T> ReadValueAsync<T>(string deviceAddress, string valueKey);
 
-        Task WriteValueAsync(string deviceAddress, string valueKey, object value);
+    Task WriteValueAsync(string deviceAddress, string valueKey, object value);
         
-        Task<IEnumerable<IServiceMessage>> GetServiceMessagesAsync();
+    Task<IEnumerable<IServiceMessage>> GetServiceMessagesAsync();
 
-        Task RegisterEventServerAsync();
+    Task RegisterEventServerAsync();
 
-        Task UnregisterEventServerAsync();
+    Task UnregisterEventServerAsync();
 
-        Task<CcuLogLevel> SetLogLevelAsync(CcuLogLevel logLevel);
+    Task<CcuLogLevel> SetLogLevelAsync(CcuLogLevel logLevel);
 
-        Task<CcuLogLevel> GetLogLevelAsync();
+    Task<CcuLogLevel> GetLogLevelAsync();
 
-        Task<Dictionary<string, object>> ReadParamSetAsync(string deviceAddress, string paramSetKey);
+    Task<Dictionary<string, object>> ReadParamSetAsync(string deviceAddress, string paramSetKey);
 
-        Task<Dictionary<string, ICcuParameterInfo>> GetParameterInfoAsync(string deviceAddress, string paramSetKey);
+    Task<Dictionary<string, ICcuParameterInfo>> GetParameterInfoAsync(string deviceAddress, string paramSetKey);
 
-        Task<IEnumerable<IBidcosInterfaceInfo>> GetBidcosInterfacesAsync();
+    Task<IEnumerable<IBidcosInterfaceInfo>> GetBidcosInterfacesAsync();
 
-        Task WriteParamsetAsync(string deviceAddress, string paramSetKey, IDictionary<string, object> paramSet);
+    Task WriteParamsetAsync(string deviceAddress, string paramSetKey, IDictionary<string, object> paramSet);
 
-        Task<bool> PingAsync(string callerId);
+    Task<bool> PingAsync(string callerId);
         
-        string InterfaceId { get; set; }
+    string InterfaceId { get; set; }
         
-        string EventXmlRpcUrl { get; set; }
-    }
+    string EventXmlRpcUrl { get; set; }
 }

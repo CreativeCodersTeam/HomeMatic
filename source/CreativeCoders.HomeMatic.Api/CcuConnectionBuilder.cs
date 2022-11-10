@@ -3,41 +3,40 @@ using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Api.Core;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
-namespace CreativeCoders.HomeMatic.Api
+namespace CreativeCoders.HomeMatic.Api;
+
+public class CcuConnectionBuilder : ICcuConnectionBuilder
 {
-    public class CcuConnectionBuilder : ICcuConnectionBuilder
+    private readonly IHomeMaticXmlRpcApiBuilder _xmlRpcApiBuilder;
+        
+    private string _ccuAddress;
+
+    public CcuConnectionBuilder(IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder)
     {
-        private readonly IHomeMaticXmlRpcApiBuilder _xmlRpcApiBuilder;
+        Ensure.IsNotNull(xmlRpcApiBuilder, nameof(xmlRpcApiBuilder));
+            
+        _xmlRpcApiBuilder = xmlRpcApiBuilder;
+    }
         
-        private string _ccuAddress;
-
-        public CcuConnectionBuilder(IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder)
+    public ICcuConnectionBuilder ForAddress(string ccuAddress)
+    {
+        if (_ccuAddress != null)
         {
-            Ensure.IsNotNull(xmlRpcApiBuilder, nameof(xmlRpcApiBuilder));
-            
-            _xmlRpcApiBuilder = xmlRpcApiBuilder;
+            throw new InvalidOperationException("CCU address is already set");
         }
-        
-        public ICcuConnectionBuilder ForAddress(string ccuAddress)
-        {
-            if (_ccuAddress != null)
-            {
-                throw new InvalidOperationException("CCU address is already set");
-            }
             
-            Ensure.IsNotNullOrWhitespace(ccuAddress, nameof(ccuAddress));
+        Ensure.IsNotNullOrWhitespace(ccuAddress, nameof(ccuAddress));
             
-            _ccuAddress = ccuAddress;
+        _ccuAddress = ccuAddress;
 
-            return this;
-        }
+        return this;
+    }
 
-        public ICcuConnection Build()
-        {
-            return new CcuConnection(
-                _xmlRpcApiBuilder
-                    .ForUrl(_ccuAddress)
-                    .Build());
-        }
+    public ICcuConnection Build()
+    {
+        return new CcuConnection(
+            _xmlRpcApiBuilder
+                .ForUrl(_ccuAddress)
+                .Build());
     }
 }

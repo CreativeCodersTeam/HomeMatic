@@ -1,9 +1,8 @@
 ﻿using System.Windows.Controls;
 
-namespace CreativeCoders.HomeMatic.Tools.Explorer.Views.Selectors
+namespace CreativeCoders.HomeMatic.Tools.Explorer.Views.Selectors;
+
+public class ExplorerTreeItemTemplateSelector : DataTemplateSelector
 {
-    public class ExplorerTreeItemTemplateSelector : DataTemplateSelector
-    {
         
-    }
 }

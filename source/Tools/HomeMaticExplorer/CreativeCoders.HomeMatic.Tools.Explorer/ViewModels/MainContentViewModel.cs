@@ -1,11 +1,10 @@
 ﻿using CreativeCoders.Mvvm;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Tools.Explorer.ViewModels
+namespace CreativeCoders.HomeMatic.Tools.Explorer.ViewModels;
+
+[UsedImplicitly]
+public class MainContentViewModel : ViewModelBase
 {
-    [UsedImplicitly]
-    public class MainContentViewModel : ViewModelBase
-    {
         
-    }
 }

@@ -3,55 +3,54 @@ using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Api.Core.Devices
-{
-    [PublicAPI]
-    public interface ICcuDeviceInfo
-    {
-        string Address { get; }
-        
-        string DeviceType { get; }
-        
-        int Version { get; }
-        
-        bool IsAesActive { get; }
-        
-        string[] ParamSets { get; }
+namespace CreativeCoders.HomeMatic.Api.Core.Devices;
 
-        bool Roaming { get; }
+[PublicAPI]
+public interface ICcuDeviceInfo
+{
+    string Address { get; }
         
-        int RfAddress { get; }
+    string DeviceType { get; }
         
-        string Firmware { get; }
+    int Version { get; }
         
-        string AvailableFirmware { get; }
+    bool IsAesActive { get; }
         
-        bool CanBeUpdated { get; }
+    string[] ParamSets { get; }
+
+    bool Roaming { get; }
         
-        DeviceFirmwareUpdateState FirmwareUpdateState { get; }
+    int RfAddress { get; }
         
-        string[] Children { get; }
+    string Firmware { get; }
         
-        string Interface { get; }
+    string AvailableFirmware { get; }
         
-        RxMode RxMode { get; }
+    bool CanBeUpdated { get; }
         
-        string Parent { get; }
+    DeviceFirmwareUpdateState FirmwareUpdateState { get; }
         
-        string ParentType { get; }
+    string[] Children { get; }
         
-        int Index { get; }
+    string Interface { get; }
         
-        string Group { get; }
+    RxMode RxMode { get; }
         
-        ChannelDirection ChannelDirection { get; }
+    string Parent { get; }
         
-        IEnumerable<string> LinkSourceRoles { get; }
+    string ParentType { get; }
         
-        IEnumerable<string> LinkTargetRoles { get; }
+    int Index { get; }
         
-        bool IsDevice { get; }
+    string Group { get; }
         
-        bool IsChannel { get; }
-    }
+    ChannelDirection ChannelDirection { get; }
+        
+    IEnumerable<string> LinkSourceRoles { get; }
+        
+    IEnumerable<string> LinkTargetRoles { get; }
+        
+    bool IsDevice { get; }
+        
+    bool IsChannel { get; }
 }

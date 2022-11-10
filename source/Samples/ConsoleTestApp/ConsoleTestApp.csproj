@@ -8,11 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Di.MsServiceProvider" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Logging.Console" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.62.0" />
+		<PackageReference Include="CreativeCoders.Net.Servers.Http.AspNetCore" Version="1.2.0" />
+		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,13 +1,12 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Tools.Explorer.Views
+namespace CreativeCoders.HomeMatic.Tools.Explorer.Views;
+
+[UsedImplicitly]
+public partial class MainView
 {
-    [UsedImplicitly]
-    public partial class MainView
+    public MainView()
     {
-        public MainView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace CreativeCoders.HomeMatic.Api.Core
+﻿namespace CreativeCoders.HomeMatic.Api.Core;
+
+public interface ICcuConnectionBuilder
 {
-    public interface ICcuConnectionBuilder
-    {
-        ICcuConnectionBuilder ForAddress(string ccuAddress);
+    ICcuConnectionBuilder ForAddress(string ccuAddress);
         
-        ICcuConnection Build();
-    }
+    ICcuConnection Build();
 }

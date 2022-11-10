@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions
+namespace CreativeCoders.HomeMatic.Core.Exceptions;
+
+public class OperationNotSupportedException : CcuXmlRpcException
 {
-    public class OperationNotSupportedException : CcuXmlRpcException
+    public OperationNotSupportedException(string message, Exception faultException) : base(message, faultException)
     {
-        public OperationNotSupportedException(string message, Exception faultException) : base(message, faultException)
-        {
-        }
     }
 }

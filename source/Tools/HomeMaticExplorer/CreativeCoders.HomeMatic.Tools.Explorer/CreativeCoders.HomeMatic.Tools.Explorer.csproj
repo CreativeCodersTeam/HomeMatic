@@ -17,9 +17,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Di.SimpleInjector" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Mvvm.Skeletor" Version="0.62.0" />
-		<PackageReference Include="Dirkster.AvalonDock" Version="4.70.2" />
+		<PackageReference Include="CreativeCoders.DependencyInjection" Version="1.2.0" />
+		<PackageReference Include="CreativeCoders.Mvvm.Skeletor" Version="1.2.0" />
+		<PackageReference Include="Dirkster.AvalonDock" Version="4.70.3" />
 		<PackageReference Include="Fluent.Ribbon" Version="9.0.4" />
 	</ItemGroup>
 
