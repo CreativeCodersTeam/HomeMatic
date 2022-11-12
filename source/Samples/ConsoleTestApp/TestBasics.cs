@@ -13,6 +13,7 @@ using CreativeCoders.Net.Servers.Http.AspNetCore;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using CreativeCoders.Net.XmlRpc.Server;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ConsoleTestApp;
 
@@ -28,11 +29,11 @@ public class TestBasics
         var apiBuilder = _serviceProvider.GetRequiredService<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
             
         var xmlRpcApiHmIp = apiBuilder
-            .ForUrl("http://homematic-ccu2:" + CcuRpcPorts.HomeMaticIp)
+            .ForUrl("http://192.168.1.220:" + CcuRpcPorts.HomeMaticIp)
             .Build();
 
         var xmlRpcApi = apiBuilder
-            .ForUrl("http://homematic-ccu2:" + CcuRpcPorts.HomeMatic)
+            .ForUrl("http://192.168.1.220:" + CcuRpcPorts.HomeMatic)
             .Build();
 
         var connection = new CcuConnection(xmlRpcApiHmIp);
@@ -41,9 +42,9 @@ public class TestBasics
 
         var devices = await connection.GetDevicesAsync();
 
-        var temperature = await xmlRpcApi.GetValueAsync<double>("NEQ1142873:1", "TEMPERATURE");
+        //var temperature = await xmlRpcApi.GetValueAsync<double>("NEQ1142873:1", "TEMPERATURE");
 
-        Console.WriteLine($"Temperature: {temperature}");
+        //Console.WriteLine($"Temperature: {temperature}");
 
         var deviceDescriptions = await xmlRpcApiHmIp.ListDevicesAsync();
             
@@ -57,14 +58,11 @@ public class TestBasics
     private static IServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection() as IServiceCollection;
+
+        services.AddLogging(x => x.AddConsole().SetMinimumLevel(LogLevel.Debug));
             
         services.AddHomeMaticXmlRpc();
             
-        // services.AddTransient<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>, XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
-        // services.AddTransient(typeof(IProxyBuilder<>), typeof(ProxyBuilder<>));
-            
-        //services.AddHttpClient();
-
         return services.BuildServiceProvider();
     }
 
