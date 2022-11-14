@@ -16,6 +16,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
 {
     private readonly IXmlRpcServer _xmlRpcServer;
+    
     private readonly ILogger<CcuXmlRpcEventServer> _logger;
 
     private IList<ICcuEventHandler> _eventHandlers;
@@ -62,7 +63,9 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             "Event from CCU received. InterfaceId = {InterfaceId}; Address = {Address}; ValueKey = {ValueKey}; Value = {Value}",
             interfaceId, address, valueKey, value);
 
-        await _eventHandlers.ForEachAsync(x => x.Event(address, valueKey, value));
+        await _eventHandlers
+            .ForEachAsync(x => x.Event(address, valueKey, value))
+            .ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -86,7 +89,9 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             .ForEach(deviceDescription =>
                 _logger.LogTrace("New device: Address = {DeviceDescriptionAddress}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.NewDevices(deviceDescriptions));
+        await _eventHandlers
+            .ForEachAsync(x => x.NewDevices(deviceDescriptions))
+            .ConfigureAwait(false);
             
         return string.Empty;
     }
@@ -101,7 +106,9 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             .ForEach(deviceDescription =>
                 _logger.LogTrace("Deleted device: Address = {DeviceDescriptionAddress}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(deviceDescriptions));
+        await _eventHandlers
+            .ForEachAsync(x => x.DeleteDevices(deviceDescriptions))
+            .ConfigureAwait(false);
             
         return string.Empty;
     }
@@ -112,7 +119,9 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         _logger.LogDebug("CCU device is updated. InterfaceId = {InterfaceId}; Address = {Address}; Hint = {Hint}",
             interfaceId, address, hint);
 
-        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(address, hint));
+        await _eventHandlers
+            .ForEachAsync(x => x.UpdateDevice(address, hint))
+            .ConfigureAwait(false);
             
         return string.Empty;
     }

@@ -26,7 +26,7 @@ public class CcuConnection : ICcuConnection
         
     public async Task<IEnumerable<ICcuDeviceInfo>> GetDeviceInfosAsync()
     {
-        var deviceDescriptions = await XmlRpcApi.ListDevicesAsync();
+        var deviceDescriptions = await XmlRpcApi.ListDevicesAsync().ConfigureAwait(false);
 
         return deviceDescriptions
             .Select(DeviceInfoCreator.Create)
@@ -35,7 +35,7 @@ public class CcuConnection : ICcuConnection
 
     public async Task<ICcuDeviceInfo> GetDeviceInfoAsync(string deviceAddress)
     {
-        var deviceDescription = await XmlRpcApi.GetDeviceDescriptionAsync(deviceAddress);
+        var deviceDescription = await XmlRpcApi.GetDeviceDescriptionAsync(deviceAddress).ConfigureAwait(false);
             
         return DeviceInfoCreator.Create(deviceDescription);
     }
@@ -73,7 +73,7 @@ public class CcuConnection : ICcuConnection
 
         foreach (var channelAddress in deviceInfo.Children)
         {
-            var channelInfo = await GetDeviceInfoAsync(channelAddress);
+            var channelInfo = await GetDeviceInfoAsync(channelAddress).ConfigureAwait(false);
             channelInfos.Add(channelInfo);
         }
 
@@ -99,7 +99,7 @@ public class CcuConnection : ICcuConnection
 
     public async Task<IEnumerable<IServiceMessage>> GetServiceMessagesAsync()
     {
-        var messages = await XmlRpcApi.GetServiceMessagesAsync();
+        var messages = await XmlRpcApi.GetServiceMessagesAsync().ConfigureAwait(false);
 
         return messages
             .Select(x => x.ToArray())
@@ -119,12 +119,12 @@ public class CcuConnection : ICcuConnection
 
     public async Task<CcuLogLevel> SetLogLevelAsync(CcuLogLevel logLevel)
     {
-        return (CcuLogLevel) await XmlRpcApi.SetLogLevelAsync((int) logLevel);
+        return (CcuLogLevel) await XmlRpcApi.SetLogLevelAsync((int) logLevel).ConfigureAwait(false);
     }
 
     public async Task<CcuLogLevel> GetLogLevelAsync()
     {
-        return (CcuLogLevel) await XmlRpcApi.GetLogLevelAsync();
+        return (CcuLogLevel) await XmlRpcApi.GetLogLevelAsync().ConfigureAwait(false);
     }
 
     public Task<Dictionary<string, object>> ReadParamSetAsync(string deviceAddress, string paramSetKey)
@@ -134,7 +134,9 @@ public class CcuConnection : ICcuConnection
 
     public async Task<Dictionary<string, ICcuParameterInfo>> GetParameterInfoAsync(string deviceAddress, string paramSetKey)
     {
-        var parameterDescription = await XmlRpcApi.GetParameterDescriptionAsync(deviceAddress, paramSetKey);
+        var parameterDescription =
+            await XmlRpcApi.GetParameterDescriptionAsync(deviceAddress, paramSetKey)
+                .ConfigureAwait(false);
 
         return parameterDescription.Keys.ToDictionary(key => key,
             key => (ICcuParameterInfo) ParameterInfoCreator.Create(parameterDescription[key]));
@@ -143,7 +145,8 @@ public class CcuConnection : ICcuConnection
     public async Task<IEnumerable<IBidcosInterfaceInfo>> GetBidcosInterfacesAsync()
     {
         var bidcosInterfaces = await XmlRpcApi
-            .ListBidcosInterfacesAsync();
+            .ListBidcosInterfacesAsync()
+            .ConfigureAwait(false);
 
         return bidcosInterfaces
             .Select(BidcosInterfaceInfoCreator.Create);

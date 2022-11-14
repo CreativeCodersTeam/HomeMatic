@@ -26,7 +26,9 @@ public class TestBasics
     {
         _serviceProvider = CreateServiceProvider();
 
-        var apiBuilder = _serviceProvider.GetRequiredService<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
+        //var apiBuilder = _serviceProvider.GetRequiredService<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
+        
+        var apiBuilder = _serviceProvider.GetRequiredService<IHomeMaticXmlRpcApiBuilder>();
             
         var xmlRpcApiHmIp = apiBuilder
             .ForUrl("http://192.168.1.220:" + CcuRpcPorts.HomeMaticIp)
