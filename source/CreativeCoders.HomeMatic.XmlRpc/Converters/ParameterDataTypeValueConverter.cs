@@ -23,7 +23,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Converters
         
         public object ConvertFromValue(XmlRpcValue xmlRpcValue)
         {
-            if (!(xmlRpcValue is StringValue text))
+            if (xmlRpcValue is not StringValue text)
             {
                 return ParameterDataType.Unknown;
             }

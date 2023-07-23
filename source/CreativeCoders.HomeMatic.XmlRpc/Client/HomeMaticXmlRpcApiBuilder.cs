@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Net.Http;
 using CreativeCoders.Core;
-using CreativeCoders.DynamicCode.Proxying;
-using CreativeCoders.Net.Http;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using JetBrains.Annotations;
 
@@ -13,7 +10,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client
     {
         private readonly IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
         
-        private string _url;
+        private string? _url;
 
         public HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder)
         {
@@ -21,27 +18,14 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client
             
             _proxyBuilder = proxyBuilder;
         }
-
-        private HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder, string url) : this(proxyBuilder)
-        {
-            Ensure.IsNotNullOrWhitespace(url, nameof(url));
-            
-            _url = url;
-        }
-
-        public static IHomeMaticXmlRpcApiBuilder Create()
-        {
-            return new HomeMaticXmlRpcApiBuilder(
-                new XmlRpcProxyBuilder<IHomeMaticXmlRpcApi>(
-                    new ProxyBuilder<IHomeMaticXmlRpcApi>(),
-                    new DelegateHttpClientFactory(_ => new HttpClient())));
-        }
-
+        
         public IHomeMaticXmlRpcApiBuilder ForUrl(string url)
         {
             Ensure.IsNotNullOrWhitespace(url, nameof(url));
 
-            return new HomeMaticXmlRpcApiBuilder(_proxyBuilder, url);
+            _url = url;
+
+            return this;
         }
 
         public IHomeMaticXmlRpcApi Build()

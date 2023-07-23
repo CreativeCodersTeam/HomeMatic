@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
+using CreativeCoders.Core.Text;
 using CreativeCoders.HomeMatic.Api.Core;
 using CreativeCoders.HomeMatic.Api.Core.Devices;
 using CreativeCoders.HomeMatic.Api.Core.Parameters;
@@ -159,9 +160,9 @@ namespace CreativeCoders.HomeMatic.Api
             return XmlRpcApi.PingAsync(callerId);
         }
 
-        public string InterfaceId { get; set; }
-        
-        public string EventXmlRpcUrl { get; set; }
+        public string InterfaceId { get; set; } = RandomString.Create(10);
+
+        public string EventXmlRpcUrl { get; set; } = string.Empty;
         
         public IHomeMaticXmlRpcApi XmlRpcApi { get; }
     }

@@ -13,16 +13,16 @@ namespace CreativeCoders.HomeMatic.XmlRpc
     public class DeviceDescription
     {
         [XmlRpcStructMember("ADDRESS", Required = true)]
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         [XmlRpcStructMember("TYPE", Required = true)]
-        public string DeviceType { get; set; }
+        public string DeviceType { get; set; } = string.Empty;
 
         [XmlRpcStructMember("CHILDREN")]
         public string[] Children { get; set; } = Array.Empty<string>();
 
         [XmlRpcStructMember("PARENT", Required = true)]
-        public string Parent { get; set; }
+        public string Parent { get; set; } = string.Empty;
 
         [XmlRpcStructMember("PARENT_TYPE", DefaultValue = "")]
         public string ParentType { get; set; } = string.Empty;
@@ -67,13 +67,14 @@ namespace CreativeCoders.HomeMatic.XmlRpc
         public bool Roaming { get; set; }
 
         [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None, Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
-        public ChannelDirection ChannelDirection { get; set; }        
+        public ChannelDirection ChannelDirection { get; set; }
 
-        [XmlRpcStructMember("LINK_SOURCE_ROLES", DefaultValue = new string[0], Converter = typeof(LinkRolesValueConverter))]
-        public IEnumerable<string> LinkSourceRoles { get; set; }
+        [XmlRpcStructMember("LINK_SOURCE_ROLES", DefaultValue = new string[0],
+            Converter = typeof(LinkRolesValueConverter))]
+        public IEnumerable<string> LinkSourceRoles { get; set; } = Array.Empty<string>();
         
         [XmlRpcStructMember("LINK_TARGET_ROLES", DefaultValue = new string[0], Converter = typeof(LinkRolesValueConverter))]
-        public IEnumerable<string> LinkTargetRoles { get; set; }
+        public IEnumerable<string> LinkTargetRoles { get; set; } = Array.Empty<string>();
 
         public bool IsDevice => string.IsNullOrEmpty(Parent);
         

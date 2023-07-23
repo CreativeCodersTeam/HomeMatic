@@ -9,7 +9,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client
     {
         public void HandleException(MethodExceptionHandlerArguments arguments)
         {
-            if (!(arguments.MethodException is FaultException faultException))
+            if (arguments.MethodException is not FaultException faultException)
             {
                 return;
             }

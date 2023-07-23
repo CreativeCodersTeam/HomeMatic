@@ -8,7 +8,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Converters
 {
     public class LinkRolesValueConverter : IXmlRpcMemberValueConverter
     {
-        public object ConvertFromValue(XmlRpcValue xmlRpcValue)
+        public object? ConvertFromValue(XmlRpcValue xmlRpcValue)
         {
             var text = xmlRpcValue.GetValue<string>();
 

@@ -6,11 +6,12 @@
 		<Authors>CreativeCoders</Authors>
 		<Description>Base classes and enums for HomeMatic CCU RPC</Description>
 		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.62.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+		<PackageReference Include="CreativeCoders.Core" Version="2.4.2" />
+		<PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
 	</ItemGroup>
 
 </Project>

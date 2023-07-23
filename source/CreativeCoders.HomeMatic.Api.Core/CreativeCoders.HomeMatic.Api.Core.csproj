@@ -6,10 +6,11 @@
 		<Authors>CreativeCoders</Authors>
 		<Description>Base classes and interfaces for HomeMatic API</Description>
 		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.62.0" />
+		<PackageReference Include="CreativeCoders.Core" Version="2.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>
