@@ -14,13 +14,22 @@ public class CliCommandExecutor : ICliCommandExecutor
         _serviceProvider = Ensure.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
-    public Task<CliActionResult> ExecuteAsync<TCommand, TOptions>(TOptions options)
-        where TCommand : IHomeMaticCliCommand<TOptions> where TOptions : class
+    public async Task<CliActionResult> ExecuteAsync<TCommand, TOptions>(TOptions options)
+        where TCommand : IHomeMaticCliCommandWithOptions<TOptions> where TOptions : class
     {
-        var command = typeof(TCommand).CreateInstance<IHomeMaticCliCommand<TOptions>>(_serviceProvider);
+        var command = typeof(TCommand).CreateInstance<IHomeMaticCliCommandWithOptions<TOptions>>(_serviceProvider);
 
         return command != null
-            ? command.ExecuteAsync(options)
+            ? new CliActionResult(await command.ExecuteAsync(options))
+            : throw new CliActionException("Command object cannot be created");
+    }
+
+    public async Task<CliActionResult> ExecuteAsync<TCommand>() where TCommand : IHomeMaticCliCommand
+    {
+        var command = typeof(TCommand).CreateInstance<IHomeMaticCliCommand>(_serviceProvider);
+
+        return command != null
+            ? new CliActionResult(await command.ExecuteAsync())
             : throw new CliActionException("Command object cannot be created");
     }
 }

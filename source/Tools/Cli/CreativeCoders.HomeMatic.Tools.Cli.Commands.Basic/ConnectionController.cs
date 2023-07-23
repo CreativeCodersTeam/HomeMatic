@@ -1,6 +1,7 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using CreativeCoders.Core;
+﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Select;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Status;
 using CreativeCoders.SysConsole.Cli.Actions;
 using CreativeCoders.SysConsole.Cli.Actions.Definition;
 using JetBrains.Annotations;
@@ -20,14 +21,14 @@ public class ConnectionController
     }
     
     [CliAction("select", HelpText = "Selects the connection to use")]
-    public Task<CliActionResult> SelectConnectionAsync()
+    public Task<CliActionResult> SelectConnectionAsync(SelectOptions options)
     {
-        return Task.FromResult(new CliActionResult(0));
+        return _commandExecutor.ExecuteAsync<SelectCommand, SelectOptions>(options);
     }
     
     [CliAction("status", HelpText = "Show current connection status")]
     public Task<CliActionResult> ShowStatusAsync()
     {
-        return Task.FromResult(new CliActionResult(0));
+        return _commandExecutor.ExecuteAsync<StatusCommand>();
     }
 }

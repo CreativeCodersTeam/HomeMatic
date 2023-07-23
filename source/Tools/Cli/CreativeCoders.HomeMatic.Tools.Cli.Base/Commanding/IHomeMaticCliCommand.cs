@@ -2,8 +2,7 @@
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 
-public interface IHomeMaticCliCommand<TOptions>
-    where TOptions : class
+public interface IHomeMaticCliCommand
 {
-    Task<CliActionResult> ExecuteAsync(TOptions options);
+    Task<int> ExecuteAsync();
 }

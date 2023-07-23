@@ -1,6 +1,7 @@
 ﻿using CreativeCoders.HomeMatic.Tools.Cli.Base;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.SysConsole.App;
 using CreativeCoders.SysConsole.Cli.Actions;
 using CreativeCoders.SysConsole.Cli.Actions.Runtime;
@@ -28,6 +29,8 @@ public class Startup : ICliStartup
         // services.AddGitLabTools(configuration);
 
         services.AddHomeMaticCliBase();
+
+        services.AddHomeMaticXmlRpc();
 
         services.AddSingleton(_ => AnsiConsole.Create(new AnsiConsoleSettings()));
 
