@@ -40,10 +40,7 @@ public class Startup : ICliStartup
     public void Configure(ICliActionRuntimeBuilder runtimeBuilder)
     {
         runtimeBuilder.AddController<ConnectionController>();
-        // runtimeBuilder.AddController<BranchesController>();
-        // runtimeBuilder.AddController<ReleasesController>();
-        // runtimeBuilder.AddController<ToolController>();
-        //
+        
         // runtimeBuilder.UseMiddleware<GitToolsExceptionMiddleware>();
 
         runtimeBuilder.UseRouting();
