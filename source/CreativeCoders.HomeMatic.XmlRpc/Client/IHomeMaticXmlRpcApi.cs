@@ -50,5 +50,8 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client
 
         [XmlRpcMethod("ping")]
         Task<bool> PingAsync(string callerId);
+        
+        [XmlRpcMethod("getVersion")]
+        Task<string> GetVersionAsync();
     }
 }

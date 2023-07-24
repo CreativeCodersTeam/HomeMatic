@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CreativeCoders.HomeMatic.XmlRpc;
 
-public static class ServiceCollectionExtensions
+public static class XmlRpcServiceCollectionExtensions
 {
     public static void AddHomeMaticXmlRpc(this IServiceCollection services)
     {

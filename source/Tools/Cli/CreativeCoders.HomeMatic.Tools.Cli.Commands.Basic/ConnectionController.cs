@@ -1,7 +1,8 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
-using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Select;
-using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Status;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionListDevices;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionSelect;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionStatus;
 using CreativeCoders.SysConsole.Cli.Actions;
 using CreativeCoders.SysConsole.Cli.Actions.Definition;
 using JetBrains.Annotations;
@@ -30,5 +31,11 @@ public class ConnectionController
     public Task<CliActionResult> ShowStatusAsync()
     {
         return _commandExecutor.ExecuteAsync<StatusCommand>();
+    }
+    
+    [CliAction("list-devices", HelpText = "List devices")]
+    public Task<CliActionResult> ListDevicesAsync(ListDevicesOptions options)
+    {
+        return _commandExecutor.ExecuteAsync<ListDevicesCommand, ListDevicesOptions>(options);
     }
 }

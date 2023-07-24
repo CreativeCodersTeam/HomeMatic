@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base;
 
-public static class ServiceCollectionExtensions
+public static class CliBaseServiceCollectionExtensions
 {
     public static void AddHomeMaticCliBase(this IServiceCollection services)
     {

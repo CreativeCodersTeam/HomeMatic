@@ -10,4 +10,8 @@
       <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.4.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+    </ItemGroup>
+
 </Project>

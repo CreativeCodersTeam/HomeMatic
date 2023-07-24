@@ -1,6 +1,6 @@
 using CreativeCoders.SysConsole.Cli.Parsing;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Select;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionSelect;
 
 public class SelectOptions
 {

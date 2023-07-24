@@ -1,11 +1,10 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
-using CreativeCoders.SysConsole.Cli.Actions;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Select;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionSelect;
 
 [UsedImplicitly]
 public class SelectCommand : IHomeMaticCliCommandWithOptions<SelectOptions>
@@ -20,7 +19,7 @@ public class SelectCommand : IHomeMaticCliCommandWithOptions<SelectOptions>
         _sharedData = Ensure.NotNull(sharedData, nameof(sharedData));
     }
     
-    public async Task<int> ExecuteAsync(SelectOptions options)
+    public Task<int> ExecuteAsync(SelectOptions options)
     {
         _console.MarkupLine("Select CCU connection");
         _console.WriteLine();
@@ -34,6 +33,6 @@ public class SelectCommand : IHomeMaticCliCommandWithOptions<SelectOptions>
         _console.MarkupLine($"Set CCU host to [green]{options.CcuHost}[/]");
         _console.WriteLine();
 
-        return 0;
+        return Task.FromResult(0);
     }
 }
