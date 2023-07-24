@@ -18,21 +18,21 @@ using Nuke.Common.ProjectModel;
 [GitHubActions("integration", GitHubActionsImage.WindowsLatest,
     OnPushBranches = new[]{"feature/**"},
     OnPullRequestBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport", "pack", "pushnuget"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "pack", "pushnuget"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
     )]
 [GitHubActions("main", GitHubActionsImage.WindowsLatest,
     OnPushBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport", "pack", "pushnuget"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "pack", "pushnuget"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
 )]
 [GitHubActions(ReleaseWorkflow, GitHubActionsImage.WindowsLatest,
     OnPushTags = new []{"v**"},
-    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport", "pack", "pushnuget"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "pack", "pushnuget"},
     ImportSecrets = new []{"NUGET_ORG_TOKEN"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
