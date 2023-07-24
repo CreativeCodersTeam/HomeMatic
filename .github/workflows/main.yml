@@ -36,11 +36,7 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd clean restore compile test codecoveragereport pack pushnuget'
-        run: ./build.cmd clean restore compile test codecoveragereport pack pushnuget
+      - name: Run './build.cmd clean restore compile test pack pushnuget'
+        run: ./build.cmd clean restore compile test pack pushnuget
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v3
-        with:
-          name: coverage_report
-          path: .tests/coverage_report
