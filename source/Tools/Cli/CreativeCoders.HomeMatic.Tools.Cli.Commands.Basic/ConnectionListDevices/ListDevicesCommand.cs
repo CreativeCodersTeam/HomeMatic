@@ -20,7 +20,9 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
     
     public async Task<int> ExecuteAsync(ListDevicesOptions options)
     {
-        _console.MarkupLine("List devices");
+        var cliData = SharedData.LoadCliData();
+        
+        _console.MarkupLine($"List devices for CCU : [green]{cliData.CcuHost}[/]");
         _console.WriteLine();
         
         var api = BuildApi();
@@ -38,16 +40,17 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
     {
         var devicesTable = new Table()
             .Border(TableBorder.None)
-            //.HideHeaders()
             .AddColumn("Address", x => x.Padding(new Padding(3, 0)))
-            .AddColumn("Type", x => x.Padding(new Padding(3, 0)));
+            .AddColumn("Type", x => x.Padding(new Padding(3, 0)))
+            .AddColumn("Parameter Sets", x => x.Padding(new Padding(3, 0)));
         
         devices.ForEach(x =>
         {
-            var addressColumn = new Markup(x.Address);
-            var typeColumn = new Markup(x.DeviceType);
+            var addressColumn = new Markup($"[bold]{x.Address}[/]");
+            var typeColumn = new Markup($"[bold teal]{x.DeviceType}[/]");
+            var interfaceColumn = new Markup($"[bold gray]{string.Join(", ", x.ParamSets)}[/]");
 
-            devicesTable.AddRow(addressColumn, typeColumn);
+            devicesTable.AddRow(addressColumn, typeColumn, interfaceColumn);
         });
         
         _console.Write(devicesTable);

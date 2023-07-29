@@ -5,4 +5,6 @@ public interface ISharedData
     CliSharedData LoadCliData();
     
     void SaveCliData(CliSharedData cliSharedData);
+
+    string GetPassword(string ccuHost);
 }

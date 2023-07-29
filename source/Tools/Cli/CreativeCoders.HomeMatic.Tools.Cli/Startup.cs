@@ -40,6 +40,7 @@ public class Startup : ICliStartup
     public void Configure(ICliActionRuntimeBuilder runtimeBuilder)
     {
         runtimeBuilder.AddController<ConnectionController>();
+        runtimeBuilder.AddController<BasicController>();
         
         // runtimeBuilder.UseMiddleware<GitToolsExceptionMiddleware>();
 

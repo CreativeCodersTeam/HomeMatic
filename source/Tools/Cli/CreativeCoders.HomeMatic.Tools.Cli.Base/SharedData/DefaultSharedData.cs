@@ -1,12 +1,18 @@
 using System.Text.Json;
+using CreativeCoders.Core;
 using CreativeCoders.Core.IO;
+using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 
 public class DefaultSharedData : ISharedData
 {
-    public DefaultSharedData()
+    private readonly IAnsiConsole _console;
+
+    public DefaultSharedData(IAnsiConsole console)
     {
+        _console = Ensure.NotNull(console, nameof(console));
+        
         FileSys.Directory.CreateDirectory(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             HomeMaticToolApp.ConfigFolderName));
@@ -31,5 +37,10 @@ public class DefaultSharedData : ISharedData
     public void SaveCliData(CliSharedData cliSharedData)
     {
         FileSys.File.WriteAllText(GetCliDataFileName(), JsonSerializer.Serialize(cliSharedData));
+    }
+
+    public string GetPassword(string ccuHost)
+    {
+        return _console.Prompt<string>(new TextPrompt<string>("Password: ") { IsSecret = true });
     }
 }

@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj" />
       <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
       <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj" />
     </ItemGroup>
