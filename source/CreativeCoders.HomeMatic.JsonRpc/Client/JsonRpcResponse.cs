@@ -1,10 +1,10 @@
 ﻿namespace CreativeCoders.HomeMatic.JsonRpc.Client;
 
-public class JsonRpcResponse
+public class JsonRpcResponse<T>
 {
     public int Id { get; set; }
 
-    public object? Result { get; set; }
+    public T? Result { get; set; }
 
     public JsonRpcError? Error { get; set; }
 }

@@ -2,5 +2,5 @@
 
 public interface IJsonRpcClient
 {
-    Task<JsonRpcResponse> ExecuteAsync(Uri url, string methodName, params object[] arguments);
+    Task<JsonRpcResponse<T>> ExecuteAsync<T>(Uri url, string methodName, params object[] arguments);
 }

@@ -11,8 +11,8 @@ public class JsonRpcClient : IJsonRpcClient
     {
         _httpClient = Ensure.NotNull(httpClient, nameof(httpClient));
     }
-    
-    public async Task<JsonRpcResponse> ExecuteAsync(Uri url, string methodName, params object[] arguments)
+
+    public async Task<JsonRpcResponse<T>> ExecuteAsync<T>(Uri url, string methodName, params object[] arguments)
     {
         var jsonRpcRequest = new JsonRpcRequest(methodName, arguments);
 
@@ -20,7 +20,9 @@ public class JsonRpcClient : IJsonRpcClient
 
         httpResponse.EnsureSuccessStatusCode();
 
-        var jsonRpcResponse = await httpResponse.Content.ReadFromJsonAsync<JsonRpcResponse>().ConfigureAwait(false);
+        var jsonRpcResponse = await httpResponse.Content
+            .ReadFromJsonAsync<JsonRpcResponse<T>>()
+            .ConfigureAwait(false);
 
         if (jsonRpcResponse == null)
         {
