@@ -1,4 +1,5 @@
-﻿using CreativeCoders.HomeMatic.Tools.Cli.Base;
+﻿using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.Tools.Cli.Base;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic;
 using CreativeCoders.HomeMatic.XmlRpc;
@@ -31,6 +32,8 @@ public class Startup : ICliStartup
         services.AddHomeMaticCliBase();
 
         services.AddHomeMaticXmlRpc();
+
+        services.AddHomeMaticJsonRpcClient();
 
         services.AddSingleton(_ => AnsiConsole.Create(new AnsiConsoleSettings()));
 

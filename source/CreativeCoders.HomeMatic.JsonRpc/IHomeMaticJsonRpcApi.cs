@@ -6,40 +6,56 @@ namespace CreativeCoders.HomeMatic.JsonRpc;
 public interface IHomeMaticJsonRpcApi
 {
     [JsonRpcMethod("Session.login")]
-    Task<JsonRpcResponse<string>> LoginAsync(string username, string password);
+    Task<JsonRpcResponse<string>> LoginAsync(string userName, string password);
     
     [JsonRpcMethod("Session.logout")]
     Task<JsonRpcResponse<bool>> LogoutAsync(string sessionId);
     
     [JsonRpcMethod("Device.listAllDetail")]
     Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync(string sessionId);
+    
+    string CcuHost { get; set; }
 }
 
 public class HomeMaticJsonRpcApi : IHomeMaticJsonRpcApi
 {
-    private readonly HttpClient _httpClient;
+    private readonly IJsonRpcClient _jsonRpcClient;
 
-    public HomeMaticJsonRpcApi(IHttpClientFactory httpClientFactory)
+    public HomeMaticJsonRpcApi(IJsonRpcClient jsonRpcClient)
     {
-        _httpClient = Ensure.NotNull(httpClient, nameof(httpClient));
+        _jsonRpcClient = Ensure.NotNull(jsonRpcClient, nameof(jsonRpcClient));
     }
     
-    public Task<JsonRpcResponse<string>> LoginAsync(string username, string password)
+    public async Task<JsonRpcResponse<string>> LoginAsync(string userName, string password)
     {
-        var loginResponse = await jsonRpcClient.ExecuteAsync<string>(
-            new Uri($"http://{cliData.CcuHost}/api/homematic.cgi"),
+        var loginResponse = await _jsonRpcClient.ExecuteAsync<string>(
+            new Uri($"http://{CcuHost}/api/homematic.cgi"),
             "Session.login",
             "username", userName,
-            "password", SharedData.GetPassword(cliData.CcuHost)).ConfigureAwait(false);
+            "password", password).ConfigureAwait(false);
+
+        return loginResponse;
     }
 
-    public Task<JsonRpcResponse<bool>> LogoutAsync(string sessionId)
+    public async Task<JsonRpcResponse<bool>> LogoutAsync(string sessionId)
     {
-        throw new NotImplementedException();
+        var logoutResponse = await _jsonRpcClient.ExecuteAsync<bool>(
+            new Uri($"http://{CcuHost}/api/homematic.cgi"),
+            "Session.logout",
+            "_session_id_", sessionId).ConfigureAwait(false);
+
+        return logoutResponse;
     }
 
-    public Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync(string sessionId)
+    public async Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync(string sessionId)
     {
-        throw new NotImplementedException();
+        var listDetailsResponse = await _jsonRpcClient.ExecuteAsync<IEnumerable<DeviceDetails>>(
+            new Uri($"http://{CcuHost}/api/homematic.cgi"),
+            "Device.listAllDetail",
+            "_session_id_", sessionId).ConfigureAwait(false);
+
+        return listDetailsResponse;
     }
+
+    public string CcuHost { get; set; } = string.Empty;
 }
