@@ -1,24 +1,27 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.JsonRpc.Client;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using Spectre.Console;
 using System.Text.Json;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.JsonRpc.ApiBuilder;
+using CreativeCoders.HomeMatic.JsonRpc.RpcClient;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Test;
 
 public class TestCommand : CliBaseCommand, IHomeMaticCliCommand
 {
+    private readonly IJsonRpcApiBuilder<IHomeMaticJsonRpcApi> _jsonRpcApiBuilder;
     private readonly IAnsiConsole _console;
     
     private readonly IHomeMaticJsonRpcApi _homeMaticJsonRpcApi;
 
     public TestCommand(IAnsiConsole console, IHomeMaticXmlRpcApiBuilder apiBuilder, ISharedData sharedData,
-        IHomeMaticJsonRpcApi homeMaticJsonRpcApi)
+        IHomeMaticJsonRpcApi homeMaticJsonRpcApi, IJsonRpcApiBuilder<IHomeMaticJsonRpcApi> jsonRpcApiBuilder)
         : base(apiBuilder, sharedData)
     {
+        _jsonRpcApiBuilder = jsonRpcApiBuilder;
         _console = Ensure.NotNull(console, nameof(console));
         
         _homeMaticJsonRpcApi = Ensure.NotNull(homeMaticJsonRpcApi, nameof(homeMaticJsonRpcApi));
@@ -41,12 +44,12 @@ public class TestCommand : CliBaseCommand, IHomeMaticCliCommand
         
         _homeMaticJsonRpcApi.CcuHost = cliData.CcuHost;
         
-        // var loginResponse = await jsonRpcClient.ExecuteAsync<string>(
-        //     new Uri($"http://{cliData.CcuHost}/api/homematic.cgi"),
-        //     "Session.login",
-        //     "username", userName,
-        //     "password", SharedData.GetPassword(cliData.CcuHost)).ConfigureAwait(false);
+        var api = _jsonRpcApiBuilder.ForUrl(new Uri($"http://{cliData.CcuHost}/api/homematic.cgi")).Build();
 
+        var response = await api.LoginAsync(userName, SharedData.GetPassword(cliData.CcuHost));
+        
+        _console.WriteLine($"Login with api builder Response: {JsonSerializer.Serialize(response)}");
+        
         var loginResponse = await _homeMaticJsonRpcApi.LoginAsync(userName, SharedData.GetPassword(cliData.CcuHost));
         
         _console.WriteLine($"Login Response: {JsonSerializer.Serialize(loginResponse)}");
@@ -56,20 +59,10 @@ public class TestCommand : CliBaseCommand, IHomeMaticCliCommand
             return 1;
         }
         
-        // var listAllDetailsResponse = await jsonRpcClient.ExecuteAsync<IEnumerable<DeviceDetails>>(
-        //     new Uri($"http://{cliData.CcuHost}/api/homematic.cgi"),
-        //     "Device.listAllDetail",
-        //     "_session_id_", loginResponse.Result).ConfigureAwait(false);   
-        
         var listAllDetailsResponse = await _homeMaticJsonRpcApi.ListAllDetailsAsync(loginResponse.Result);
         
         _console.WriteLine($"All Details Response: {JsonSerializer.Serialize(listAllDetailsResponse)}");
         
-        // var logoutResponse = await jsonRpcClient.ExecuteAsync<bool>(
-        //     new Uri($"http://{cliData.CcuHost}/api/homematic.cgi"),
-        //     "Session.logout",
-        //     "_session_id_", loginResponse.Result).ConfigureAwait(false);
-
         var logoutResponse = await _homeMaticJsonRpcApi.LogoutAsync(loginResponse.Result);
         
         _console.WriteLine($"Logout Response: {JsonSerializer.Serialize(logoutResponse)}");

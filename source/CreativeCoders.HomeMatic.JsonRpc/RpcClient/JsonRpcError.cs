@@ -1,4 +1,4 @@
-﻿namespace CreativeCoders.HomeMatic.JsonRpc.Client;
+﻿namespace CreativeCoders.HomeMatic.JsonRpc.RpcClient;
 
 public class JsonRpcError
 {

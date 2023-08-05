@@ -1,5 +1,7 @@
-﻿using CreativeCoders.Core;
+﻿using System.Net;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using CreativeCoders.HomeMatic.XmlRpc;
@@ -11,11 +13,15 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionListDevice
 public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOptions<ListDevicesOptions>
 {
     private readonly IAnsiConsole _console;
+    
+    private readonly IHomeMaticJsonRpcApi _homeMaticJsonRpcApi;
 
-    public ListDevicesCommand(IAnsiConsole console, IHomeMaticXmlRpcApiBuilder apiBuilder, ISharedData sharedData)
+    public ListDevicesCommand(IAnsiConsole console, IHomeMaticXmlRpcApiBuilder apiBuilder,
+        ISharedData sharedData, IHomeMaticJsonRpcApi homeMaticJsonRpcApi)
         : base(apiBuilder, sharedData)
     {
         _console = Ensure.NotNull(console, nameof(console));
+        _homeMaticJsonRpcApi = Ensure.NotNull(homeMaticJsonRpcApi, nameof(_homeMaticJsonRpcApi));
     }
     
     public async Task<int> ExecuteAsync(ListDevicesOptions options)
@@ -26,21 +32,29 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
         _console.WriteLine();
         
         var api = BuildApi();
+        
+        _homeMaticJsonRpcApi.CcuHost = cliData.CcuHost;
+        _homeMaticJsonRpcApi.Credentials =
+            new NetworkCredential(cliData.Users.Values.First(), SharedData.GetPassword(cliData.CcuHost));
 
         var devices = (await api.ListDevicesAsync().ConfigureAwait(false))
             .Where(x => x.IsDevice)
             .OrderBy(x => x.DeviceType);
         
-        PrintDevices(devices);
+        var deviceDetails = await _homeMaticJsonRpcApi.ListAllDetailsAsync().ConfigureAwait(false);
+        
+        PrintDevices(devices, deviceDetails.Result);
 
         return 0;
     }
 
-    private void PrintDevices(IOrderedEnumerable<DeviceDescription> devices)
+    private void PrintDevices(IOrderedEnumerable<DeviceDescription> devices,
+        IEnumerable<DeviceDetails>? deviceDetailsEnumerable)
     {
         var devicesTable = new Table()
             .Border(TableBorder.None)
             .AddColumn("Address", x => x.Padding(new Padding(3, 0)))
+            .AddColumn("Name", x => x.Padding(new Padding(3, 0)))
             .AddColumn("Type", x => x.Padding(new Padding(3, 0)))
             .AddColumn("Parameter Sets", x => x.Padding(new Padding(3, 0)));
         
@@ -49,8 +63,14 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
             var addressColumn = new Markup($"[bold]{x.Address}[/]");
             var typeColumn = new Markup($"[bold teal]{x.DeviceType}[/]");
             var interfaceColumn = new Markup($"[bold gray]{string.Join(", ", x.ParamSets)}[/]");
+            
+            var detail = deviceDetailsEnumerable?.FirstOrDefault(y => y.Address == x.Address);
 
-            devicesTable.AddRow(addressColumn, typeColumn, interfaceColumn);
+            var detailColumn = detail != null
+                ? new Markup($"[bold]{detail.Name}[/]")
+                : new Markup("[bold red]Unknown[/]");
+
+            devicesTable.AddRow(addressColumn, detailColumn, typeColumn, interfaceColumn);
         });
         
         _console.Write(devicesTable);

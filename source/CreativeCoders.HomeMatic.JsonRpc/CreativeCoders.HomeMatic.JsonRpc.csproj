@@ -8,7 +8,9 @@
 
     <ItemGroup>
       <PackageReference Include="CreativeCoders.Core" Version="2.4.2" />
+      <PackageReference Include="CreativeCoders.DynamicCode.Proxying" Version="2.4.2" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     </ItemGroup>
+
 
 </Project>

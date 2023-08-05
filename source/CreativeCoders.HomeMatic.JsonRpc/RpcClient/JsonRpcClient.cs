@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using CreativeCoders.Core;
 
-namespace CreativeCoders.HomeMatic.JsonRpc.Client;
+namespace CreativeCoders.HomeMatic.JsonRpc.RpcClient;
 
 public class JsonRpcClient : IJsonRpcClient
 {
@@ -12,7 +12,7 @@ public class JsonRpcClient : IJsonRpcClient
         _httpClient = Ensure.NotNull(httpClient, nameof(httpClient));
     }
 
-    public async Task<JsonRpcResponse<T>> ExecuteAsync<T>(Uri url, string methodName, params object[] arguments)
+    public async Task<JsonRpcResponse<T>> ExecuteAsync<T>(Uri url, string methodName, params object?[] arguments)
     {
         var jsonRpcRequest = new JsonRpcRequest(methodName, arguments);
 
@@ -32,11 +32,6 @@ public class JsonRpcClient : IJsonRpcClient
         if (jsonRpcResponse.Id != jsonRpcRequest.Id)
         {
             throw new InvalidOperationException("Json RPC id mismatch");
-        }
-
-        if (jsonRpcResponse.Error != null)
-        {
-            throw new JsonRpcException(jsonRpcResponse.Error.Code, jsonRpcResponse.Error.Message);
         }
 
         return jsonRpcResponse;
