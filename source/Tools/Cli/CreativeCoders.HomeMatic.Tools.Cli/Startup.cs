@@ -33,7 +33,7 @@ public class Startup : ICliStartup
 
         services.AddHomeMaticXmlRpc();
 
-        services.AddHomeMaticJsonRpcClient();
+        services.AddHomeMaticJsonRpc();
 
         services.AddSingleton(_ => AnsiConsole.Create(new AnsiConsoleSettings()));
 

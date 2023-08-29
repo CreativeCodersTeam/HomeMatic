@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.JsonRpc.RpcClient;
+using CreativeCoders.Net.JsonRpc;
 
 namespace CreativeCoders.HomeMatic.JsonRpc;
 
@@ -86,7 +86,7 @@ public class HomeMaticJsonRpcApi : IHomeMaticJsonRpcApi
 
     public async Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync()
     {
-        return await ExecuteAsync<JsonRpcResponse<IEnumerable<DeviceDetails>>>(async () =>
+        return await ExecuteAsync(async () =>
         {
             var listDetailsResponse = await ListAllDetailsAsync(_sessionId);
 

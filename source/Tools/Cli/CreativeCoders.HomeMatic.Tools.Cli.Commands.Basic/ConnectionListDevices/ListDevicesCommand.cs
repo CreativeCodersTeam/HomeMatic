@@ -16,12 +16,15 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
     
     private readonly IHomeMaticJsonRpcApi _homeMaticJsonRpcApi;
 
+    private readonly IHomeMaticJsonRpcApiBuilder _jsonRpcApiBuilder;
+
     public ListDevicesCommand(IAnsiConsole console, IHomeMaticXmlRpcApiBuilder apiBuilder,
-        ISharedData sharedData, IHomeMaticJsonRpcApi homeMaticJsonRpcApi)
+        ISharedData sharedData, IHomeMaticJsonRpcApi homeMaticJsonRpcApi, IHomeMaticJsonRpcApiBuilder jsonRpcApiBuilder)
         : base(apiBuilder, sharedData)
     {
         _console = Ensure.NotNull(console, nameof(console));
         _homeMaticJsonRpcApi = Ensure.NotNull(homeMaticJsonRpcApi, nameof(_homeMaticJsonRpcApi));
+        _jsonRpcApiBuilder = Ensure.NotNull(jsonRpcApiBuilder, nameof(jsonRpcApiBuilder));
     }
     
     public async Task<int> ExecuteAsync(ListDevicesOptions options)

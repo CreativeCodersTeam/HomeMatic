@@ -1,6 +1,6 @@
 ﻿using System.Net;
-using CreativeCoders.HomeMatic.JsonRpc.ApiBuilder;
-using CreativeCoders.HomeMatic.JsonRpc.RpcClient;
+using CreativeCoders.Net.JsonRpc;
+using CreativeCoders.Net.JsonRpc.ApiBuilder;
 
 namespace CreativeCoders.HomeMatic.JsonRpc;
 
@@ -14,10 +14,10 @@ public interface IHomeMaticJsonRpcApi
     Task<string> DoLoginAsync(string username, string password);
     
     [JsonRpcMethod("Session.logout")]
-    Task<JsonRpcResponse<bool>> LogoutAsync(string sessionId);
+    Task<JsonRpcResponse<bool>> LogoutAsync([JsonRpcArgument("_session_id_")]string sessionId);
     
     [JsonRpcMethod("Device.listAllDetail")]
-    Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync(string sessionId);
+    Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync([JsonRpcArgument("_session_id_")]string sessionId);
     
     [JsonRpcMethod("Device.listAllDetail")]
     Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ListAllDetailsAsync();

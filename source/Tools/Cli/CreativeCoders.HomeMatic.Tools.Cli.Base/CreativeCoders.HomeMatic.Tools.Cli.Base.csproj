@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.4.2" />
+      <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.5.0" />
       <PackageReference Include="Spectre.Console" Version="0.47.0" />
     </ItemGroup>
 

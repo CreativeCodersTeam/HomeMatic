@@ -2,7 +2,6 @@
 
 using System.Text.Json;
 using CreativeCoders.HomeMatic.JsonRpc;
-using CreativeCoders.HomeMatic.JsonRpc.ApiBuilder;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -11,7 +10,7 @@ services.AddJsonRpcClient();
 
 var sp = services.BuildServiceProvider();
 
-var apiBuilder = sp.GetRequiredService<IJsonRpcApiBuilder<IHomeMaticJsonRpcApi>>();
+var apiBuilder = sp.GetRequiredService<IHomeMaticJsonRpcApiBuilder>();
 
 var api = apiBuilder.ForUrl(new Uri("http://192.168.2.210/api/homematic.cgi")).Build();
 
