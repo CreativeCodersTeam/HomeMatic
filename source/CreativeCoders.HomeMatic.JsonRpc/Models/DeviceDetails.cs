@@ -1,7 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.JsonRpc;
+namespace CreativeCoders.HomeMatic.JsonRpc.Models;
 
+[UsedImplicitly]
 public class DeviceDetails
 {
     public string? Id { get; set; }

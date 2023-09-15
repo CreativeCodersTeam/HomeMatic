@@ -11,7 +11,9 @@
       <PackageReference Include="CreativeCoders.DynamicCode.Proxying" Version="2.5.0" />
       <PackageReference Include="CreativeCoders.Net.JsonRpc" Version="2.5.0" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+
     </ItemGroup>
+
 
 
 

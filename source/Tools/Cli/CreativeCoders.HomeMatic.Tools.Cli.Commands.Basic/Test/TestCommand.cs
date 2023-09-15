@@ -5,6 +5,7 @@ using CreativeCoders.HomeMatic.XmlRpc.Client;
 using Spectre.Console;
 using System.Text.Json;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.JsonRpc.Api;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Test;
 

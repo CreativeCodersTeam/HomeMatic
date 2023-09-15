@@ -2,6 +2,8 @@
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.JsonRpc.Api;
+using CreativeCoders.HomeMatic.JsonRpc.Models;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using CreativeCoders.HomeMatic.XmlRpc;

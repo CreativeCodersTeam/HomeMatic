@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CreativeCoders.HomeMatic.JsonRpc.Api;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CreativeCoders.HomeMatic.JsonRpc;

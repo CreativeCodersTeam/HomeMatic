@@ -2,6 +2,7 @@
 
 using System.Text.Json;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.JsonRpc.Api;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();

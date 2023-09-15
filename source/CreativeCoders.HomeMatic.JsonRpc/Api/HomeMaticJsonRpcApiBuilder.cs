@@ -1,14 +1,7 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Net.JsonRpc.ApiBuilder;
 
-namespace CreativeCoders.HomeMatic.JsonRpc;
-
-public interface IHomeMaticJsonRpcApiBuilder
-{
-    IHomeMaticJsonRpcApiBuilder ForUrl(Uri url);
-
-    IHomeMaticJsonRpcApi Build();
-}
+namespace CreativeCoders.HomeMatic.JsonRpc.Api;
 
 public class HomeMaticJsonRpcApiBuilder : IHomeMaticJsonRpcApiBuilder
 {
@@ -23,6 +16,13 @@ public class HomeMaticJsonRpcApiBuilder : IHomeMaticJsonRpcApiBuilder
     
     public IHomeMaticJsonRpcApiBuilder ForUrl(Uri url)
     {
+        Ensure.NotNull(url);
+        
+        if (!url.PathAndQuery.EndsWith("/api/homematic.cgi", StringComparison.InvariantCulture))
+        {
+            url = new Uri(url, "/api/homematic.cgi");
+        }
+        
         _url = url;
 
         return this;
