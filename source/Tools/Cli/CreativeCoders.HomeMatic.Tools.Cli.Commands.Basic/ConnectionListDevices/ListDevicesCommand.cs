@@ -16,17 +16,14 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
 {
     private readonly IAnsiConsole _console;
     
-    private readonly IHomeMaticJsonRpcApi _homeMaticJsonRpcApi;
-
-    private readonly IHomeMaticJsonRpcApiBuilder _jsonRpcApiBuilder;
+    private readonly IHomeMaticJsonRpcClientBuilder _jsonRpcClientBuilder;
 
     public ListDevicesCommand(IAnsiConsole console, IHomeMaticXmlRpcApiBuilder apiBuilder,
-        ISharedData sharedData, IHomeMaticJsonRpcApi homeMaticJsonRpcApi, IHomeMaticJsonRpcApiBuilder jsonRpcApiBuilder)
+        ISharedData sharedData, IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder)
         : base(apiBuilder, sharedData)
     {
         _console = Ensure.NotNull(console, nameof(console));
-        _homeMaticJsonRpcApi = Ensure.NotNull(homeMaticJsonRpcApi, nameof(_homeMaticJsonRpcApi));
-        _jsonRpcApiBuilder = Ensure.NotNull(jsonRpcApiBuilder, nameof(jsonRpcApiBuilder));
+        _jsonRpcClientBuilder = Ensure.NotNull(jsonRpcClientBuilder);
     }
     
     public async Task<int> ExecuteAsync(ListDevicesOptions options)
@@ -37,18 +34,20 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
         _console.WriteLine();
         
         var api = BuildApi();
-        
-        _homeMaticJsonRpcApi.CcuHost = cliData.CcuHost;
-        _homeMaticJsonRpcApi.Credentials =
-            new NetworkCredential(cliData.Users.Values.First(), SharedData.GetPassword(cliData.CcuHost));
+
+        var jsonRpcClient = _jsonRpcClientBuilder
+            .ForUrl(new Uri($"http://{cliData.CcuHost}"))
+            .WithCredentials(new NetworkCredential(cliData.Users.Values.First(),
+                SharedData.GetPassword(cliData.CcuHost)))
+            .Build();
 
         var devices = (await api.ListDevicesAsync().ConfigureAwait(false))
             .Where(x => x.IsDevice)
             .OrderBy(x => x.DeviceType);
         
-        var deviceDetails = await _homeMaticJsonRpcApi.ListAllDetailsAsync().ConfigureAwait(false);
+        var deviceDetails = await jsonRpcClient.ListAllDetailsAsync().ConfigureAwait(false);
         
-        PrintDevices(devices, deviceDetails.Result);
+        PrintDevices(devices, deviceDetails);
 
         return 0;
     }

@@ -8,41 +8,67 @@ namespace CreativeCoders.HomeMatic.JsonRpc;
 
 public interface IHomeMaticJsonRpcClient
 {
-    Task<bool> LoginAsync();
+    Task LoginAsync();
     
-    Task<bool> LogoutAsync();
+    Task LogoutAsync();
     
     Task<IEnumerable<DeviceDetails>> ListAllDetailsAsync();
     
-    ICredentials? Credentials { get; set; }
+    NetworkCredential? Credential { get; set; }
 }
 
 public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
 {
     private readonly IHomeMaticJsonRpcApi _jsonRpcApi;
+    
+    private string? _sessionId;
 
     public HomeMaticJsonRpcClient(IHomeMaticJsonRpcApi jsonRpcApi)
     {
         _jsonRpcApi = Ensure.NotNull(jsonRpcApi);
     }
     
-    public async Task<bool> LoginAsync()
+    public async Task LoginAsync()
     {
-        _jsonRpcApi.LoginAsync()
+        if (Credential == null)
+        {
+            throw new InvalidOperationException("No credentials specified");
+        }
+        
+        var response = await _jsonRpcApi.LoginAsync(Credential.UserName, Credential.Password);
+
+        _sessionId = response.Result;
     }
 
-    public Task<bool> LogoutAsync()
+    public async Task LogoutAsync()
     {
-        throw new NotImplementedException();
+        if (_sessionId == null)
+        {
+            return;
+        }
+        
+        await _jsonRpcApi.LogoutAsync(_sessionId).ConfigureAwait(false);
     }
 
-    public Task<IEnumerable<DeviceDetails>> ListAllDetailsAsync()
+    public async Task<IEnumerable<DeviceDetails>> ListAllDetailsAsync()
     {
-        throw new NotImplementedException();
+        var jsonRpcResponse = await InvokeAsync(ExecuteAsync).ConfigureAwait(false);
+        
+        return jsonRpcResponse.Result ?? Array.Empty<DeviceDetails>();
+        
+        async Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ExecuteAsync()
+        {
+            return await _jsonRpcApi.ListAllDetailsAsync(_sessionId!).ConfigureAwait(false);
+        }
     }
     
     private async Task<T> InvokeAsync<T>(Func<Task<T>> executeFunc)
     {
+        if (_sessionId == null)
+        {
+            await LoginAsync().ConfigureAwait(false);
+        }
+        
         try
         {
             return await executeFunc();
@@ -51,21 +77,7 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
         {
             if (e.ErrorCode == 400)
             {
-                //var credential = Credentials.GetCredential(new Uri($"http://{CcuHost}/api/homematic.cgi"), "Basic");
-                
-                if (credential == null)
-                {
-                    throw;
-                }
-                
-                var loginResponse = await LoginAsync(credential.UserName, credential.Password).ConfigureAwait(false);
-                
-                if (loginResponse.Result == null)
-                {
-                    throw;
-                }
-                
-                _sessionId = loginResponse.Result;
+                await LoginAsync().ConfigureAwait(false);
                 
                 return await executeFunc();
             }
@@ -74,5 +86,5 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
         }
     }
 
-    public ICredentials? Credentials { get; set; }
+    public NetworkCredential? Credential { get; set; }
 }

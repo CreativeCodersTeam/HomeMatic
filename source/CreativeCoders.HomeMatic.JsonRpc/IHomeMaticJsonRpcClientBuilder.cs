@@ -8,7 +8,7 @@ public interface IHomeMaticJsonRpcClientBuilder
 {
     IHomeMaticJsonRpcClientBuilder ForUrl(Uri url);
     
-    IHomeMaticJsonRpcClientBuilder WithCredentials(ICredentials credentials);
+    IHomeMaticJsonRpcClientBuilder WithCredentials(NetworkCredential credential);
     
     IHomeMaticJsonRpcClient Build();
 }
@@ -19,7 +19,7 @@ public class HomeMaticJsonRpcClientBuilder : IHomeMaticJsonRpcClientBuilder
     
     private Uri? _url;
 
-    private ICredentials? _credentials;
+    private NetworkCredential? _credential;
 
     public HomeMaticJsonRpcClientBuilder(IHomeMaticJsonRpcApiBuilder apiBuilder)
     {
@@ -33,9 +33,9 @@ public class HomeMaticJsonRpcClientBuilder : IHomeMaticJsonRpcClientBuilder
         return this;
     }
 
-    public IHomeMaticJsonRpcClientBuilder WithCredentials(ICredentials credentials)
+    public IHomeMaticJsonRpcClientBuilder WithCredentials(NetworkCredential credential)
     {
-        _credentials = credentials;
+        _credential = Ensure.NotNull(credential);
 
         return this;
     }
@@ -49,7 +49,7 @@ public class HomeMaticJsonRpcClientBuilder : IHomeMaticJsonRpcClientBuilder
         
         return new HomeMaticJsonRpcClient(_apiBuilder.ForUrl(_url).Build())
         {
-            Credentials = _credentials
+            Credential = _credential
         };
     }
 }
