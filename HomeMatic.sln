@@ -5,40 +5,44 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_build", "_build", "{3E115441-C1BA-4467-BE02-8BB6C1020488}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "..\build\_build.csproj", "{6391D531-E617-4AFA-A2F0-1D114E350072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{6391D531-E617-4AFA-A2F0-1D114E350072}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Core", "CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj", "{33773A69-F53A-4BC8-B3B9-564C8C9B0E23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Core", "source\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj", "{33773A69-F53A-4BC8-B3B9-564C8C9B0E23}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.XmlRpc", "CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj", "{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.XmlRpc", "source\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj", "{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Api", "CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj", "{389F2F84-07C6-43AE-9BA6-0F9417B6456B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Api", "source\CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj", "{389F2F84-07C6-43AE-9BA6-0F9417B6456B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{13FED5D5-41CE-4DB5-A0FD-5A1EB5FBEF51}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__global", "__global", "{73022F12-1D56-44FF-AFF1-9FEA43637836}"
 	ProjectSection(SolutionItems) = preProject
-		..\.gitattributes = ..\.gitattributes
-		..\.gitignore = ..\.gitignore
-		..\LICENSE = ..\LICENSE
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Api.Core", "CreativeCoders.HomeMatic.Api.Core\CreativeCoders.HomeMatic.Api.Core.csproj", "{3D405BF1-0DA8-4F37-9AF1-E95B059F7123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreativeCoders.HomeMatic.Api.Core", "source\CreativeCoders.HomeMatic.Api.Core\CreativeCoders.HomeMatic.Api.Core.csproj", "{3D405BF1-0DA8-4F37-9AF1-E95B059F7123}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{B79F3B3E-C9CE-4629-ADE3-B1659AF9C673}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli", "Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli\CreativeCoders.HomeMatic.Tools.Cli.csproj", "{89F70DF5-22A6-4E94-ADE7-A18DE3A4D378}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli", "source\Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli\CreativeCoders.HomeMatic.Tools.Cli.csproj", "{89F70DF5-22A6-4E94-ADE7-A18DE3A4D378}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli.Base", "Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj", "{5F02B2B8-FC8C-44D8-A0CD-E9E31115EAB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli.Base", "source\Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj", "{5F02B2B8-FC8C-44D8-A0CD-E9E31115EAB5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{9525D056-2D64-4426-AF5F-0F42D2D40946}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic", "Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.csproj", "{50446171-3D45-400A-9E5D-7FB5A1D46D54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic", "source\Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.csproj", "{50446171-3D45-400A-9E5D-7FB5A1D46D54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.JsonRpc", "CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj", "{1DB2232F-17CF-40AF-9190-09441C860BEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.JsonRpc", "source\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj", "{1DB2232F-17CF-40AF-9190-09441C860BEB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{0CBB6422-3CF8-4014-B881-E48DBC964D99}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{0CBB6422-3CF8-4014-B881-E48DBC964D99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMaticConsoleTestApp", "Samples\HomeMaticConsoleTestApp\HomeMaticConsoleTestApp.csproj", "{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMaticConsoleTestApp", "samples\HomeMaticConsoleTestApp\HomeMaticConsoleTestApp.csproj", "{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{7DBE5A9D-0500-4C35-A673-481C411B0FA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5BD797BA-4D66-4F55-A55E-5F1063678D8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +100,12 @@ Global
 		{9525D056-2D64-4426-AF5F-0F42D2D40946} = {B79F3B3E-C9CE-4629-ADE3-B1659AF9C673}
 		{50446171-3D45-400A-9E5D-7FB5A1D46D54} = {9525D056-2D64-4426-AF5F-0F42D2D40946}
 		{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF} = {0CBB6422-3CF8-4014-B881-E48DBC964D99}
+		{13FED5D5-41CE-4DB5-A0FD-5A1EB5FBEF51} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{389F2F84-07C6-43AE-9BA6-0F9417B6456B} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{3D405BF1-0DA8-4F37-9AF1-E95B059F7123} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{33773A69-F53A-4BC8-B3B9-564C8C9B0E23} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{1DB2232F-17CF-40AF-9190-09441C860BEB} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E5E58EB-0096-4ED2-B1DE-D7FC5951CAB7}

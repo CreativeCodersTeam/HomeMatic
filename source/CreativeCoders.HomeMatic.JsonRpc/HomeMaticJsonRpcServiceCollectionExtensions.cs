@@ -11,5 +11,7 @@ public static class HomeMaticJsonRpcServiceCollectionExtensions
         services.AddJsonRpcClient();
         
         services.TryAddTransient<IHomeMaticJsonRpcApiBuilder, HomeMaticJsonRpcApiBuilder>();
+        
+        services.TryAddTransient<IHomeMaticJsonRpcClientBuilder, HomeMaticJsonRpcClientBuilder>();
     }
 }
