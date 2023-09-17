@@ -11,9 +11,6 @@ public interface IHomeMaticJsonRpcApi
     [JsonRpcMethod("Session.login")]
     Task<JsonRpcResponse<string>> LoginAsync([JsonRpcArgument("username")] string userName, string password);
     
-    [JsonRpcMethod("Session.login")]
-    Task<string> DoLoginAsync(string username, string password);
-    
     [JsonRpcMethod("Session.logout")]
     Task<JsonRpcResponse<bool>> LogoutAsync([JsonRpcArgument("_session_id_")]string sessionId);
     
