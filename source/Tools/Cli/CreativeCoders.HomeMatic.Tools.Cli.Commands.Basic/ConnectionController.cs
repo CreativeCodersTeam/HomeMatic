@@ -1,5 +1,6 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionAdd;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionListDevices;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionSelect;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.ConnectionStatus;
@@ -37,5 +38,11 @@ public class ConnectionController
     public Task<CliActionResult> ListDevicesAsync(ListDevicesOptions options)
     {
         return _commandExecutor.ExecuteAsync<ListDevicesCommand, ListDevicesOptions>(options);
+    }
+    
+    [CliAction("add", HelpText = "Adds a new CCU connection to the available connections")]
+    public Task<CliActionResult> AddAsync(AddOptions options)
+    {
+        return _commandExecutor.ExecuteAsync<AddCommand, AddOptions>(options);
     }
 }

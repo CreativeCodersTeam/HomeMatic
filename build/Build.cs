@@ -73,7 +73,7 @@ class Build : NukeBuild,
             .AddRange(this.As<ITestSettings>().TestBaseDirectory);
     
     public IEnumerable<Project> TestProjects => this.TryAs<ISolutionParameter>(out var solutionParameter)
-        ? solutionParameter.Solution.GetProjects("*.UnitTests")
+        ? solutionParameter.Solution.GetProjects("*.Tests")
         : Array.Empty<Project>();
 
     string IPackSettings.PackageProjectUrl => "https://github.com/CreativeCodersTeam/Core";

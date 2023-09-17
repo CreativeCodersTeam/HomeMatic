@@ -40,6 +40,8 @@ public class ListDevicesCommand : CliBaseCommand, IHomeMaticCliCommandWithOption
             .WithCredentials(new NetworkCredential(cliData.Users.Values.First(),
                 SharedData.GetPassword(cliData.CcuHost)))
             .Build();
+        
+        await using var _ = jsonRpcClient.AutoLogout();
 
         var devices = (await api.ListDevicesAsync().ConfigureAwait(false))
             .Where(x => x.IsDevice)

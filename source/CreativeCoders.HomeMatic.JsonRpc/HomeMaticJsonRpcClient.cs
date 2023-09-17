@@ -37,43 +37,96 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
         }
         
         await _jsonRpcApi.LogoutAsync(_sessionId).ConfigureAwait(false);
+
+        _sessionId = null;
     }
 
     public async Task<IEnumerable<DeviceDetails>> ListAllDetailsAsync()
     {
-        var jsonRpcResponse = await InvokeAsync(ExecuteAsync).ConfigureAwait(false);
-        
+        var jsonRpcResponse = await InvokeAsync(
+                sessionId => _jsonRpcApi.ListAllDetailsAsync(sessionId))
+            .ConfigureAwait(false);
+
         return jsonRpcResponse.Result ?? Array.Empty<DeviceDetails>();
-        
-        async Task<JsonRpcResponse<IEnumerable<DeviceDetails>>> ExecuteAsync()
-        {
-            return await _jsonRpcApi.ListAllDetailsAsync(_sessionId!).ConfigureAwait(false);
-        }
     }
-    
-    private async Task<T> InvokeAsync<T>(Func<Task<T>> executeFunc)
+
+    public IAsyncDisposable AutoLogout()
+    {
+        return new DelegateAsyncDisposable(async () => await LogoutAsync().ConfigureAwait(false));
+    }
+
+    private async Task<T> InvokeAsync<T>(Func<string, Task<T>> executeFunc)
     {
         if (_sessionId == null)
         {
             await LoginAsync().ConfigureAwait(false);
         }
         
+        if (_sessionId == null)
+        {
+            throw new InvalidOperationException("No session id available. Logins seems to fail somehow.");
+        }
+        
         try
         {
-            return await executeFunc();
+            return await executeFunc(_sessionId).ConfigureAwait(false);
         }
         catch (JsonRpcCallException e)
         {
-            if (e.ErrorCode == 400)
+            if (e.ErrorCode != 400)
             {
-                await LoginAsync().ConfigureAwait(false);
-                
-                return await executeFunc();
+                throw;
             }
+            
+            await LoginAsync().ConfigureAwait(false);
+            
+            if (_sessionId == null)
+            {
+                throw new InvalidOperationException("No session id available. Logins seems to fail somehow.");
+            }
+                
+            return await executeFunc(_sessionId);
 
-            throw;
         }
     }
 
     public NetworkCredential? Credential { get; set; }
+}
+
+public sealed class DelegateAsyncDisposable : IAsyncDisposable
+{
+    private readonly Func<ValueTask> _disposeFunc;
+
+    public DelegateAsyncDisposable(Func<ValueTask> disposeFunc)
+    {
+        _disposeFunc = Ensure.NotNull(disposeFunc);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return _disposeFunc();
+    }
+}
+
+public static class Check
+{
+    public static T NotNull<T>(T? value, string? message = null)
+        where T : class
+    {
+        var valueCopy = value;
+        
+        if (valueCopy == null)
+        {
+            if (message == null)
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                throw new InvalidOperationException(message);
+            }
+        }
+
+        return valueCopy;
+    }
 }

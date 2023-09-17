@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{7DBE5A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5BD797BA-4D66-4F55-A55E-5F1063678D8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.JsonRpc.Tests", "tests\CreativeCoders.HomeMatic.JsonRpc.Tests\CreativeCoders.HomeMatic.JsonRpc.Tests.csproj", "{91834652-D1F2-4563-B684-AAF776E6B341}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15C3A03E-F2A5-4497-B0DE-A9EB73C9E6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91834652-D1F2-4563-B684-AAF776E6B341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91834652-D1F2-4563-B684-AAF776E6B341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91834652-D1F2-4563-B684-AAF776E6B341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91834652-D1F2-4563-B684-AAF776E6B341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +112,7 @@ Global
 		{33773A69-F53A-4BC8-B3B9-564C8C9B0E23} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
 		{1DB2232F-17CF-40AF-9190-09441C860BEB} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
 		{C8E5E8C0-FAA5-49D3-B121-F5E5BBF7C0EF} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{91834652-D1F2-4563-B684-AAF776E6B341} = {5BD797BA-4D66-4F55-A55E-5F1063678D8B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E5E58EB-0096-4ED2-B1DE-D7FC5951CAB7}
