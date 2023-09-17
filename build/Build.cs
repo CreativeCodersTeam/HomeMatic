@@ -48,7 +48,7 @@ class Build : NukeBuild,
 {
     public const string ReleaseWorkflow = "release";
     
-    public static int Main() => Execute<Build>(x => ((ICodeCoverageReportTarget)x).CodeCoverageReport);
+    public static int Main() => Execute<Build>(x => ((ICompileTarget)x).Compile);
 
     [Parameter(Name = "GITHUB_TOKEN")] string DevNuGetApiKey;
     
