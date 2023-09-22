@@ -1,15 +1,14 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Devices
+namespace CreativeCoders.HomeMatic.Core.Devices;
+
+[PublicAPI]
+public enum DeviceFirmwareUpdateState
 {
-    [PublicAPI]
-    public enum DeviceFirmwareUpdateState
-    {
-        None,
-        UpToDate,
-        NewFirmwareAvailable,
-        DeliverFirmwareImage,
-        ReadyForUpdate,
-        PerformingUpdate
-    }
+    None,
+    UpToDate,
+    NewFirmwareAvailable,
+    DeliverFirmwareImage,
+    ReadyForUpdate,
+    PerformingUpdate
 }

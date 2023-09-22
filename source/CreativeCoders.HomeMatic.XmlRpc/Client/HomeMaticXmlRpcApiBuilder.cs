@@ -3,41 +3,40 @@ using CreativeCoders.Core;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.XmlRpc.Client
+namespace CreativeCoders.HomeMatic.XmlRpc.Client;
+
+[PublicAPI]
+public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
 {
-    [PublicAPI]
-    public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
+    private readonly IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
+        
+    private string? _url;
+
+    public HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder)
     {
-        private readonly IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
-        
-        private string? _url;
-
-        public HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder)
-        {
-            Ensure.IsNotNull(proxyBuilder, nameof(proxyBuilder));
+        Ensure.IsNotNull(proxyBuilder, nameof(proxyBuilder));
             
-            _proxyBuilder = proxyBuilder;
-        }
+        _proxyBuilder = proxyBuilder;
+    }
         
-        public IHomeMaticXmlRpcApiBuilder ForUrl(string url)
+    public IHomeMaticXmlRpcApiBuilder ForUrl(string url)
+    {
+        Ensure.IsNotNullOrWhitespace(url, nameof(url));
+
+        _url = url;
+
+        return this;
+    }
+
+    public IHomeMaticXmlRpcApi Build()
+    {
+        if (string.IsNullOrWhiteSpace(_url))
         {
-            Ensure.IsNotNullOrWhitespace(url, nameof(url));
-
-            _url = url;
-
-            return this;
+            throw new InvalidOperationException("No url specified");
         }
-
-        public IHomeMaticXmlRpcApi Build()
-        {
-            if (string.IsNullOrWhiteSpace(_url))
-            {
-                throw new InvalidOperationException("No url specified");
-            }
             
-            return _proxyBuilder
-                .ForUrl(_url)
-                .Build();
-        }
+        return _proxyBuilder
+            .ForUrl(_url)
+            .Build();
     }
 }

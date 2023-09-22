@@ -21,7 +21,7 @@ var loginResponse = await api.LoginAsync("Admin", password);
 
 Console.WriteLine(JsonSerializer.Serialize(loginResponse));
 
-var doLoginResponse = await api.DoLoginAsync("Admin", password);
+var doLoginResponse = await api.LoginAsync("Admin", password);
         
 Console.WriteLine($"DoLogin with api builder Response: {doLoginResponse}");
 

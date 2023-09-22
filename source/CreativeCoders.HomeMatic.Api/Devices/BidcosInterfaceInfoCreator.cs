@@ -1,18 +1,17 @@
 ﻿using CreativeCoders.HomeMatic.XmlRpc;
 
-namespace CreativeCoders.HomeMatic.Api.Devices
+namespace CreativeCoders.HomeMatic.Api.Devices;
+
+public static class BidcosInterfaceInfoCreator
 {
-    public static class BidcosInterfaceInfoCreator
+    public static BidcosInterfaceInfo Create(BidcosInterface bidcosInterface)
     {
-        public static BidcosInterfaceInfo Create(BidcosInterface bidcosInterface)
+        return new()
         {
-            return new()
-            {
-                Address = bidcosInterface.Address,
-                Description = bidcosInterface.Description,
-                IsConnected = bidcosInterface.IsConnected,
-                IsDefault = bidcosInterface.IsDefault
-            };
-        }
+            Address = bidcosInterface.Address,
+            Description = bidcosInterface.Description,
+            IsConnected = bidcosInterface.IsConnected,
+            IsDefault = bidcosInterface.IsDefault
+        };
     }
 }
