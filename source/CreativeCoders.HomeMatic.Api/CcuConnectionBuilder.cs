@@ -36,7 +36,7 @@ public class CcuConnectionBuilder : ICcuConnectionBuilder
     {
         return new CcuConnection(
             _xmlRpcApiBuilder
-                .ForUrl(_ccuAddress)
+                .ForUrl(new Uri(_ccuAddress))
                 .Build());
     }
 }

@@ -10,7 +10,7 @@ public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
 {
     private readonly IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> _proxyBuilder;
         
-    private string? _url;
+    private Uri? _url;
 
     public HomeMaticXmlRpcApiBuilder(IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi> proxyBuilder)
     {
@@ -19,24 +19,22 @@ public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
         _proxyBuilder = proxyBuilder;
     }
         
-    public IHomeMaticXmlRpcApiBuilder ForUrl(string url)
+    public IHomeMaticXmlRpcApiBuilder ForUrl(Uri url)
     {
-        Ensure.IsNotNullOrWhitespace(url, nameof(url));
-
-        _url = url;
+        _url = Ensure.NotNull(url);
 
         return this;
     }
 
     public IHomeMaticXmlRpcApi Build()
     {
-        if (string.IsNullOrWhiteSpace(_url))
+        if (_url == null)
         {
             throw new InvalidOperationException("No url specified");
         }
             
         return _proxyBuilder
-            .ForUrl(_url)
+            .ForUrl(_url.ToString())
             .Build();
     }
 }

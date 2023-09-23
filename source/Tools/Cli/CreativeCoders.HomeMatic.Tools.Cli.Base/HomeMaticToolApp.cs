@@ -7,4 +7,6 @@ public static class HomeMaticToolApp
     public const string ConfigFileName = "hmc.json";
     
     public const string CliDataFileName = "hmc-cli.json";
+    
+    public const string CcuConnectionsStoreFileName = "hmc-connections.json";
 }

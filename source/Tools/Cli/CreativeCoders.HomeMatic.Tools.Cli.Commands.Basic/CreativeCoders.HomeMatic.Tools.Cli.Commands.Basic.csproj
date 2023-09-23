@@ -18,8 +18,5 @@
     </ItemGroup>
 
 
-    <ItemGroup>
-      <Folder Include="Connections\" />
-    </ItemGroup>
 
 </Project>

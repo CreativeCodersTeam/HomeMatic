@@ -1,23 +1,22 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Client.Core;
 using CreativeCoders.HomeMatic.JsonRpc.Api;
-using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic.Client;
 
 public class HomeMaticCcuConnection
 {
-    public HomeMaticCcuConnection(HomeMaticCcu ccu, IHomeMaticXmlRpcApi xmlRpcApi,
+    public HomeMaticCcuConnection(HomeMaticCcu ccu, IEnumerable<XmlRpcApi> xmlRpcApis,
         IHomeMaticJsonRpcApi jsonRpcApi)
     {
         Ccu = Ensure.NotNull(ccu);
-        XmlRpcApi = Ensure.NotNull(xmlRpcApi);
+        XmlRpcApis = Ensure.NotNull(xmlRpcApis);
         JsonRpcApi = Ensure.NotNull(jsonRpcApi);
     }
     
     public HomeMaticCcu Ccu { get; }
 
-    public IHomeMaticXmlRpcApi XmlRpcApi { get; }
+    public IEnumerable<XmlRpcApi> XmlRpcApis { get; }
 
     public IHomeMaticJsonRpcApi JsonRpcApi { get; }
 }

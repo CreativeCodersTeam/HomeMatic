@@ -19,16 +19,6 @@ public class Startup : ICliStartup
     {
         services.AddOptions();
 
-        // services.Configure<ToolConfiguration>(configuration.GetSection("tool"));
-        //
-        // services.AddGitFeatureCommands();
-        //
-        // services.AddGitSharedCommands();
-        //
-        // services.AddGitTools();
-        // services.AddGitHubTools(configuration);
-        // services.AddGitLabTools(configuration);
-
         services.AddHomeMaticCliBase();
 
         services.AddHomeMaticXmlRpc();
@@ -44,8 +34,6 @@ public class Startup : ICliStartup
     {
         runtimeBuilder.AddController<ConnectionController>();
         runtimeBuilder.AddController<BasicController>();
-        
-        // runtimeBuilder.UseMiddleware<GitToolsExceptionMiddleware>();
 
         runtimeBuilder.UseRouting();
     }

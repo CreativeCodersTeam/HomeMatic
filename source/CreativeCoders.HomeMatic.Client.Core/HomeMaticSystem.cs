@@ -3,7 +3,7 @@
 [Flags]
 public enum HomeMaticSystem
 {
-    HomeMatic,
-    HomeMaticIp,
-    HomeMaticIpWired,
+    HomeMatic = 1,
+    HomeMaticIp = 2,
+    HomeMaticIpWired = 4
 }

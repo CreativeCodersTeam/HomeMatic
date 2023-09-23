@@ -20,7 +20,7 @@ public abstract class CliBaseCommand
         var cliData = SharedData.LoadCliData();
         
         return _apiBuilder
-            .ForUrl($"http://{cliData.CcuHost}:{CcuRpcPorts.HomeMaticIp}")
+            .ForUrl(new Uri($"http://{cliData.CcuHost}:{CcuRpcPorts.HomeMaticIp}"))
             .Build();
     }
 

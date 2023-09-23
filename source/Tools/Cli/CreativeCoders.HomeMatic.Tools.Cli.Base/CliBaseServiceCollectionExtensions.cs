@@ -1,4 +1,5 @@
 ﻿using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
+using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -11,5 +12,7 @@ public static class CliBaseServiceCollectionExtensions
     {
         services.TryAddSingleton<ISharedData, DefaultSharedData>();
         services.TryAddSingleton<ICliCommandExecutor, CliCommandExecutor>();
+        
+        services.TryAddSingleton<ICcuConnectionsStore, CcuConnectionsStore>();
     }
 }
