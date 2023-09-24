@@ -1,7 +1,8 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.Core.Collections;
+using CreativeCoders.Core.Enums;
 using CreativeCoders.HomeMatic.Client.Core;
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.JsonRpc.Api;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
@@ -11,15 +12,15 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
 {
     private readonly IHomeMaticXmlRpcApiBuilder _xmlRpcApiBuilder;
     
-    private readonly IHomeMaticJsonRpcApiBuilder _jsonRpcApiBuilder;
+    private readonly IHomeMaticJsonRpcClientBuilder _jsonRpcClientBuilder;
     
     private List<HomeMaticCcu> _ccus = new List<HomeMaticCcu>();
     
     public HomeMaticClientBuilder(IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
-        IHomeMaticJsonRpcApiBuilder jsonRpcApiBuilder)
+        IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder)
     {
         _xmlRpcApiBuilder = Ensure.NotNull(xmlRpcApiBuilder);
-        _jsonRpcApiBuilder = Ensure.NotNull(jsonRpcApiBuilder);
+        _jsonRpcClientBuilder = Ensure.NotNull(jsonRpcClientBuilder);
     }
     
     public IHomeMaticClientBuilder AddCcu(HomeMaticCcu ccu)
@@ -31,11 +32,11 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
 
     private HomeMaticCcuConnection CreateConnection(HomeMaticCcu ccu)
     {
-        var jsonRpcApi = _jsonRpcApiBuilder
+        var jsonRpcApi = _jsonRpcClientBuilder
             .ForUrl(ccu.Url)
             .Build();
 
-        var xmlRpcApis = ccu.Systems.Enumerate().Select(x =>
+        var xmlRpcApis = ccu.Systems.EnumerateFlags().Select(x =>
             {
                 var url = new Uri($"{ccu.Url}:{SystemToPort(x)}");
 
@@ -64,16 +65,5 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
     public IHomeMaticClient Build()
     {
         return new HomeMaticClient(_ccus.Select(CreateConnection).ToArray());
-    }
-}
-
-public static class EnumExtensions
-{
-    public static IEnumerable<T> Enumerate<T>(this T flags)
-        where T : struct, Enum
-    {
-        return Enum
-            .GetValues<T>()
-            .Where(x => flags.HasFlag(x));
     }
 }

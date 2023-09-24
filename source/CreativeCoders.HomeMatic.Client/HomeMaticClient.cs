@@ -10,7 +10,7 @@ public class HomeMaticClient : IHomeMaticClient
         
     }
     
-    public Task<CcuDevice> GetDevicesAsync()
+    public Task<IEnumerable<CcuDevice>> GetDevicesAsync()
     {
         throw new NotImplementedException();
     }

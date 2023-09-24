@@ -7,11 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.6.0" />
+      <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.7.0" />
+      <PackageReference Include="Devlooped.CredentialManager" Version="2.3.2" />
       <PackageReference Include="Spectre.Console" Version="0.47.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.Client.Core\CreativeCoders.HomeMatic.Client.Core.csproj" />
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.Client\CreativeCoders.HomeMatic.Client.csproj" />
       <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
     </ItemGroup>
 

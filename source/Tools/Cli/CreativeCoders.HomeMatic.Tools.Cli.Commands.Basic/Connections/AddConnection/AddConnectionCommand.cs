@@ -23,15 +23,22 @@ public class AddConnectionCommand : IHomeMaticCliCommandWithOptions<AddConnectio
     {
         if (options.Url is null)
         {
-            return 1;
+            return -1;
         }
 
         var url = new Uri(options.Url);
 
-        await _ccuConnectionsStore
+        var added = await _ccuConnectionsStore
             .AddConnectionAsync(new CcuConnectionInfo(url, options.Name))
             .ConfigureAwait(false);
 
+        if (!added)
+        {
+            _console.MarkupLine("[bold italic red3]Connection already exists[/]");
+            return -1;
+        }
+        
+        _console.MarkupLine("[bold lime]Connection added[/]");
         return 0;
     }
 }

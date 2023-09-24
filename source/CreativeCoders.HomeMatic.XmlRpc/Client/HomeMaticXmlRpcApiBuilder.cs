@@ -34,7 +34,7 @@ public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
         }
             
         return _proxyBuilder
-            .ForUrl(_url.ToString())
+            .ForUrl(_url)
             .Build();
     }
 }

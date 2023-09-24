@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.6.0" />
+        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.7.0" />
         <PackageReference Include="Spectre.Console" Version="0.47.0" />
     </ItemGroup>
 
@@ -15,7 +15,9 @@
       <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj" />
       <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
       <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj" />
+
     </ItemGroup>
+
 
 
 

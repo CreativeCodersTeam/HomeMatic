@@ -4,5 +4,5 @@ namespace CreativeCoders.HomeMatic.Client.Core;
 
 public interface IHomeMaticClient
 {
-    Task<CcuDevice> GetDevicesAsync();
+    Task<IEnumerable<CcuDevice>> GetDevicesAsync();
 }

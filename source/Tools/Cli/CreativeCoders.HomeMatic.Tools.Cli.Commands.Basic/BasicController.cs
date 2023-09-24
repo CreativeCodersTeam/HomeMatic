@@ -16,9 +16,9 @@ public class BasicController
         _commandExecutor = Ensure.NotNull(commandExecutor, nameof(commandExecutor));
     }
     
-    [CliAction("test")]
-    public Task<CliActionResult> TestAsync()
-    {
-        return _commandExecutor.ExecuteAsync<TestCommand>();
-    }
+    // [CliAction("test")]
+    // public Task<CliActionResult> TestAsync()
+    // {
+    //     return _commandExecutor.ExecuteAsync<TestCommand>();
+    // }
 }

@@ -1,4 +1,5 @@
-﻿using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
+﻿using CreativeCoders.HomeMatic.Client;
+using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,5 +15,9 @@ public static class CliBaseServiceCollectionExtensions
         services.TryAddSingleton<ICliCommandExecutor, CliCommandExecutor>();
         
         services.TryAddSingleton<ICcuConnectionsStore, CcuConnectionsStore>();
+        
+        services.TryAddSingleton<ICliHomeMaticClientBuilder, CliHomeMaticClientBuilder>();
+
+        services.AddHomeMaticClient();
     }
 }

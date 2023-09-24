@@ -1,10 +1,16 @@
-﻿namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
+﻿using System.Net;
+
+namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 
 public interface ICcuConnectionsStore
 {
-    Task AddConnectionAsync(CcuConnectionInfo connectionInfo);
+    Task<bool> AddConnectionAsync(CcuConnectionInfo connectionInfo);
     
-    Task RemoveConnectionAsync(CcuConnectionInfo connectionInfo);
+    Task<bool> RemoveConnectionAsync(Uri ccuUrl);
     
-    Task<IEnumerable<CcuConnectionInfo>> GetConnectionsAsync();
+    Task<bool> RemoveConnectionAsync(string name);
+    
+    Task<IReadOnlyCollection<CcuConnectionInfo>> GetConnectionsAsync();
+    
+    NetworkCredential GetCredentials(CcuConnectionInfo ccuConnectionInfo);
 }

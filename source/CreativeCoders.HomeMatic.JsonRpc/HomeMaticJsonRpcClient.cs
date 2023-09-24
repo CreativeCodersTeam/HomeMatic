@@ -53,7 +53,7 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
 
     public IAsyncDisposable AutoLogout()
     {
-        return new DelegateAsyncDisposable(async () => await LogoutAsync().ConfigureAwait(false));
+        return new DelegateAsyncDisposable(async () => await LogoutAsync().ConfigureAwait(false), true);
     }
 
     private async Task<T> InvokeAsync<T>(Func<string, Task<T>> executeFunc)
@@ -92,19 +92,4 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
     }
 
     public NetworkCredential? Credential { get; set; }
-}
-
-public sealed class DelegateAsyncDisposable : IAsyncDisposable
-{
-    private readonly Func<ValueTask> _disposeFunc;
-
-    public DelegateAsyncDisposable(Func<ValueTask> disposeFunc)
-    {
-        _disposeFunc = Ensure.NotNull(disposeFunc);
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _disposeFunc();
-    }
 }
