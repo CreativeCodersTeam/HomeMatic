@@ -29,7 +29,7 @@ public class CliHomeMaticClientBuilder : ICliHomeMaticClientBuilder
                 new HomeMaticCcu(x.Name, x.Url)
                 {
                     Systems =
-                        HomeMaticSystem.HomeMatic | HomeMaticSystem.HomeMaticIp | HomeMaticSystem.HomeMaticIpWired,
+                        HomeMaticSystem.HomeMatic | HomeMaticSystem.HomeMaticIp,
                     Username = credential.UserName,
                     Password = credential.Password
                 });

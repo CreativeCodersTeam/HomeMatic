@@ -23,12 +23,17 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
     
     public async Task<int> ExecuteAsync(ListDevicesOptions options)
     {
+        _console.MarkupLine("List all devices for all CCUs");
+        _console.WriteLine();
+        
         var client = await _cliHomeMaticClientBuilder.BuildAsync()
             .ConfigureAwait(false);
 
         var devices = await client.GetDevicesAsync().ConfigureAwait(false);
 
         PrintDevices(devices);
+        
+        _console.WriteLine();
         
         return 0;
     }
@@ -37,20 +42,19 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
     {
         var devicesTable = new Table()
             .Border(TableBorder.None)
-            .AddColumn("Address", x => x.Padding(new Padding(3, 0)))
             .AddColumn("Name", x => x.Padding(new Padding(3, 0)))
-            .AddColumn("Type", x => x.Padding(new Padding(3, 0)))
-            .AddColumn("Parameter Sets", x => x.Padding(new Padding(3, 0)));
+            .AddColumn("Address", x => x.Padding(new Padding(3, 0)))
+            .AddColumn("CCU")
+            .AddColumn("Type", x => x.Padding(new Padding(3, 0)));
         
         devices.ForEach(x =>
         {
+            var nameColumn = new Markup($"[bold teal]{x.Name}[/]");
             var addressColumn = new Markup($"[bold]{x.Address}[/]");
-            var typeColumn = new Markup($"[bold teal]{x.DeviceType}[/]");
-            //var interfaceColumn = new Markup($"[bold gray]{string.Join(", ", x.ParamSets)}[/]");
+            var ccuColumn = new Markup($"[bold yellow]{x.CcuSystem.Name}[/]");
+            var deviceTypeColumn = new Markup($"{x.DeviceType}");
             
-            var detailColumn = new Markup($"[bold]{x.Name}[/]");
-
-            devicesTable.AddRow(addressColumn, detailColumn, typeColumn);
+            devicesTable.AddRow(nameColumn, addressColumn, ccuColumn, deviceTypeColumn);
         });
         
         _console.Write(devicesTable);

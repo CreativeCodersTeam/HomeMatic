@@ -34,8 +34,29 @@ public class Startup : ICliStartup
     {
         runtimeBuilder.AddController<ConnectionController>();
         runtimeBuilder.AddController<DevicesController>();
-        //runtimeBuilder.AddController<BasicController>();
+        
+        runtimeBuilder.UseMiddleware<DebugExceptionMiddleware>();
 
         runtimeBuilder.UseRouting();
+    }
+}
+
+public class DebugExceptionMiddleware : CliActionMiddlewareBase
+{
+    public DebugExceptionMiddleware(Func<CliActionContext, Task> next) : base(next)
+    {
+    }
+
+    public override async Task InvokeAsync(CliActionContext context)
+    {
+        try
+        {
+            await Next(context).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

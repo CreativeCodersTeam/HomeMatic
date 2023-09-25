@@ -1,4 +1,5 @@
-﻿using CreativeCoders.Core;
+﻿using System.Net;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Enums;
 using CreativeCoders.HomeMatic.Client.Core;
 using CreativeCoders.HomeMatic.Core;
@@ -34,11 +35,17 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
     {
         var jsonRpcApi = _jsonRpcClientBuilder
             .ForUrl(ccu.Url)
+            .WithCredentials(new NetworkCredential(ccu.Username, ccu.Password))
             .Build();
 
         var xmlRpcApis = ccu.Systems.EnumerateFlags().Select(x =>
             {
-                var url = new Uri($"{ccu.Url}:{SystemToPort(x)}");
+                var uriBuilder = new UriBuilder(ccu.Url)
+                {
+                    Port = SystemToPort(x)
+                };
+
+                var url = uriBuilder.Uri;
 
                 var xmlRpcApi = _xmlRpcApiBuilder
                     .ForUrl(url)
