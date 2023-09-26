@@ -11,4 +11,10 @@
       <PackageReference Include="CreativeCoders.Core" Version="2.7.0" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj" />
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+    </ItemGroup>
+
 </Project>

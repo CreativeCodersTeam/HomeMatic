@@ -2,7 +2,7 @@
 
 public interface IHomeMaticClientBuilder
 {
-    IHomeMaticClientBuilder AddCcu(HomeMaticCcu ccu);
+    IHomeMaticClientBuilder AddCcu(HomeMaticCcuConnectionInfo ccuConnectionInfo);
     
     IHomeMaticClient Build();
 }

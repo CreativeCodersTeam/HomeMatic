@@ -6,15 +6,15 @@ namespace CreativeCoders.HomeMatic.Client;
 
 public class HomeMaticCcuConnection
 {
-    public HomeMaticCcuConnection(HomeMaticCcu ccu, IEnumerable<XmlRpcApi> xmlRpcApis,
+    public HomeMaticCcuConnection(HomeMaticCcuConnectionInfo ccuConnectionInfo, IEnumerable<XmlRpcApi> xmlRpcApis,
         IHomeMaticJsonRpcClient jsonRpcApi)
     {
-        Ccu = Ensure.NotNull(ccu);
+        Info = Ensure.NotNull(ccuConnectionInfo);
         XmlRpcApis = Ensure.NotNull(xmlRpcApis);
         JsonRpcClient = Ensure.NotNull(jsonRpcApi);
     }
     
-    public HomeMaticCcu Ccu { get; }
+    public HomeMaticCcuConnectionInfo Info { get; }
 
     public IEnumerable<XmlRpcApi> XmlRpcApis { get; }
 

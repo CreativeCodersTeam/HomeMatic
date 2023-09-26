@@ -1,8 +1,20 @@
-﻿namespace CreativeCoders.HomeMatic.Client.Core.Devices;
+﻿using CreativeCoders.HomeMatic.XmlRpc;
+
+namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
 public class CcuDevice : CcuDeviceBase
 {
-    public CcuSystem? CcuSystem { get; set; }
+    public CcuDevice(CcuSystemInfo ccuSystemInfo, string? name, DeviceDescription deviceDescription)
+    {
+        CcuSystem = ccuSystemInfo;
+        
+        Name = name ?? deviceDescription.Address;
+        
+        Address = deviceDescription.Address;
+        DeviceType = deviceDescription.DeviceType;
+    }
+    
+    public CcuSystemInfo? CcuSystem { get; set; }
     
     public string? Name { get; init; }
 

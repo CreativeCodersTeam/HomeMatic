@@ -1,6 +1,7 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Client.Core;
+using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 
@@ -26,10 +27,10 @@ public class CliHomeMaticClientBuilder : ICliHomeMaticClientBuilder
             var credential = _ccuConnectionsStore.GetCredentials(x);
             
             _homeMaticClientBuilder.AddCcu(
-                new HomeMaticCcu(x.Name, x.Url)
+                new HomeMaticCcuConnectionInfo(x.Name, x.Url)
                 {
                     Systems =
-                        HomeMaticSystem.HomeMatic | HomeMaticSystem.HomeMaticIp,
+                        HomeMaticDeviceSystem.HomeMatic | HomeMaticDeviceSystem.HomeMaticIp,
                     Username = credential.UserName,
                     Password = credential.Password
                 });

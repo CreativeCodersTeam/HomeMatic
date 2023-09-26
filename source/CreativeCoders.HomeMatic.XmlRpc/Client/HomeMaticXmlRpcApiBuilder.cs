@@ -26,6 +26,11 @@ public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
         return this;
     }
 
+    public IHomeMaticXmlRpcApiBuilder ForUrl(XmlRpcApiAddress apiAddress)
+    {
+        return ForUrl(apiAddress.ToApiUrl());
+    }
+
     public IHomeMaticXmlRpcApi Build()
     {
         if (_url == null)

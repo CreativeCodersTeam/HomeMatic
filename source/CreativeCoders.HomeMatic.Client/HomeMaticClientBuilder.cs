@@ -2,9 +2,8 @@
 using CreativeCoders.Core;
 using CreativeCoders.Core.Enums;
 using CreativeCoders.HomeMatic.Client.Core;
-using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
-using CreativeCoders.HomeMatic.JsonRpc.Api;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic.Client;
@@ -15,7 +14,7 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
     
     private readonly IHomeMaticJsonRpcClientBuilder _jsonRpcClientBuilder;
     
-    private List<HomeMaticCcu> _ccus = new List<HomeMaticCcu>();
+    private List<HomeMaticCcuConnectionInfo> _ccus = new List<HomeMaticCcuConnectionInfo>();
     
     public HomeMaticClientBuilder(IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
         IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder)
@@ -24,49 +23,31 @@ public class HomeMaticClientBuilder : IHomeMaticClientBuilder
         _jsonRpcClientBuilder = Ensure.NotNull(jsonRpcClientBuilder);
     }
     
-    public IHomeMaticClientBuilder AddCcu(HomeMaticCcu ccu)
+    public IHomeMaticClientBuilder AddCcu(HomeMaticCcuConnectionInfo ccuConnectionInfo)
     {
-        _ccus.Add(ccu);
+        _ccus.Add(ccuConnectionInfo);
         
         return this;
     }
 
-    private HomeMaticCcuConnection CreateConnection(HomeMaticCcu ccu)
+    private HomeMaticCcuConnection CreateConnection(HomeMaticCcuConnectionInfo ccuConnectionInfo)
     {
         var jsonRpcApi = _jsonRpcClientBuilder
-            .ForUrl(ccu.Url)
-            .WithCredentials(new NetworkCredential(ccu.Username, ccu.Password))
+            .ForUrl(ccuConnectionInfo.Url)
+            .WithCredentials(new NetworkCredential(ccuConnectionInfo.Username, ccuConnectionInfo.Password))
             .Build();
 
-        var xmlRpcApis = ccu.Systems.EnumerateFlags().Select(x =>
+        var xmlRpcApis = ccuConnectionInfo.Systems.EnumerateFlags().Select(x =>
             {
-                var uriBuilder = new UriBuilder(ccu.Url)
-                {
-                    Port = SystemToPort(x)
-                };
-
-                var url = uriBuilder.Uri;
-
                 var xmlRpcApi = _xmlRpcApiBuilder
-                    .ForUrl(url)
+                    .ForUrl(new XmlRpcApiAddress(ccuConnectionInfo.Url, x))
                     .Build();
 
                 return new XmlRpcApi(x, xmlRpcApi);
             })
             .ToArray();
 
-        return new HomeMaticCcuConnection(ccu, xmlRpcApis, jsonRpcApi);
-    }
-
-    private int SystemToPort(HomeMaticSystem system)
-    {
-        return system switch
-        {
-            HomeMaticSystem.HomeMatic => CcuRpcPorts.HomeMatic,
-            HomeMaticSystem.HomeMaticIp => CcuRpcPorts.HomeMaticIp,
-            HomeMaticSystem.HomeMaticIpWired => CcuRpcPorts.HomeMaticWired,
-            _ => throw new ArgumentOutOfRangeException(nameof(system), system, null)
-        };
+        return new HomeMaticCcuConnection(ccuConnectionInfo, xmlRpcApis, jsonRpcApi);
     }
 
     public IHomeMaticClient Build()

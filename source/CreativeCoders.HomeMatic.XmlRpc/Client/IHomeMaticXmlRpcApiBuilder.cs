@@ -7,6 +7,8 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Client;
 public interface IHomeMaticXmlRpcApiBuilder
 {
     IHomeMaticXmlRpcApiBuilder ForUrl(Uri url);
+    
+    IHomeMaticXmlRpcApiBuilder ForUrl(XmlRpcApiAddress apiAddress);
 
     IHomeMaticXmlRpcApi Build();
 }

@@ -1,10 +1,11 @@
 ﻿using CreativeCoders.Core;
+using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Client.Core;
 
-public class HomeMaticCcu
+public class HomeMaticCcuConnectionInfo
 {
-    public HomeMaticCcu(string? name, Uri url)
+    public HomeMaticCcuConnectionInfo(string? name, Uri url)
     {
         Url = Ensure.NotNull(url);
         Name = name ?? url.ToString();
@@ -14,7 +15,7 @@ public class HomeMaticCcu
 
     public Uri? Url { get; }
 
-    public HomeMaticSystem Systems { get; set; }
+    public HomeMaticDeviceSystem Systems { get; set; }
     
     public string? Username { get; set; }
     
