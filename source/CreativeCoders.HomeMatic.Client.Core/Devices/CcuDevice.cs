@@ -2,7 +2,7 @@
 
 namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
-public class CcuDevice : CcuDeviceBase
+public class CcuDevice : CcuDeviceBase, ICcuDevice
 {
     public CcuDevice(CcuSystemInfo ccuSystemInfo, string? name, DeviceDescription deviceDescription)
     {

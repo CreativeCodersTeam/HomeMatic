@@ -6,7 +6,7 @@ using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
 
 [UsedImplicitly]
 public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOptions>
@@ -28,7 +28,7 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         
         var client = await _cliHomeMaticClientBuilder.BuildAsync()
             .ConfigureAwait(false);
-
+        
         var devices = await client.GetDevicesAsync().ConfigureAwait(false);
 
         PrintDevices(devices);
@@ -38,7 +38,7 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         return 0;
     }
     
-    private void PrintDevices(IEnumerable<CcuDevice> devices)
+    private void PrintDevices(IEnumerable<ICcuDevice> devices)
     {
         var devicesTable = new Table()
             .Border(TableBorder.None)

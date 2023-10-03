@@ -15,7 +15,7 @@ public class HomeMaticClient : IHomeMaticClient
         _connections = Ensure.NotNull(connections);
     }
 
-    public async Task<IEnumerable<CcuDevice>> GetDevicesAsync()
+    public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
         var deviceList = new ConcurrentList<CcuDevice>();
 
@@ -42,5 +42,17 @@ public class HomeMaticClient : IHomeMaticClient
         });
 
         return deviceList.OrderBy(x => x.Name);
+    }
+
+    public async Task<CcuDeviceDescription> GetDeviceDescriptionAsync(string address)
+    {
+        var device = (await GetDevicesAsync()).FirstOrDefault(x => x.Address == address);
+
+        if (device is null)
+        {
+            throw new CcuDeviceNotFoundException(address);
+        }
+
+        return new CcuDeviceDescription(device);
     }
 }
