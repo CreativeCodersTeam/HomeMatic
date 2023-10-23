@@ -321,5 +321,8 @@ ASALocalRun/
 
 .vscode
 
-/tools/
-/nuget/nupkgs
+.artifacts
+
+.tests
+
+.nuke

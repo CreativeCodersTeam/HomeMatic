@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 using CreativeCoders.HomeMatic.XmlRpc;
 
-namespace CreativeCoders.HomeMatic.Api.Devices
+namespace CreativeCoders.HomeMatic.Api.Devices;
+
+public static class DeviceInfoCreator
 {
-    public static class DeviceInfoCreator
-    {
-        private static readonly IMapper Mapper =
-            new Mapper(new MapperConfiguration(x => x.CreateMap<DeviceDescription, CcuDeviceInfo>()));
+    private static readonly IMapper Mapper =
+        new Mapper(new MapperConfiguration(x => x.CreateMap<DeviceDescription, CcuDeviceInfo>()));
         
-        public static CcuDeviceInfo Create(DeviceDescription deviceDescription)
-        {
-            return Mapper.Map<CcuDeviceInfo>(deviceDescription);
-        }
+    public static CcuDeviceInfo Create(DeviceDescription deviceDescription)
+    {
+        return Mapper.Map<CcuDeviceInfo>(deviceDescription);
     }
 }

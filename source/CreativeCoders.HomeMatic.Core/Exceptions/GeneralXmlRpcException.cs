@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions
+namespace CreativeCoders.HomeMatic.Core.Exceptions;
+
+public class GeneralException : CcuXmlRpcException
 {
-    public class GeneralException : CcuXmlRpcException
+    public GeneralException(string message, Exception faultException) : base(message, faultException)
     {
-        public GeneralException(string message, Exception faultException) : base(message, faultException)
-        {
-        }
     }
 }

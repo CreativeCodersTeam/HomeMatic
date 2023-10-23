@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions
+namespace CreativeCoders.HomeMatic.Core.Exceptions;
+
+public class UnknownParamSetException : CcuXmlRpcException
 {
-    public class UnknownParamSetException : CcuXmlRpcException
+    public UnknownParamSetException(string message, Exception faultException) : base(message, faultException)
     {
-        public UnknownParamSetException(string message, Exception faultException) : base(message, faultException)
-        {
-        }
     }
 }

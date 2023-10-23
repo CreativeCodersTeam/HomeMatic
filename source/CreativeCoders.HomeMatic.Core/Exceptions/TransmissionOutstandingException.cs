@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions
+namespace CreativeCoders.HomeMatic.Core.Exceptions;
+
+public class TransmissionOutstandingException : CcuXmlRpcException
 {
-    public class TransmissionOutstandingException : CcuXmlRpcException
+    public TransmissionOutstandingException(string message, Exception faultException) : base(message, faultException)
     {
-        public TransmissionOutstandingException(string message, Exception faultException) : base(message, faultException)
-        {
-        }
     }
 }

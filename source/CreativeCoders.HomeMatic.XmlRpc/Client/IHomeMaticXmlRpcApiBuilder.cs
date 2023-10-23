@@ -1,12 +1,14 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.XmlRpc.Client
+namespace CreativeCoders.HomeMatic.XmlRpc.Client;
+
+[PublicAPI]
+public interface IHomeMaticXmlRpcApiBuilder
 {
-    [PublicAPI]
-    public interface IHomeMaticXmlRpcApiBuilder
-    {
-        IHomeMaticXmlRpcApiBuilder ForUrl(string url);
+    IHomeMaticXmlRpcApiBuilder ForUrl(Uri url);
+    
+    IHomeMaticXmlRpcApiBuilder ForUrl(XmlRpcApiAddress apiAddress);
 
-        IHomeMaticXmlRpcApi Build();
-    }
+    IHomeMaticXmlRpcApi Build();
 }

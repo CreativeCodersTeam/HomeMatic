@@ -6,11 +6,12 @@
 		<Authors>CreativeCoders</Authors>
 		<Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
 		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="0.62.0" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="0.62.0" />
+		<PackageReference Include="CreativeCoders.Core" Version="2.7.0" />
+		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="2.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>

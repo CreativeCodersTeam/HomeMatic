@@ -5,42 +5,41 @@ using CreativeCoders.HomeMatic.XmlRpc.Converters;
 using CreativeCoders.Net.XmlRpc.Definition;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.XmlRpc
+namespace CreativeCoders.HomeMatic.XmlRpc;
+
+[PublicAPI]
+public class ParameterDescription
 {
-    [PublicAPI]
-    public class ParameterDescription
-    {
-        [XmlRpcStructMember("ID")]
-        public string Id { get; set; }
+    [XmlRpcStructMember("ID")]
+    public string? Id { get; set; }
         
-        [XmlRpcStructMember("DEFAULT")]
-        public object DefaultValue { get; set; }
+    [XmlRpcStructMember("DEFAULT")]
+    public object? DefaultValue { get; set; }
 
-        [XmlRpcStructMember("MIN")]
-        public object MinValue { get; set; }
+    [XmlRpcStructMember("MIN")]
+    public object? MinValue { get; set; }
 
-        [XmlRpcStructMember("MAX")]
-        public object MaxValue { get; set; }
+    [XmlRpcStructMember("MAX")]
+    public object? MaxValue { get; set; }
 
-        [XmlRpcStructMember("TYPE")]
-        public string Type { get; set; }
+    [XmlRpcStructMember("TYPE")]
+    public string? Type { get; set; }
 
-        [XmlRpcStructMember("TYPE", Converter = typeof(ParameterDataTypeValueConverter))]
-        public ParameterDataType DataType { get; set; }
+    [XmlRpcStructMember("TYPE", Converter = typeof(ParameterDataTypeValueConverter))]
+    public ParameterDataType DataType { get; set; }
 
-        [XmlRpcStructMember("UNIT", DefaultValue = "")]
-        public string Unit { get; set; }
+    [XmlRpcStructMember("UNIT", DefaultValue = "")]
+    public string? Unit { get; set; }
 
-        [XmlRpcStructMember("TAB_ORDER")]
-        public int TabOrder { get; set; }
+    [XmlRpcStructMember("TAB_ORDER")]
+    public int TabOrder { get; set; }
 
-        [XmlRpcStructMember("CONTROL", DefaultValue = "")]
-        public string Control { get; set; }
+    [XmlRpcStructMember("CONTROL", DefaultValue = "")]
+    public string? Control { get; set; }
 
-        [XmlRpcStructMember("VALUE_LIST", DefaultValue = new string[0])]
-        public IEnumerable<string> ValuesList { get; set; }
+    [XmlRpcStructMember("VALUE_LIST", DefaultValue = new string[0])]
+    public IEnumerable<string> ValuesList { get; set; } = Array.Empty<string>();
 
-        [XmlRpcStructMember("SPECIAL")]
-        public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = Array.Empty<Dictionary<string, object>>();
-    }
+    [XmlRpcStructMember("SPECIAL")]
+    public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = Array.Empty<Dictionary<string, object>>();
 }

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.7.0" />
+        <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj" />
+      <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+      <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj" />
+
+    </ItemGroup>
+
+
+
+
+</Project>

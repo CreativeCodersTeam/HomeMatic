@@ -1,11 +1,10 @@
-﻿namespace CreativeCoders.HomeMatic.Core.Parameters
+﻿namespace CreativeCoders.HomeMatic.Core.Parameters;
+
+public enum ParameterKind
 {
-    public enum ParameterKind
-    {
-        Undefined,
-        Master,
-        Values,
-        Link,
-        Service
-    }
+    Undefined,
+    Master,
+    Values,
+    Link,
+    Service
 }

@@ -1,12 +1,11 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Devices
+namespace CreativeCoders.HomeMatic.Core.Devices;
+
+[PublicAPI]
+public enum ChannelDirection
 {
-    [PublicAPI]
-    public enum ChannelDirection
-    {
-        None = 0,
-        Sender = 1,
-        Receiver = 2
-    }
+    None = 0,
+    Sender = 1,
+    Receiver = 2
 }

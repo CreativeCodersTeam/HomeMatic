@@ -1,15 +1,14 @@
 ﻿using System.Threading.Tasks;
 
-namespace CreativeCoders.HomeMatic.XmlRpc.Server
+namespace CreativeCoders.HomeMatic.XmlRpc.Server;
+
+public interface ICcuXmlRpcEventServer
 {
-    public interface ICcuXmlRpcEventServer
-    {
-        Task StartAsync();
+    Task StartAsync();
 
-        Task StopAsync();
+    Task StopAsync();
 
-        void RegisterEventHandler(ICcuEventHandler eventHandler);
+    void RegisterEventHandler(ICcuEventHandler eventHandler);
 
-        string ServerUrl { get; set; }
-    }
+    string ServerUrl { get; set; }
 }

@@ -18,10 +18,7 @@
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
         },
-        "DevNuGetApiKey": {
-          "type": "string"
-        },
-        "DevNuGetSource": {
+        "GITHUB_TOKEN": {
           "type": "string"
         },
         "Help": {
@@ -53,10 +50,7 @@
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
         },
-        "NuGetApiKey": {
-          "type": "string"
-        },
-        "NuGetSource": {
+        "NUGET_ORG_TOKEN": {
           "type": "string"
         },
         "Partition": {
@@ -85,16 +79,11 @@
             "type": "string",
             "enum": [
               "Clean",
+              "CodeCoverageReport",
               "Compile",
-              "CreateNuGetPackages",
-              "DeployToDevNuGet",
-              "DeployToNuGet",
               "Pack",
-              "PushToDevNuGet",
-              "PushToNuGet",
+              "PushNuGet",
               "Restore",
-              "RunBuild",
-              "RunTest",
               "Test"
             ]
           }
@@ -110,16 +99,11 @@
             "type": "string",
             "enum": [
               "Clean",
+              "CodeCoverageReport",
               "Compile",
-              "CreateNuGetPackages",
-              "DeployToDevNuGet",
-              "DeployToNuGet",
               "Pack",
-              "PushToDevNuGet",
-              "PushToNuGet",
+              "PushNuGet",
               "Restore",
-              "RunBuild",
-              "RunTest",
               "Test"
             ]
           }
