@@ -2,11 +2,13 @@
 
 public interface ICcuDevice
 {
-    CcuSystemInfo? CcuSystem { get; }
+    CcuSystemInfo CcuSystem { get; }
     
-    string? Name { get; }
+    string Name { get; }
 
-    string? Address { get; }
+    string Address { get; }
 
-    string? DeviceType { get; }
+    string DeviceType { get; }
+    
+    string[] ParamSets { get; }
 }

@@ -11,9 +11,9 @@ public class HomeMaticCcuConnectionInfo
         Name = name ?? url.ToString();
     }
     
-    public string? Name { get; }
+    public string Name { get; }
 
-    public Uri? Url { get; }
+    public Uri Url { get; }
 
     public HomeMaticDeviceSystem Systems { get; set; }
     

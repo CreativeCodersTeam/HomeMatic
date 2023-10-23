@@ -12,13 +12,16 @@ public class CcuDevice : CcuDeviceBase, ICcuDevice
         
         Address = deviceDescription.Address;
         DeviceType = deviceDescription.DeviceType;
+        ParamSets = deviceDescription.ParamSets;
     }
     
     public CcuSystemInfo? CcuSystem { get; set; }
     
-    public string? Name { get; init; }
+    public string Name { get; }
 
-    public string? Address { get; set; }
+    public string Address { get; }
 
-    public string? DeviceType { get; set; }
+    public string DeviceType { get; }
+    
+    public string[] ParamSets { get; }
 }
