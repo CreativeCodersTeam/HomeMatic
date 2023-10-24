@@ -50,6 +50,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Client", "source\CreativeCoders.HomeMatic.Client\CreativeCoders.HomeMatic.Client.csproj", "{17014207-F5B6-4B7A-A44D-781ACBAB4079}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ControlCenter", "ControlCenter", "{5C74AB3A-97CE-4E28-A3C4-B39C8F039282}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.ControlCenter.Backend", "source\Tools\ControlCenter\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.csproj", "{84439B01-9A35-462C-AA22-2B2601CAAC49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +110,10 @@ Global
 		{17014207-F5B6-4B7A-A44D-781ACBAB4079}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17014207-F5B6-4B7A-A44D-781ACBAB4079}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17014207-F5B6-4B7A-A44D-781ACBAB4079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84439B01-9A35-462C-AA22-2B2601CAAC49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84439B01-9A35-462C-AA22-2B2601CAAC49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84439B01-9A35-462C-AA22-2B2601CAAC49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84439B01-9A35-462C-AA22-2B2601CAAC49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +135,8 @@ Global
 		{91834652-D1F2-4563-B684-AAF776E6B341} = {5BD797BA-4D66-4F55-A55E-5F1063678D8B}
 		{3B423C7A-5AEA-40FF-8DA9-6A2B86F4D412} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
 		{17014207-F5B6-4B7A-A44D-781ACBAB4079} = {7DBE5A9D-0500-4C35-A673-481C411B0FA1}
+		{5C74AB3A-97CE-4E28-A3C4-B39C8F039282} = {13FED5D5-41CE-4DB5-A0FD-5A1EB5FBEF51}
+		{84439B01-9A35-462C-AA22-2B2601CAAC49} = {5C74AB3A-97CE-4E28-A3C4-B39C8F039282}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E5E58EB-0096-4ED2-B1DE-D7FC5951CAB7}

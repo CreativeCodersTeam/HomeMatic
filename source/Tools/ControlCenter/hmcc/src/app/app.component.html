@@ -1,0 +1,47 @@
+<td-layout class="layout-management-list-demo" sidenavWidth="280px">
+  <td-navigation-drawer
+    flex
+    sidenavTitle="Covalent"
+    logo="teradata-dark"
+    name="Firstname Lastname"
+    email="firstname.lastname@company.com"
+  >
+    <mat-nav-list>
+      <a mat-list-item>
+        <mat-icon matListItemIcon>home</mat-icon>
+        Home
+      </a>
+      <a mat-list-item tdLayoutToggle>
+        <mat-icon matListItemIcon>close</mat-icon>
+        Close Drawer
+      </a>
+    </mat-nav-list>
+    <div tdNavigationDrawerMenu>
+      <mat-nav-list>
+        <a mat-list-item>
+          <mat-icon matListItemIcon>account_box</mat-icon>
+          Profile
+        </a>
+      </mat-nav-list>
+    </div>
+  </td-navigation-drawer>
+  <td-layout-nav
+    logo="assets:teradata"
+    toolbarTitle="HomeMatic ControlCenter"
+    navigationRoute="/"
+  >
+    <button mat-icon-button td-menu-button tdLayoutToggle>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <td-layout-manage-list [opened]="true" mode="side" [containerAutosize]="true" sidenavWidth="64px">
+
+      <hmcc-side-nav td-sidenav-content style="width: 64px; min-width: 64px; max-width: 64px"></hmcc-side-nav>
+
+      <mat-toolbar>
+<!--        <button mat-button tdLayoutManageListToggle>Toggle</button>-->
+        Content Title
+      </mat-toolbar>
+      <router-outlet style="margin: 10px"></router-outlet>
+    </td-layout-manage-list>
+  </td-layout-nav>
+</td-layout>
