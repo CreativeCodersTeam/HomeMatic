@@ -2,7 +2,6 @@
   <td-navigation-drawer
     flex
     sidenavTitle="Covalent"
-    logo="teradata-dark"
     name="Firstname Lastname"
     email="firstname.lastname@company.com"
   >
@@ -26,7 +25,6 @@
     </div>
   </td-navigation-drawer>
   <td-layout-nav
-    logo="assets:teradata"
     toolbarTitle="HomeMatic ControlCenter"
     navigationRoute="/"
   >
@@ -37,11 +35,7 @@
 
       <hmcc-side-nav td-sidenav-content style="width: 64px; min-width: 64px; max-width: 64px"></hmcc-side-nav>
 
-      <mat-toolbar>
-<!--        <button mat-button tdLayoutManageListToggle>Toggle</button>-->
-        Content Title
-      </mat-toolbar>
-      <router-outlet style="margin: 10px"></router-outlet>
+      <router-outlet></router-outlet>
     </td-layout-manage-list>
   </td-layout-nav>
 </td-layout>

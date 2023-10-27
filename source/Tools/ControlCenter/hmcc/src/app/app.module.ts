@@ -15,6 +15,7 @@ import { SideNavComponent } from './side-nav/side-nav.component';
 import { CcuListOverviewComponent } from './ccu-list-overview/ccu-list-overview.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {MatCardModule} from "@angular/material/card";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {MatCardModule} from "@angular/material/card";
     MatSidenavModule,
     MatListModule,
     CovalentLayoutModule,
-    MatCardModule
+    MatCardModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {MessengerService} from "./shared/messenger.service";
+import {filter} from "rxjs";
 
 @Component({
   selector: 'hmcc-root',
@@ -6,5 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'hmcc';
+  caption = '';
+
+  constructor(messenger: MessengerService) {
+    messenger.messages
+      .pipe(filter(x => x.id == 'app-caption'))
+      .subscribe(msg => this.caption = msg.data || '');
+  }
 }
