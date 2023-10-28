@@ -16,6 +16,9 @@ import { CcuListOverviewComponent } from './ccu-list-overview/ccu-list-overview.
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {MatCardModule} from "@angular/material/card";
 import {HttpClientModule} from "@angular/common/http";
+import { AddCcuComponent } from './dialogs/add-ccu/add-ccu.component';
+import {ReactiveFormsModule} from "@angular/forms";
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import {HttpClientModule} from "@angular/common/http";
     HeaderComponent,
     SideNavComponent,
     CcuListOverviewComponent,
-    DashboardComponent
+    DashboardComponent,
+    AddCcuComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +40,9 @@ import {HttpClientModule} from "@angular/common/http";
     MatListModule,
     CovalentLayoutModule,
     MatCardModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
