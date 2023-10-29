@@ -1,7 +1,21 @@
+<h1 mat-dialog-title>Add CCU</h1>
 
-<form>
-  <div [formGroup]="ccuFormGroup"></div>
+<form [formGroup]="ccuFormGroup" mat-dialog-content>
+  <div>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field>
+      <mat-label>Url</mat-label>
+      <input matInput formControlName="url" />
+    </mat-form-field>
+  </div>
 </form>
 
-<button mat-button>Add</button>
-<button mat-button>Cancel</button>
+<div mat-dialog-actions>
+  <button mat-button (click)="addCcu()" [disabled]="ccuFormGroup.invalid">Add</button>
+  <button mat-button mat-dialog-close>Cancel</button>
+</div>

@@ -8,5 +8,5 @@ public class CcuModel : IObjectKey<string>
 
     public string Name { get; set; } = "";
 
-    public string? Url { get; set; }
+    public Uri? Url { get; set; }
 }

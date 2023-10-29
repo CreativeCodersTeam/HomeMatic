@@ -27,17 +27,8 @@ export class CcuListOverviewComponent implements OnInit{
   }
 
   openCcuNewDialog() {
-    const ccu: CcuModel = {
-      name: 'CCU3', url: 'http://192.168.2.210', id: undefined
-    };
-
-    this.dialog.open(AddCcuComponent);
-
-    // this.ccuRepository.addCcu(ccu)
-    //   .subscribe(() => {
-    //     console.log(ccu.id);
-    //     this.updateCcuModels();
-    //   });
+    this.dialog.open(AddCcuComponent)
+      .afterClosed().subscribe(result => this.updateCcuModels());
   }
 
   updateCcuModels(){

@@ -19,6 +19,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { AddCcuComponent } from './dialogs/add-ccu/add-ccu.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatCardModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
