@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.Core" Version="2.7.0" />
-      <PackageReference Include="LiteDB" Version="5.0.17" />
+      <PackageReference Include="CreativeCoders.Core" Version="2.8.0-featureobjectrep0011" />
+        <PackageReference Include="CreativeCoders.Data.NoSql.LiteDb" Version="2.8.0-featureobjectrep0011" />
     </ItemGroup>
 
 </Project>

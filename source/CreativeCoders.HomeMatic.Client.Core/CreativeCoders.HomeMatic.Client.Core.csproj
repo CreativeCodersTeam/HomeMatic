@@ -8,7 +8,7 @@
 
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.Core" Version="2.7.0" />
+      <PackageReference Include="CreativeCoders.Core" Version="2.8.0-featureobjectrep0011" />
     </ItemGroup>
 
 

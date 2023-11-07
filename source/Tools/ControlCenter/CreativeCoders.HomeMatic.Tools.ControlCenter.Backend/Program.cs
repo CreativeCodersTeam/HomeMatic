@@ -1,6 +1,4 @@
-using CreativeCoders.Core.IO;
-using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.Ccus;
-using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.LiteDbRepository;
+using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +8,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddSingleton<ICcuRepository, InMemoryCcuRepository>();
-builder.Services.AddScoped<ICcuRepository, ObjectCcuRepository>();
 builder.Services.AddCors(x => x.AddDefaultPolicy(x => x.AllowAnyOrigin()));
 
-builder.Services.AddLiteDbObjectRepository(FileSys.Path.Combine(FileSys.Path.GetTempPath(), "hmcc-backend.db"))
-    .AddCollection<CcuModel, string>();
+builder.Services.AddHmccRepositories();
 
 var app = builder.Build();
 

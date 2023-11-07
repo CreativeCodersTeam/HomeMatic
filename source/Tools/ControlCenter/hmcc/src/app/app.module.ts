@@ -20,6 +20,7 @@ import { AddCcuComponent } from './dialogs/add-ccu/add-ccu.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatInputModule} from "@angular/material/input";
+import { LoginPageComponent } from './auth/login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {MatInputModule} from "@angular/material/input";
     SideNavComponent,
     CcuListOverviewComponent,
     DashboardComponent,
-    AddCcuComponent
+    AddCcuComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,

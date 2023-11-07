@@ -1,8 +1,8 @@
-﻿using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.LiteDbRepository;
+﻿using CreativeCoders.Data.NoSql;
 
 namespace CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.Ccus;
 
-public class CcuModel : IObjectKey<string>
+public class CcuModel : IDocumentKey<string>
 {
     public string Id { get; set; } = "";
 

@@ -1,34 +1,34 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.LiteDbRepository;
+using CreativeCoders.Data.NoSql;
 
 namespace CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.Ccus;
 
 public class ObjectCcuRepository : ICcuRepository
 {
-    private readonly IObjectRepository<CcuModel, string> _objectRepository;
+    private readonly IDocumentRepository<CcuModel, string> _documentRepository;
 
-    public ObjectCcuRepository(IObjectRepository<CcuModel, string> objectRepository)
+    public ObjectCcuRepository(IDocumentRepository<CcuModel, string> documentRepository)
     {
-        _objectRepository = Ensure.NotNull(objectRepository);
+        _documentRepository = Ensure.NotNull(documentRepository);
     }
     
     public Task AddAsync(CcuModel ccu)
     {
-        return _objectRepository.AddAsync(ccu);
+        return _documentRepository.AddAsync(ccu);
     }
 
     public Task<IEnumerable<CcuModel>> GetAllAsync()
     {
-        return _objectRepository.GetAllAsync();
+        return _documentRepository.GetAllAsync();
     }
 
     public Task RemoveAsync(string id)
     {
-        return _objectRepository.DeleteAsync(id);
+        return _documentRepository.DeleteAsync(id);
     }
 
     public Task UpdateAsync(CcuModel ccu)
     {
-        return _objectRepository.UpdateAsync(ccu);
+        return _documentRepository.UpdateAsync(ccu);
     }
 }
