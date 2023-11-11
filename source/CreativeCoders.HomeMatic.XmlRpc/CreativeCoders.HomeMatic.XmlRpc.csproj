@@ -10,8 +10,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="2.8.0-featureobjectrep0011" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="2.8.0-featureobjectrep0011" />
+		<PackageReference Include="CreativeCoders.Core" Version="2.8.0" />
+		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="2.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>

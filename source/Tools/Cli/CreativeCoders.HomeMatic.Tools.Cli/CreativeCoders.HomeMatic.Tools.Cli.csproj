@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.SysConsole.App" Version="2.8.0-featureobjectrep0011" />
-        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.8.0-featureobjectrep0011" />
+        <PackageReference Include="CreativeCoders.SysConsole.App" Version="2.8.0" />
+        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.8.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
         <PackageReference Include="Spectre.Console" Version="0.47.0" />
