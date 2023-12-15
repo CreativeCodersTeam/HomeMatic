@@ -1,10 +1,18 @@
+using CreativeCoders.AspNetCore.Jwt;
+using CreativeCoders.AspNetCore.TokenAuth;
+using CreativeCoders.Core;
+using CreativeCoders.Core.Text;
+using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend;
 using CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(TokenAuthController).Assembly);
+
+builder.Services.AddJwtSupport<HomeMaticTokenAuthHandler>(RandomString.Create());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,7 +41,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
