@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Build Schema",
   "$ref": "#/definitions/build",
+  "title": "Build Schema",
   "definitions": {
     "build": {
       "type": "object",
@@ -78,11 +78,13 @@
           "items": {
             "type": "string",
             "enum": [
+              "Build",
               "Clean",
-              "CodeCoverageReport",
-              "Compile",
+              "CodeCoverage",
+              "DeployNuGet",
               "Pack",
               "PushNuGet",
+              "Rebuild",
               "Restore",
               "Test"
             ]
@@ -98,11 +100,13 @@
           "items": {
             "type": "string",
             "enum": [
+              "Build",
               "Clean",
-              "CodeCoverageReport",
-              "Compile",
+              "CodeCoverage",
+              "DeployNuGet",
               "Pack",
               "PushNuGet",
+              "Rebuild",
               "Restore",
               "Test"
             ]
