@@ -1,11 +1,7 @@
 ﻿namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
-public class CcuDeviceNotFoundException : Exception
+public class CcuDeviceNotFoundException(string deviceAddress)
+    : Exception($"Device with address '{deviceAddress}' not found")
 {
-    public CcuDeviceNotFoundException(string deviceAddress) : base($"Device with address '{deviceAddress}' not found")
-    {
-        DeviceAddress = deviceAddress;
-    }
-
-    public string DeviceAddress { get; set; }
+    public string DeviceAddress { get; set; } = deviceAddress;
 }

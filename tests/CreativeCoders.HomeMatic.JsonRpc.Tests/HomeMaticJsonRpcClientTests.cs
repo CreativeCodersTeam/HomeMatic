@@ -14,7 +14,7 @@ public class HomeMaticJsonRpcClientTests
         const string expectedUserName = "user1";
         const string expectedPassword = "password1";
         const string expectedSessionId = "ABCD1234";
-        
+
         // Arrange
         var api = A.Fake<IHomeMaticJsonRpcApi>();
 
@@ -27,14 +27,14 @@ public class HomeMaticJsonRpcClientTests
         };
 
         // Act
-        await client.LoginAsync().ConfigureAwait(false);
-        await client.ListAllDetailsAsync().ConfigureAwait(false);
+        await client.LoginAsync();
+        await client.ListAllDetailsAsync();
 
         // Assert
         A.CallTo(() => api.LoginAsync(expectedUserName, expectedPassword)).MustHaveHappenedOnceExactly();
         A.CallTo(() => api.ListAllDetailsAsync(expectedSessionId)).MustHaveHappenedOnceExactly();
     }
-    
+
     [Fact]
     public async Task LoginAsync_NoCredentialsGiven_ExceptionIsThrown()
     {
@@ -50,17 +50,17 @@ public class HomeMaticJsonRpcClientTests
         await act
             .Should()
             .ThrowWithinAsync<InvalidOperationException>(TimeSpan.MaxValue);
-        
+
         A.CallTo(() => api.LoginAsync(A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
     }
-    
+
     [Fact]
     public async Task ListAllDetailsAsync_CredentialsGivenNotLoggedIn_LoginIsDoneAndListAllDetailsAsyncIsCalled()
     {
         const string expectedUserName = "user1";
         const string expectedPassword = "password1";
         const string expectedSessionId = "ABCD1234";
-        
+
         // Arrange
         var api = A.Fake<IHomeMaticJsonRpcApi>();
 
@@ -73,7 +73,7 @@ public class HomeMaticJsonRpcClientTests
         };
 
         // Act
-        await client.ListAllDetailsAsync().ConfigureAwait(false);
+        await client.ListAllDetailsAsync();
 
         // Assert
         A.CallTo(() => api.LoginAsync(expectedUserName, expectedPassword)).MustHaveHappenedOnceExactly();
@@ -86,28 +86,28 @@ public class HomeMaticJsonRpcClientTests
         const string expectedUserName = "user1";
         const string expectedPassword = "password1";
         const string expectedSessionId = "ABCD1234";
-        
+
         // Arrange
         var api = A.Fake<IHomeMaticJsonRpcApi>();
-        
+
         A.CallTo(() => api.LoginAsync(expectedUserName, expectedPassword))
             .Returns(Task.FromResult(new JsonRpcResponse<string> { Result = expectedSessionId }));
-        
+
         var client = new HomeMaticJsonRpcClient(api)
         {
             Credential = new NetworkCredential(expectedUserName, expectedPassword)
         };
-        
-        await client.LoginAsync().ConfigureAwait(false);
+
+        await client.LoginAsync();
 
         // Act
         var autoLogoutDisposable = client.AutoLogout();
-        
+
         A.CallTo(() => api.LogoutAsync(expectedSessionId))
             .MustNotHaveHappened();
-        
-        await autoLogoutDisposable.DisposeAsync().ConfigureAwait(false);
-        
+
+        await autoLogoutDisposable.DisposeAsync();
+
         // Assert
         A.CallTo(() => api.LogoutAsync(expectedSessionId))
             .MustHaveHappenedOnceExactly();

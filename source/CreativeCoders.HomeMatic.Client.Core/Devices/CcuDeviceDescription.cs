@@ -1,21 +1,14 @@
 ﻿namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
-public class CcuDeviceDescription : ICcuDevice
+public class CcuDeviceDescription(ICcuDevice ccuDevice) : ICcuDevice
 {
-    private readonly ICcuDevice _ccuDevice;
+    public CcuSystemInfo CcuSystem => ccuDevice.CcuSystem;
 
-    public CcuDeviceDescription(ICcuDevice ccuDevice)
-    {
-        _ccuDevice = ccuDevice;
-    }
+    public string Name => ccuDevice.Name;
 
-    public CcuSystemInfo CcuSystem => _ccuDevice.CcuSystem;
+    public string Address => ccuDevice.Address;
 
-    public string Name => _ccuDevice.Name;
+    public string DeviceType => ccuDevice.DeviceType;
 
-    public string Address => _ccuDevice.Address;
-
-    public string DeviceType => _ccuDevice.DeviceType;
-
-    public string[] ParamSets => _ccuDevice.ParamSets;
+    public string[] ParamSets => ccuDevice.ParamSets;
 }
