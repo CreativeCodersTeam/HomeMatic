@@ -1,18 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.AspNetCore.Jwt" Version="2.8.0" />
+        <PackageReference Include="CreativeCoders.AspNetCore.Jwt" Version="2.8.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.csproj" />
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories\CreativeCoders.HomeMatic.Tools.ControlCenter.Backend.Repositories.csproj"/>
     </ItemGroup>
 
 </Project>

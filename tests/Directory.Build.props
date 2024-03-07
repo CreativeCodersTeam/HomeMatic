@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Authors>CreativeCoders</Authors>
+        <IsPackable>false</IsPackable>
+        <NoWarn>$(NoWarn);IDE0079</NoWarn>
+    </PropertyGroup>
+</Project>

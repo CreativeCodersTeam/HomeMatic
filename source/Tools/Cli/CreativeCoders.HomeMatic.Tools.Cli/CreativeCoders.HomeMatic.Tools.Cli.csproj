@@ -2,23 +2,22 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>hmc</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.SysConsole.App" Version="2.8.0" />
-        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="2.8.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-        <PackageReference Include="Spectre.Console" Version="0.47.0" />
+        <PackageReference Include="CreativeCoders.SysConsole.App" Version="4.2.0" />
+        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="4.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+        <PackageReference Include="Spectre.Console" Version="0.48.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj" />
-      <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.csproj" />
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic\CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.csproj"/>
     </ItemGroup>
 
 </Project>

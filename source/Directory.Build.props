@@ -1,0 +1,9 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Authors>CreativeCoders</Authors>
+        <IsPackable>true</IsPackable>
+        <NoWarn>$(NoWarn);IDE0079</NoWarn>
+        <RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
+    </PropertyGroup>
+</Project>

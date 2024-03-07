@@ -1,21 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Library</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<Authors>CreativeCoders</Authors>
-		<Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
-		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Description>Classes for XML RPC API implementation to access HomeMatic CCU</Description>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="2.8.0" />
-		<PackageReference Include="CreativeCoders.Net.XmlRpc" Version="2.8.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CreativeCoders.Core" Version="4.2.0" />
+        <PackageReference Include="CreativeCoders.Net.XmlRpc" Version="4.2.0" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj"/>
+    </ItemGroup>
 
 </Project>
