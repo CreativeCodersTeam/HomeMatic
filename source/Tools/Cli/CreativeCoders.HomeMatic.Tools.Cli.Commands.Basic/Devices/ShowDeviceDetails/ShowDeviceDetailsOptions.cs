@@ -4,6 +4,6 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ShowDeviceDe
 
 public class ShowDeviceDetailsOptions
 {
-    [OptionValue(0)]
+    [OptionValue(0, IsRequired = true)]
     public string Address { get; set; }
 }
