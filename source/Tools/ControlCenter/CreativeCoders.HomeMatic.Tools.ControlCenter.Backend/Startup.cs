@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using CreativeCoders.AspNetCore.TokenAuth.Jwt;
 using CreativeCoders.AspNetCore.TokenAuthApi;
 using CreativeCoders.AspNetCore.TokenAuthApi.Abstractions;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CreativeCoders.HomeMatic.Tools.ControlCenter.Backend;
 
+[SuppressMessage("csharpsquid", "S2325", Justification = "Convention for ASP.NET Core Startup class")]
 public class Startup(IConfiguration configuration)
 {
     public IConfiguration Configuration { get; } = configuration;
@@ -54,7 +56,6 @@ public class Startup(IConfiguration configuration)
 
         app.UseCors();
 
-// Configure the HTTP request pipeline.
         if (env.IsDevelopment())
         {
             app.UseSwagger();
