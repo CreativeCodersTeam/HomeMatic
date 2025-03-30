@@ -1,0 +1,44 @@
+.layout-container {
+  height: calc(100vh - 64px); /* Höhe der Toolbar abziehen */
+  margin-top: 64px; /* Höhe der Toolbar */
+}
+
+.side-nav {
+  width: auto;
+  background: #f4f4f4;
+}
+
+.side-nav button {
+  width: 100%;
+}
+
+/* Header Styling */
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 15px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Hauptinhalt */
+.main-content {
+  padding: 16px;
+}
+
+.nav-header {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: bold;
+}
