@@ -34,7 +34,7 @@ public class HomeMaticClient : IHomeMaticClient
                         {
                             return new CcuDevice(new CcuSystemInfo(connection.Info.Name, x.DeviceSystem),
                                 deviceDetails.FirstOrDefault(d => d.Address == device.Address)?.Name,
-                                device);
+                                device, x.Api);
                         }
                     ));
                 })

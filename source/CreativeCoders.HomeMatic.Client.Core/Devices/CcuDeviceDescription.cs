@@ -11,4 +11,9 @@ public class CcuDeviceDescription(ICcuDevice ccuDevice) : ICcuDevice
     public string DeviceType => ccuDevice.DeviceType;
 
     public string[] ParamSets => ccuDevice.ParamSets;
+    
+    public Task<Dictionary<string, object>> GetParamSetAsync(string paramSetName)
+    {
+        return ccuDevice.GetParamSetAsync(paramSetName);
+    }
 }

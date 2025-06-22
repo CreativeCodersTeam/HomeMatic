@@ -11,4 +11,6 @@ public interface ICcuDevice
     string DeviceType { get; }
     
     string[] ParamSets { get; }
+
+    Task<Dictionary<string, object>> GetParamSetAsync(string paramSetName);
 }

@@ -33,7 +33,22 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
         _console.WriteLine();
 
         _console.WriteLine("Param sets:");
-        device.ParamSets.ForEach(x => { _console.WriteLine($"- {x}"); });
+
+        foreach (var paramSet in device.ParamSets)
+        {
+            _console.WriteLine($"- {paramSet}");
+            var paramSetValues = await device.GetParamSetAsync(paramSet).ConfigureAwait(false);
+
+            foreach (var paramSetValue in paramSetValues)
+            {
+                _console.WriteLine($"    {paramSetValue.Key}: {paramSetValue.Value}");
+            }
+        }
+        
+        device.ParamSets.ForEach(x =>
+        {
+            
+        });
 
         return 0;
     }
