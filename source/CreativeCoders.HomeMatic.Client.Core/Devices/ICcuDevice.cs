@@ -1,4 +1,6 @@
-﻿namespace CreativeCoders.HomeMatic.Client.Core.Devices;
+﻿using CreativeCoders.HomeMatic.Api.Core.Devices;
+
+namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
 public interface ICcuDevice
 {
@@ -11,6 +13,8 @@ public interface ICcuDevice
     string DeviceType { get; }
     
     string[] ParamSets { get; }
+
+    //IEnumerable<ICcuDeviceChannel> GetChannels();
 
     Task<Dictionary<string, object>> GetParamSetAsync(string paramSetName);
 }

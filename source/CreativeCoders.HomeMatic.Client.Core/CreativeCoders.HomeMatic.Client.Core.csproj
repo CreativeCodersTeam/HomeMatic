@@ -13,6 +13,8 @@
 
 
     <ItemGroup>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Api.Core\CreativeCoders.HomeMatic.Api.Core.csproj" />
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Api\CreativeCoders.HomeMatic.Api.csproj" />
         <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj"/>
         <ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
     </ItemGroup>

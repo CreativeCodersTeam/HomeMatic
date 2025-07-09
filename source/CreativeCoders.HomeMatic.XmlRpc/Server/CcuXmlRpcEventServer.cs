@@ -23,9 +23,9 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
 
     public CcuXmlRpcEventServer(IXmlRpcServer xmlRpcServer, ILogger<CcuXmlRpcEventServer> logger)
     {
-        _xmlRpcServer = Ensure.NotNull(xmlRpcServer, nameof(xmlRpcServer));
+        _xmlRpcServer = Ensure.NotNull(xmlRpcServer);
             
-        _logger = Ensure.NotNull(logger, nameof(logger));
+        _logger = Ensure.NotNull(logger);
 
         _xmlRpcServer.Methods.RegisterMethods(string.Empty, this);
             

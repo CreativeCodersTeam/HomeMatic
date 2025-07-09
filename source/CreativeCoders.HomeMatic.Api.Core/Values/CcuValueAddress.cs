@@ -6,8 +6,8 @@ public class CcuValueAddress
 {
     public CcuValueAddress(string deviceAddress, string valueKey)
     {
-        Ensure.IsNotNullOrEmpty(deviceAddress, nameof(deviceAddress));
-        Ensure.IsNotNullOrEmpty(valueKey, nameof(valueKey));
+        Ensure.IsNotNullOrEmpty(deviceAddress);
+        Ensure.IsNotNullOrEmpty(valueKey);
             
         DeviceAddress = deviceAddress;
         ValueKey = valueKey;

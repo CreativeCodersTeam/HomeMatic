@@ -20,7 +20,7 @@ public class CcuConnection : ICcuConnection
 {
     public CcuConnection(IHomeMaticXmlRpcApi xmlRpcApi)
     {
-        Ensure.IsNotNull(xmlRpcApi, nameof(xmlRpcApi));
+        Ensure.IsNotNull(xmlRpcApi);
             
         XmlRpcApi = xmlRpcApi;
     }
