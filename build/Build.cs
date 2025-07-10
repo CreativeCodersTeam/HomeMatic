@@ -92,7 +92,7 @@ class Build : NukeBuild,
         this.TryAs<ISolutionParameter>(out var solutionParameter)
             ? solutionParameter.Solution.GetAllProjects("*")
                 .Where(x => ((string)x.Path)?.StartsWith(RootDirectory / "tests") ?? false).ToArray()
-            : Array.Empty<Project>();
+            : [];
 
     public static int Main() => Execute<Build>(x => ((ICodeCoverageTarget)x).CodeCoverage);
 }
