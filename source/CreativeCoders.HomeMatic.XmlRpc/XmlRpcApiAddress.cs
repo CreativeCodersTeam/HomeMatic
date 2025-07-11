@@ -6,21 +6,21 @@ namespace CreativeCoders.HomeMatic.XmlRpc;
 
 public class XmlRpcApiAddress
 {
-    public XmlRpcApiAddress(Uri baseUrl, HomeMaticDeviceSystem deviceSystem)
+    public XmlRpcApiAddress(Uri baseUrl, HomeMaticDeviceSystems deviceSystems)
     {
         BaseUrl = Ensure.NotNull(baseUrl);
-        DeviceSystem = deviceSystem;
+        DeviceSystems = deviceSystems;
     }
 
     public Uri ToApiUrl()
     {
         var uriBuilder = new UriBuilder(BaseUrl);
-        uriBuilder.Port = DeviceSystem.ToPort();
+        uriBuilder.Port = DeviceSystems.ToPort();
         
         return uriBuilder.Uri;
     }
     
     public Uri BaseUrl { get; }
 
-    public HomeMaticDeviceSystem DeviceSystem { get; }
+    public HomeMaticDeviceSystems DeviceSystems { get; }
 }

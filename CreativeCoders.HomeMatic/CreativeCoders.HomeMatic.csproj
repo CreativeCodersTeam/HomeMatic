@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\source\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj" />
+      <ProjectReference Include="..\source\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj" />
+      <ProjectReference Include="..\source\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+    </ItemGroup>
+
 </Project>

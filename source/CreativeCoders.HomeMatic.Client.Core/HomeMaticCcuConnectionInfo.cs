@@ -9,7 +9,7 @@ public class HomeMaticCcuConnectionInfo(string? name, Uri url)
 
     public Uri Url { get; } = Ensure.NotNull(url);
 
-    public HomeMaticDeviceSystem Systems { get; set; }
+    public HomeMaticDeviceSystems Systems { get; set; }
 
     public string? Username { get; set; }
 

@@ -32,7 +32,7 @@ public class HomeMaticClient : IHomeMaticClient
 
                     deviceList.AddRange(devices.Where(x => x.IsDevice).Select(device =>
                         {
-                            return new CcuDevice(new CcuSystemInfo(connection.Info.Name, x.DeviceSystem),
+                            return new CcuDevice(new CcuSystemInfo(connection.Info.Name, x.DeviceSystems),
                                 deviceDetails.FirstOrDefault(d => d.Address == device.Address)?.Name,
                                 device, x.Api);
                         }

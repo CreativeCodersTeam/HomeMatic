@@ -7,13 +7,13 @@ namespace CreativeCoders.HomeMatic.Client;
 
 public class XmlRpcApi
 {
-    public XmlRpcApi(HomeMaticDeviceSystem deviceSystem, IHomeMaticXmlRpcApi api)
+    public XmlRpcApi(HomeMaticDeviceSystems deviceSystems, IHomeMaticXmlRpcApi api)
     {
-        DeviceSystem = Ensure.NotNull(deviceSystem);
+        DeviceSystems = Ensure.NotNull(deviceSystems);
         Api = Ensure.NotNull(api);
     }
 
-    public HomeMaticDeviceSystem DeviceSystem { get; }
+    public HomeMaticDeviceSystems DeviceSystems { get; }
 
     public IHomeMaticXmlRpcApi Api { get; }
 }

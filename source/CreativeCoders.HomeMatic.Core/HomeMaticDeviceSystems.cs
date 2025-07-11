@@ -3,7 +3,7 @@
 namespace CreativeCoders.HomeMatic.Core;
 
 [Flags]
-public enum HomeMaticDeviceSystem
+public enum HomeMaticDeviceSystems
 {
     HomeMatic = 1,
     HomeMaticIp = 2,

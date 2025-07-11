@@ -3,9 +3,9 @@ using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Client.Core;
 
-public class CcuSystemInfo(string name, HomeMaticDeviceSystem deviceSystem)
+public class CcuSystemInfo(string name, HomeMaticDeviceSystems deviceSystems)
 {
     public string Name { get; } = Ensure.NotNull(name);
 
-    public HomeMaticDeviceSystem DeviceSystem { get; } = deviceSystem;
+    public HomeMaticDeviceSystems DeviceSystems { get; } = deviceSystems;
 }
