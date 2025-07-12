@@ -10,7 +10,7 @@ namespace CreativeCoders.HomeMatic.Tests;
 public class CcuClientFactoryTests
 {
     [Fact]
-    public void CreateCcuClient_ShouldReturnCcuClient_WhenCalled()
+    public void CreateClient_ShouldReturnCcuClient_WhenCalled()
     {
         // Arrange
         var xmlRpcApiBuilder = A.Fake<IHomeMaticXmlRpcApiBuilder>();

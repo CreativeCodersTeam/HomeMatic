@@ -1,6 +1,4 @@
-using CreativeCoders.HomeMatic.XmlRpc;
-
-namespace CreativeCoders.HomeMatic;
+namespace CreativeCoders.HomeMatic.Abstractions;
 
 public interface ICcuClient
 {

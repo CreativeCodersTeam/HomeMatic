@@ -1,20 +1,53 @@
+using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
-using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic;
 
 public class CcuClient(
     IHomeMaticJsonRpcClient jsonRpcClient,
-    IDictionary<CcuDeviceKind, IHomeMaticXmlRpcApi> xmlRpcApis) : ICcuClient
+    IDictionary<CcuDeviceKind, XmlRpcApiConnection> xmlRpcApis) : ICcuClient
 {
-    public Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
+    public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
-        throw new NotImplementedException();
+        var allDevices = new List<CcuDevice>();
+
+        foreach (var xmlRpcApiConnection in xmlRpcApis.Select(x => x.Value))
+        {
+            var devices = await xmlRpcApiConnection.Api.ListDevicesAsync();
+
+            allDevices.AddRange(devices.Select(x => new CcuDevice(xmlRpcApiConnection.Api)
+            {
+                Uri = new CcuDeviceUri
+                {
+                    Host = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
+                    Address = x.Address,
+                    Kind = xmlRpcApiConnection.Endpoint.DeviceKind
+                }
+            }));
+        }
+
+        var jsonRpcDevices = await jsonRpcClient.ListAllDetailsAsync();
+
+        jsonRpcDevices.ForEach(x =>
+        {
+            var device =
+                allDevices.FirstOrDefault(d => d.Uri.Address.Equals(x.Address, StringComparison.OrdinalIgnoreCase));
+
+            if (device != null)
+            {
+                device.Name = x?.Name ?? string.Empty;
+            }
+        });
+
+        return [..allDevices];
     }
 
-    public Task<ICcuDevice> GetDeviceAsync(string address)
+    public async Task<ICcuDevice> GetDeviceAsync(string address)
     {
-        throw new NotImplementedException();
+        return (await GetDevicesAsync())
+               .FirstOrDefault(device => device.Uri.Address.Equals(address, StringComparison.OrdinalIgnoreCase))
+               ?? throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 }

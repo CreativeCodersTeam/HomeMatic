@@ -1,5 +1,7 @@
 using System.Net;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
@@ -17,10 +19,10 @@ public class CcuClientFactory(
             CreateXmlRpcApis(deviceKinds, host));
     }
 
-    private Dictionary<CcuDeviceKind, IHomeMaticXmlRpcApi> CreateXmlRpcApis(
+    private Dictionary<CcuDeviceKind, XmlRpcApiConnection> CreateXmlRpcApis(
         IEnumerable<CcuDeviceKind> deviceKinds, string host)
     {
-        var xmlRpcApis = new Dictionary<CcuDeviceKind, IHomeMaticXmlRpcApi>();
+        var xmlRpcApis = new Dictionary<CcuDeviceKind, XmlRpcApiConnection>();
 
         var baseUrl = new UriBuilder
         {
@@ -31,7 +33,7 @@ public class CcuClientFactory(
         deviceKinds.ForEach(x =>
         {
             var xmlRpcEndpoint = new XmlRpcEndpoint(baseUrl.Uri, x);
-            xmlRpcApis[x] = CreateXmlRpcApi(xmlRpcEndpoint);
+            xmlRpcApis[x] = new XmlRpcApiConnection(xmlRpcEndpoint, CreateXmlRpcApi(xmlRpcEndpoint));
         });
 
         return xmlRpcApis;
@@ -58,4 +60,11 @@ public class CcuClientFactory(
             .ForUrl(jsonRpcUriBuilder.Uri)
             .Build();
     }
+}
+
+public class XmlRpcApiConnection(XmlRpcEndpoint endpoint, IHomeMaticXmlRpcApi api)
+{
+    public XmlRpcEndpoint Endpoint { get; } = Ensure.NotNull(endpoint);
+
+    public IHomeMaticXmlRpcApi Api { get; } = Ensure.NotNull(api);
 }

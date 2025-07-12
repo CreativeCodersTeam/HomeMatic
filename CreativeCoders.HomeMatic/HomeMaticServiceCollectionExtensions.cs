@@ -1,3 +1,4 @@
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc;
 using Microsoft.Extensions.DependencyInjection;

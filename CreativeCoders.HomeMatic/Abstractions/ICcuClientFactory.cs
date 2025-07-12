@@ -1,6 +1,6 @@
 using CreativeCoders.HomeMatic.Core;
 
-namespace CreativeCoders.HomeMatic;
+namespace CreativeCoders.HomeMatic.Abstractions;
 
 public interface ICcuClientFactory
 {
