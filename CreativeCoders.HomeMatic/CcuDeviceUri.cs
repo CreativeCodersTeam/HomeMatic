@@ -6,12 +6,12 @@ public class CcuDeviceUri
 {
     public required string Host { get; init; }
 
-    public required HomeMaticDeviceSystems DeviceSystems { get; init; }
+    public required CcuDeviceKind Kind { get; init; }
 
     public required string Address { get; init; }
 
     public override string ToString()
     {
-        return $"{DeviceSystems}://{Host}/{Address}";
+        return $"{Kind}://{Host}/{Address}";
     }
 }

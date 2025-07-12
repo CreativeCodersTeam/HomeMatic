@@ -7,7 +7,7 @@ namespace CreativeCoders.HomeMatic.Core;
 public static class CcuRpcPorts
 {
     public const int CoupledDevices = 9292;
-        
+
     public const int HomeMatic = 2001;
 
     public const int HomeMaticIp = 2010;
@@ -23,6 +23,18 @@ public static class CcuRpcPorts
             HomeMaticDeviceSystems.HomeMaticWired => HomeMaticWired,
             HomeMaticDeviceSystems.CoupledDevice => CoupledDevices,
             _ => throw new ArgumentOutOfRangeException(nameof(deviceSystems), deviceSystems, null)
+        };
+    }
+
+    public static int ToPort(this CcuDeviceKind deviceKind)
+    {
+        return deviceKind switch
+        {
+            CcuDeviceKind.HomeMatic => HomeMatic,
+            CcuDeviceKind.HomeMaticIp => HomeMaticIp,
+            CcuDeviceKind.HomeMaticWired => HomeMaticWired,
+            CcuDeviceKind.Coupled => CoupledDevices,
+            _ => throw new ArgumentOutOfRangeException(nameof(deviceKind), deviceKind, null)
         };
     }
 }
