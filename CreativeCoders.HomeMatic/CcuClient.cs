@@ -28,6 +28,7 @@ public class CcuClient(
                         Address = x.Address,
                         Kind = xmlRpcApiConnection.Endpoint.DeviceKind
                     })
+                    .WithAllDevices(devices)
                     .Build()));
         }
 

@@ -19,7 +19,5 @@ public interface ICcuDevice : ICcuDeviceBase
 
     DeviceFirmwareUpdateState FirmwareUpdateState { get; }
 
-    Task<IEnumerable<ICcuDeviceChannel>> GetChannelsAsync();
-
-    Task<ICcuDeviceChannel> GetChannelAsync(string channelAddress);
+    IEnumerable<ICcuDeviceChannel> Channels { get; }
 }

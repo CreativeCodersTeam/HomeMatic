@@ -31,6 +31,8 @@ public class CcuDevice(IHomeMaticXmlRpcApi api) : ICcuDevice
 
     public required DeviceFirmwareUpdateState FirmwareUpdateState { get; init; }
 
+    public required IEnumerable<ICcuDeviceChannel> Channels { get; init; }
+
     public required bool Roaming { get; init; }
 
     public required string[] ParamSets { get; init; }

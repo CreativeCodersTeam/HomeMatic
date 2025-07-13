@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
@@ -12,6 +14,8 @@ public class CcuDeviceBuilder
     private DeviceDescription? _deviceDescription;
 
     private IHomeMaticXmlRpcApi? _api;
+
+    private IEnumerable<DeviceDescription>? _devices;
 
     public CcuDeviceBuilder WithUri(CcuDeviceUri deviceUri)
     {
@@ -36,9 +40,9 @@ public class CcuDeviceBuilder
 
     public CcuDevice Build()
     {
-        if (_uri == null || _api == null)
+        if (_uri == null || _api == null || _devices == null)
         {
-            throw new InvalidOperationException("Uri and Api must be set");
+            throw new InvalidOperationException("Uri, Api and Devices must be set");
         }
 
         var ccuDevice = new CcuDevice(_api)
@@ -55,9 +59,51 @@ public class CcuDeviceBuilder
             CanBeUpdated = _deviceDescription?.CanBeUpdated ?? false,
             FirmwareUpdateState = _deviceDescription?.FirmwareUpdateState ?? DeviceFirmwareUpdateState.None,
             Roaming = _deviceDescription?.Roaming ?? false,
-            ParamSets = _deviceDescription?.ParamSets ?? []
+            ParamSets = _deviceDescription?.ParamSets ?? [],
+            Channels = CreateChannelsForDevice(_deviceDescription, _devices),
         };
 
         return ccuDevice;
+    }
+
+    private IEnumerable<ICcuDeviceChannel> CreateChannelsForDevice(DeviceDescription? deviceDescription,
+        IEnumerable<DeviceDescription> devices)
+    {
+        if (deviceDescription == null)
+        {
+            return [];
+        }
+
+        var channels = devices
+            .Where(x => x.Parent?.Equals(deviceDescription.Address, StringComparison.OrdinalIgnoreCase) ?? false)
+            .Select(x => new CcuDeviceChannel()
+            {
+                Uri = new CcuDeviceUri
+                {
+                    CcuHost = _uri!.CcuHost,
+                    CcuName = _uri.CcuName,
+                    Address = x.Address,
+                    Kind = _uri.Kind
+                },
+                DeviceType = x.DeviceType,
+                Version = x.Version,
+                IsAesActive = x.IsAesActive,
+                Interface = x.Interface,
+                Roaming = x.Roaming,
+                ParamSets = x.ParamSets,
+                Index = x.Index,
+                Group = x.Group,
+                ChannelDirection = x.ChannelDirection
+            })
+            .OrderBy(x => x.Index);
+
+        return [..channels];
+    }
+
+    public CcuDeviceBuilder WithAllDevices(IEnumerable<DeviceDescription> devices)
+    {
+        _devices = devices;
+
+        return this;
     }
 }

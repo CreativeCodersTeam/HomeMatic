@@ -36,6 +36,15 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
         _console.WriteLine();
 
+        _console.WriteLine("Channels:");
+
+        foreach (var channel in device.Channels)
+        {
+            _console.WriteLine($"  - Index:   {channel.Index}");
+            _console.WriteLine($"    Address: {channel.Uri.Address}");
+            _console.WriteLine($"    Type:    {channel.DeviceType}");
+        }
+
         _console.WriteLine("Param sets:");
 
         foreach (var paramSet in device.ParamSets)
