@@ -1,7 +1,7 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.Core.Text;
-using CreativeCoders.HomeMatic.Client.Core.Devices;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
@@ -30,9 +30,9 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         }
 
         return PatternMatcher.MatchesPattern(device.Name, options.FilterPattern) ||
-               PatternMatcher.MatchesPattern(device.Address, options.FilterPattern) ||
+               PatternMatcher.MatchesPattern(device.Uri.Address, options.FilterPattern) ||
                PatternMatcher.MatchesPattern(device.DeviceType, options.FilterPattern) ||
-               PatternMatcher.MatchesPattern(device.CcuSystem.Name, options.FilterPattern);
+               PatternMatcher.MatchesPattern(device.Uri.Host, options.FilterPattern);
     }
 
     private void PrintDevices(IEnumerable<ICcuDevice> devices)
@@ -47,8 +47,8 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         devices.ForEach(x =>
         {
             var nameColumn = new Markup($"[bold teal]{x.Name}[/]");
-            var addressColumn = new Markup($"[bold]{x.Address}[/]");
-            var ccuColumn = new Markup($"[bold yellow]{x.CcuSystem.Name}[/]");
+            var addressColumn = new Markup($"[bold]{x.Uri.Address}[/]");
+            var ccuColumn = new Markup($"[bold yellow]{x.Uri.Host}[/]");
             var deviceTypeColumn = new Markup($"{x.DeviceType}");
 
             devicesTable.AddRow(nameColumn, addressColumn, ccuColumn, deviceTypeColumn);
@@ -65,9 +65,11 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         var client = await _cliHomeMaticClientBuilder.BuildAsync()
             .ConfigureAwait(false);
 
-        var devices = await client.GetDevicesAsync().ConfigureAwait(false);
+        var multiCcuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
 
-        PrintDevices(devices.Where(x => FilterDevices(x, options)));
+        //var devices = await client.GetDevicesAsync().ConfigureAwait(false);
+        PrintDevices((await multiCcuClient.GetDevicesAsync().ConfigureAwait(false)).Where(device =>
+            FilterDevices(device, options)));
 
         _console.WriteLine();
 

@@ -2,5 +2,5 @@ namespace CreativeCoders.HomeMatic.Abstractions;
 
 public interface IMultiCcuClient
 {
-    IAsyncEnumerable<ICcuDevice> GetDevicesAsync();
+    Task<IEnumerable<ICcuDevice>> GetDevicesAsync();
 }

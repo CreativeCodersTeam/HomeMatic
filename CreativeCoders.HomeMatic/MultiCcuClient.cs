@@ -4,16 +4,25 @@ namespace CreativeCoders.HomeMatic;
 
 public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClient
 {
-    public async IAsyncEnumerable<ICcuDevice> GetDevicesAsync()
+    public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
-        foreach (var ccuClient in ccuClients)
-        {
-            var devices = await ccuClient.GetDevicesAsync().ConfigureAwait(false);
+        var deviceTasks = ccuClients.Select(client => client.GetDevicesAsync());
 
-            foreach (var ccuDevice in devices)
-            {
-                yield return ccuDevice;
-            }
-        }
+        var devicesPerClient = await Task.WhenAll(deviceTasks).ConfigureAwait(false);
+
+        return devicesPerClient.SelectMany(devices => devices);
     }
+
+    // public async IAsyncEnumerable<ICcuDevice> GetDevicesAsync()
+    // {
+    //     foreach (var ccuClient in ccuClients)
+    //     {
+    //         var devices = await ccuClient.GetDevicesAsync().ConfigureAwait(false);
+    //
+    //         foreach (var ccuDevice in devices)
+    //         {
+    //             yield return ccuDevice;
+    //         }
+    //     }
+    // }
 }

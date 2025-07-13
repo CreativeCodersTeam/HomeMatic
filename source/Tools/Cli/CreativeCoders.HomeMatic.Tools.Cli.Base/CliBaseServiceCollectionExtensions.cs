@@ -13,11 +13,13 @@ public static class CliBaseServiceCollectionExtensions
     {
         services.TryAddSingleton<ISharedData, DefaultSharedData>();
         services.TryAddSingleton<ICliCommandExecutor, CliCommandExecutor>();
-        
+
         services.TryAddSingleton<ICcuConnectionsStore, CcuConnectionsStore>();
-        
+
         services.TryAddSingleton<ICliHomeMaticClientBuilder, CliHomeMaticClientBuilder>();
 
         services.AddHomeMaticClient();
+
+        services.AddHomeMatic();
     }
 }
