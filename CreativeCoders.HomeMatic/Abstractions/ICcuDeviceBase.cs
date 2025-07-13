@@ -17,4 +17,6 @@ public interface ICcuDeviceBase
     bool Roaming { get; }
 
     string[] ParamSets { get; }
+
+    Task<IEnumerable<IParamSetValue>> GetParamSetValuesAsync(string paramSetKey);
 }

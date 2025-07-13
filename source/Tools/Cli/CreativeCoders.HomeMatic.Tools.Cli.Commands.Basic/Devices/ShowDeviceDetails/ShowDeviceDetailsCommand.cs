@@ -1,5 +1,6 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
@@ -43,22 +44,36 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
             _console.WriteLine($"  - Index:   {channel.Index}");
             _console.WriteLine($"    Address: {channel.Uri.Address}");
             _console.WriteLine($"    Type:    {channel.DeviceType}");
+            _console.WriteLine("    ParamSets:");
+
+            foreach (var paramSet in channel.ParamSets.Where(x => x != ParamSetKey.Link))
+            {
+                var values = await channel.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
+
+                _console.WriteLine($"- {paramSet}");
+
+                foreach (var paramSetValue in values)
+                {
+                    _console.WriteLine($"    - Name:  {paramSetValue.Name}");
+                    _console.WriteLine($"      Value: {paramSetValue.Value}");
+                }
+            }
         }
 
         _console.WriteLine("Param sets:");
 
         foreach (var paramSet in device.ParamSets)
         {
-            _console.WriteLine($"- {paramSet}");
-            // var paramSetValues = await device.GetParamSetAsync(paramSet).ConfigureAwait(false);
-            //
-            // foreach (var paramSetValue in paramSetValues)
-            // {
-            //     _console.WriteLine($"    {paramSetValue.Key}: {paramSetValue.Value}");
-            // }
-        }
+            var values = await device.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
 
-        //device.ParamSets.ForEach(x => { });
+            _console.WriteLine($"- {paramSet}");
+
+            foreach (var paramSetValue in values)
+            {
+                _console.WriteLine($"  - Name:  {paramSetValue.Name}");
+                _console.WriteLine($"    Value: {paramSetValue.Value}");
+            }
+        }
 
         return 0;
     }

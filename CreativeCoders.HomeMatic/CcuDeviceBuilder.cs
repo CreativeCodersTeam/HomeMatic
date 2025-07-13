@@ -76,7 +76,7 @@ public class CcuDeviceBuilder
 
         var channels = devices
             .Where(x => x.Parent?.Equals(deviceDescription.Address, StringComparison.OrdinalIgnoreCase) ?? false)
-            .Select(x => new CcuDeviceChannel()
+            .Select(x => new CcuDeviceChannel(_api!)
             {
                 Uri = new CcuDeviceUri
                 {
