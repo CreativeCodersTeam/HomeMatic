@@ -1,5 +1,6 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
@@ -30,6 +31,13 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
 
+        await PrintDeviceAsync(device).ConfigureAwait(false);
+
+        return 0;
+    }
+
+    private async Task PrintDeviceAsync(ICcuDevice device)
+    {
         _console.MarkupLine($"Name:    [bold teal]{device.Name}[/]");
         _console.MarkupLine($"Address: [bold]{device.Uri.Address}[/]");
         _console.MarkupLine($"Ccu:     [bold yellow]{device.Uri.HostDisplayName}[/]");
@@ -39,41 +47,34 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
         _console.WriteLine("Channels:");
 
-        foreach (var channel in device.Channels)
+        await device.Channels
+            .ForEachAsync(PrintChannelAsync);
+
+        await PrintParamSetsAsync(device, "  ");
+    }
+
+    private async Task PrintChannelAsync(ICcuDeviceChannel channel)
+    {
+        _console.WriteLine($"  - Index:   {channel.Index}");
+        _console.WriteLine($"    Address: {channel.Uri.Address}");
+        _console.WriteLine($"    Type:    {channel.DeviceType}");
+        _console.WriteLine("    ParamSets:");
+
+        await PrintParamSetsAsync(channel, "    ").ConfigureAwait(false);
+    }
+
+    private async Task PrintParamSetsAsync(ICcuDeviceBase deviceOrChannel, string indent)
+    {
+        foreach (var paramSet in deviceOrChannel.ParamSets.Where(x => x != ParamSetKey.Link))
         {
-            _console.WriteLine($"  - Index:   {channel.Index}");
-            _console.WriteLine($"    Address: {channel.Uri.Address}");
-            _console.WriteLine($"    Type:    {channel.DeviceType}");
-            _console.WriteLine("    ParamSets:");
+            var values = await deviceOrChannel.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
 
-            foreach (var paramSet in channel.ParamSets.Where(x => x != ParamSetKey.Link))
-            {
-                var values = await channel.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
-
-                _console.WriteLine($"    - ParamSet: {paramSet}");
-
-                foreach (var paramSetValue in values)
-                {
-                    _console.WriteLine($"      - {paramSetValue.Name} : {paramSetValue.Value}");
-                }
-            }
-        }
-
-        _console.WriteLine("Param sets:");
-
-        foreach (var paramSet in device.ParamSets)
-        {
-            var values = await device.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
-
-            _console.WriteLine($"- {paramSet}");
+            _console.WriteLine($"{indent}- ParamSet: {paramSet}");
 
             foreach (var paramSetValue in values)
             {
-                _console.WriteLine($"  - Name:  {paramSetValue.Name}");
-                _console.WriteLine($"    Value: {paramSetValue.Value}");
+                _console.WriteLine($"{indent}  - {paramSetValue.Name} : {paramSetValue.Value}");
             }
         }
-
-        return 0;
     }
 }
