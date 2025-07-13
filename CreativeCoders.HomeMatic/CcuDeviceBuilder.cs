@@ -46,18 +46,15 @@ public class CcuDeviceBuilder
             Uri = _uri,
             DeviceType = _deviceDescription?.DeviceType ?? string.Empty,
             Version = _deviceDescription?.Version ?? 0,
-            Index = _deviceDescription?.Index ?? 0,
             IsAesActive = _deviceDescription?.IsAesActive ?? false,
             Interface = _deviceDescription?.Interface ?? string.Empty,
             RxMode = _deviceDescription?.RxMode ?? RxMode.None,
-            Group = _deviceDescription?.Group ?? string.Empty,
             RfAddress = _deviceDescription?.RfAddress ?? 0,
             Firmware = _deviceDescription?.Firmware ?? string.Empty,
             AvailableFirmware = _deviceDescription?.AvailableFirmware ?? string.Empty,
             CanBeUpdated = _deviceDescription?.CanBeUpdated ?? false,
             FirmwareUpdateState = _deviceDescription?.FirmwareUpdateState ?? DeviceFirmwareUpdateState.None,
             Roaming = _deviceDescription?.Roaming ?? false,
-            ChannelDirection = _deviceDescription?.ChannelDirection ?? ChannelDirection.None,
             ParamSets = _deviceDescription?.ParamSets ?? []
         };
 

@@ -22,16 +22,17 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
     public async Task<int> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
-        var client = await _cliHomeMaticClientBuilder.BuildAsync();
         var ccuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync();
 
-        //var device = await client.GetDeviceDescriptionAsync(options.Address);
         var device = await ccuClient.GetDeviceAsync(options.Address).ConfigureAwait(false);
 
-        _console.MarkupLine($"[bold teal]{device.Name}[/]");
-        _console.MarkupLine($"[bold]{device.Uri.Address}[/]");
-        _console.MarkupLine($"[bold yellow]{device.Uri.HostDisplayName}[/]");
-        _console.MarkupLine($"{device.DeviceType}");
+        _console.WriteLine($"Show device details for '{options.Address}'");
+        _console.WriteLine();
+
+        _console.MarkupLine($"Name:    [bold teal]{device.Name}[/]");
+        _console.MarkupLine($"Address: [bold]{device.Uri.Address}[/]");
+        _console.MarkupLine($"Ccu:     [bold yellow]{device.Uri.HostDisplayName}[/]");
+        _console.MarkupLine($"Type:    {device.DeviceType}");
 
         _console.WriteLine();
 
@@ -48,7 +49,7 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
             // }
         }
 
-        device.ParamSets.ForEach(x => { });
+        //device.ParamSets.ForEach(x => { });
 
         return 0;
     }

@@ -53,18 +53,15 @@ public class CcuDeviceBuilderTests
         ccuDevice.Uri.Should().Be(uri);
         ccuDevice.DeviceType.Should().Be("TestType");
         ccuDevice.Version.Should().Be(1);
-        ccuDevice.Index.Should().Be(2);
         ccuDevice.IsAesActive.Should().BeTrue();
         ccuDevice.Interface.Should().Be("TestInterface");
         ccuDevice.RxMode.Should().Be(RxMode.Always);
-        ccuDevice.Group.Should().Be("TestGroup");
         ccuDevice.RfAddress.Should().Be(12345);
         ccuDevice.Firmware.Should().Be("1.0.0");
         ccuDevice.AvailableFirmware.Should().Be("1.1.0");
         ccuDevice.CanBeUpdated.Should().BeTrue();
         ccuDevice.FirmwareUpdateState.Should().Be(DeviceFirmwareUpdateState.NewFirmwareAvailable);
         ccuDevice.Roaming.Should().BeTrue();
-        ccuDevice.ChannelDirection.Should().Be(ChannelDirection.Receiver);
         ccuDevice.ParamSets.Should().HaveCount(2);
         ccuDevice.ParamSets.Should().Contain("ParamSet1");
         ccuDevice.ParamSets.Should().Contain("ParamSet2");
@@ -131,18 +128,15 @@ public class CcuDeviceBuilderTests
         // Assert
         ccuDevice.DeviceType.Should().Be(string.Empty);
         ccuDevice.Version.Should().Be(0);
-        ccuDevice.Index.Should().Be(0);
         ccuDevice.IsAesActive.Should().BeFalse();
         ccuDevice.Interface.Should().Be(string.Empty);
         ccuDevice.RxMode.Should().Be(RxMode.None);
-        ccuDevice.Group.Should().Be(string.Empty);
         ccuDevice.RfAddress.Should().Be(0);
         ccuDevice.Firmware.Should().Be(string.Empty);
         ccuDevice.AvailableFirmware.Should().Be(string.Empty);
         ccuDevice.CanBeUpdated.Should().BeFalse();
         ccuDevice.FirmwareUpdateState.Should().Be(DeviceFirmwareUpdateState.None);
         ccuDevice.Roaming.Should().BeFalse();
-        ccuDevice.ChannelDirection.Should().Be(ChannelDirection.None);
         ccuDevice.ParamSets.Should().BeEmpty();
     }
 }

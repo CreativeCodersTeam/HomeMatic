@@ -1,6 +1,12 @@
+using CreativeCoders.HomeMatic.Core.Devices;
+
 namespace CreativeCoders.HomeMatic.Abstractions;
 
-public interface ICcuDeviceChannel
+public interface ICcuDeviceChannel : ICcuDeviceBase
 {
-    CcuDeviceUri Uri { get; }
+    int Index { get; }
+
+    string Group { get; }
+
+    ChannelDirection ChannelDirection { get; }
 }
