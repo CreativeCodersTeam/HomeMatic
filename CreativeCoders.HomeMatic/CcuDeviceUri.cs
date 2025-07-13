@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic;
 
+[ExcludeFromCodeCoverage]
 public class CcuDeviceUri
 {
     public required string Host { get; init; }

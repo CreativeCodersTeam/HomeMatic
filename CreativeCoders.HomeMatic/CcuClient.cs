@@ -17,15 +17,17 @@ public class CcuClient(
         {
             var devices = await xmlRpcApiConnection.Api.ListDevicesAsync();
 
-            allDevices.AddRange(devices.Select(x => new CcuDevice(xmlRpcApiConnection.Api)
-            {
-                Uri = new CcuDeviceUri
-                {
-                    Host = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
-                    Address = x.Address,
-                    Kind = xmlRpcApiConnection.Endpoint.DeviceKind
-                }
-            }));
+            allDevices.AddRange(devices.Select(x =>
+                new CcuDeviceBuilder()
+                    .FromDeviceDescription(x)
+                    .WithApi(xmlRpcApiConnection.Api)
+                    .WithUri(new CcuDeviceUri
+                    {
+                        Host = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
+                        Address = x.Address,
+                        Kind = xmlRpcApiConnection.Endpoint.DeviceKind
+                    })
+                    .Build()));
         }
 
         var jsonRpcDevices = await jsonRpcClient.ListAllDetailsAsync();

@@ -14,6 +14,7 @@ public static class HomeMaticServiceCollectionExtensions
         services.AddHomeMaticJsonRpc();
 
         services.TryAddTransient<ICcuClientFactory, CcuClientFactory>();
+        services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
 
         return services;
     }
