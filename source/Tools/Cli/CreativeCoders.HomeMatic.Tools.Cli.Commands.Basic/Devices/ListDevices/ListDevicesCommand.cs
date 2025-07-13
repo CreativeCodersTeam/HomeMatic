@@ -32,7 +32,7 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         return PatternMatcher.MatchesPattern(device.Name, options.FilterPattern) ||
                PatternMatcher.MatchesPattern(device.Uri.Address, options.FilterPattern) ||
                PatternMatcher.MatchesPattern(device.DeviceType, options.FilterPattern) ||
-               PatternMatcher.MatchesPattern(device.Uri.Host, options.FilterPattern);
+               PatternMatcher.MatchesPattern(device.Uri.CcuHost, options.FilterPattern);
     }
 
     private void PrintDevices(IEnumerable<ICcuDevice> devices)
@@ -48,7 +48,7 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         {
             var nameColumn = new Markup($"[bold teal]{x.Name}[/]");
             var addressColumn = new Markup($"[bold]{x.Uri.Address}[/]");
-            var ccuColumn = new Markup($"[bold yellow]{x.Uri.Host}[/]");
+            var ccuColumn = new Markup($"[bold yellow]{x.Uri.HostDisplayName}[/]");
             var deviceTypeColumn = new Markup($"{x.DeviceType}");
 
             devicesTable.AddRow(nameColumn, addressColumn, ccuColumn, deviceTypeColumn);
@@ -62,12 +62,8 @@ public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOpt
         _console.MarkupLine("List all devices for all CCUs");
         _console.WriteLine();
 
-        var client = await _cliHomeMaticClientBuilder.BuildAsync()
-            .ConfigureAwait(false);
-
         var multiCcuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
 
-        //var devices = await client.GetDevicesAsync().ConfigureAwait(false);
         PrintDevices((await multiCcuClient.GetDevicesAsync().ConfigureAwait(false)).Where(device =>
             FilterDevices(device, options)));
 

@@ -1,5 +1,4 @@
 using System.Net;
-using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
@@ -12,15 +11,15 @@ public class CcuClientFactory(
     IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
     IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder) : ICcuClientFactory
 {
-    public ICcuClient CreateClient(IEnumerable<CcuDeviceKind> deviceKinds, string host, string userName,
+    public ICcuClient CreateClient(string ccuName, IEnumerable<CcuDeviceKind> deviceKinds, string host, string userName,
         string password)
     {
         return new CcuClient(CreateJsonRpcClient(host, userName, password),
-            CreateXmlRpcApis(deviceKinds, host));
+            CreateXmlRpcApis(deviceKinds, host, ccuName));
     }
 
-    private Dictionary<CcuDeviceKind, XmlRpcApiConnection> CreateXmlRpcApis(
-        IEnumerable<CcuDeviceKind> deviceKinds, string host)
+    private Dictionary<CcuDeviceKind, XmlRpcApiConnection> CreateXmlRpcApis(IEnumerable<CcuDeviceKind> deviceKinds,
+        string host, string ccuName)
     {
         var xmlRpcApis = new Dictionary<CcuDeviceKind, XmlRpcApiConnection>();
 
@@ -33,7 +32,10 @@ public class CcuClientFactory(
         deviceKinds.ForEach(x =>
         {
             var xmlRpcEndpoint = new XmlRpcEndpoint(baseUrl.Uri, x);
-            xmlRpcApis[x] = new XmlRpcApiConnection(xmlRpcEndpoint, CreateXmlRpcApi(xmlRpcEndpoint));
+            xmlRpcApis[x] = new XmlRpcApiConnection(xmlRpcEndpoint, CreateXmlRpcApi(xmlRpcEndpoint))
+            {
+                CcuName = ccuName
+            };
         });
 
         return xmlRpcApis;
@@ -60,11 +62,4 @@ public class CcuClientFactory(
             .ForUrl(jsonRpcUriBuilder.Uri)
             .Build();
     }
-}
-
-public class XmlRpcApiConnection(XmlRpcEndpoint endpoint, IHomeMaticXmlRpcApi api)
-{
-    public XmlRpcEndpoint Endpoint { get; } = Ensure.NotNull(endpoint);
-
-    public IHomeMaticXmlRpcApi Api { get; } = Ensure.NotNull(api);
 }

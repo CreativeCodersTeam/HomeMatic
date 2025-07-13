@@ -36,7 +36,7 @@ public class CcuDeviceBuilderTests
         var api = A.Fake<IHomeMaticXmlRpcApi>();
         var uri = new CcuDeviceUri
         {
-            Host = "localhost",
+            CcuHost = "localhost",
             Kind = CcuDeviceKind.HomeMatic,
             Address = "1234567890"
         };
@@ -93,7 +93,7 @@ public class CcuDeviceBuilderTests
         // Arrange
         var uri = new CcuDeviceUri
         {
-            Host = "localhost",
+            CcuHost = "localhost",
             Kind = CcuDeviceKind.HomeMatic,
             Address = "1234567890"
         };
@@ -116,7 +116,7 @@ public class CcuDeviceBuilderTests
         var api = A.Fake<IHomeMaticXmlRpcApi>();
         var uri = new CcuDeviceUri
         {
-            Host = "localhost",
+            CcuHost = "localhost",
             Kind = CcuDeviceKind.HomeMatic,
             Address = "1234567890"
         };

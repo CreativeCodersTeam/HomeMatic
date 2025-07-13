@@ -13,16 +13,9 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClien
         return devicesPerClient.SelectMany(devices => devices);
     }
 
-    // public async IAsyncEnumerable<ICcuDevice> GetDevicesAsync()
-    // {
-    //     foreach (var ccuClient in ccuClients)
-    //     {
-    //         var devices = await ccuClient.GetDevicesAsync().ConfigureAwait(false);
-    //
-    //         foreach (var ccuDevice in devices)
-    //         {
-    //             yield return ccuDevice;
-    //         }
-    //     }
-    // }
+    public async Task<ICcuDevice> GetDeviceAsync(string address)
+    {
+        return (await GetDevicesAsync().ConfigureAwait(false)).FirstOrDefault(x => x.Uri.Address == address) ??
+               throw new KeyNotFoundException($"Device with address '{address}' not found.");
+    }
 }

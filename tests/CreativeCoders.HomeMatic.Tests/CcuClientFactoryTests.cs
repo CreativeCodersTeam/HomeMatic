@@ -22,7 +22,7 @@ public class CcuClientFactoryTests
         var ccuClientFactory = new CcuClientFactory(xmlRpcApiBuilder, jsonRpcApiBuilder);
 
         // Act
-        var ccuClient = ccuClientFactory.CreateClient([CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp],
+        var ccuClient = ccuClientFactory.CreateClient("TestCCU1", [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp],
             "example.com", "username", "password");
 
         // Assert

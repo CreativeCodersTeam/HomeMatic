@@ -7,10 +7,10 @@ public class MultiCcuClientFactory(ICcuClientFactory ccuClientFactory) : IMultiC
 {
     private readonly List<ICcuClient> _ccuClients = [];
 
-    public IMultiCcuClientFactory AddCcu(string host, string userName, string password,
+    public IMultiCcuClientFactory AddCcu(string ccuName, string host, string userName, string password,
         params CcuDeviceKind[] deviceKinds)
     {
-        var ccuClient = ccuClientFactory.CreateClient(deviceKinds, host, userName, password);
+        var ccuClient = ccuClientFactory.CreateClient(ccuName, deviceKinds, host, userName, password);
 
         _ccuClients.Add(ccuClient);
 
