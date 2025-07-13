@@ -50,12 +50,11 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
             {
                 var values = await channel.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
 
-                _console.WriteLine($"- {paramSet}");
+                _console.WriteLine($"    - ParamSet: {paramSet}");
 
                 foreach (var paramSetValue in values)
                 {
-                    _console.WriteLine($"    - Name:  {paramSetValue.Name}");
-                    _console.WriteLine($"      Value: {paramSetValue.Value}");
+                    _console.WriteLine($"      - {paramSetValue.Name} : {paramSetValue.Value}");
                 }
             }
         }
