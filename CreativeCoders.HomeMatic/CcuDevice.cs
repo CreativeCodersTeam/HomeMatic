@@ -24,13 +24,12 @@ public class CcuDevice(IHomeMaticXmlRpcApi api) : CcuDeviceBase(api), ICcuDevice
 
     public required IEnumerable<ICcuDeviceChannel> Channels { get; init; }
 
-    public Task<IEnumerable<ICcuDeviceChannel>> GetChannelsAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<ICcuDeviceChannel> GetChannelAsync(string channelAddress)
     {
-        throw new NotImplementedException();
+        var channel = Channels.FirstOrDefault(x => x.Uri.Address == channelAddress);
+        return channel != null
+            ? Task.FromResult(channel)
+            : throw new KeyNotFoundException(
+                $"Channel with address '{channelAddress}' not found.");
     }
 }

@@ -25,9 +25,9 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
     public async Task<int> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
-        var ccuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync();
+        var ccuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
 
-        var device = await ccuClient.GetDeviceAsync(options.Address).ConfigureAwait(false);
+        var device = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
 
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
@@ -37,44 +37,46 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
         return 0;
     }
 
-    private async Task PrintDeviceAsync(ICcuDevice device)
+    private async Task PrintDeviceAsync(ICompleteCcuDevice device)
     {
-        _console.MarkupLine($"Name:    [bold teal]{device.Name}[/]");
-        _console.MarkupLine($"Address: [bold]{device.Uri.Address}[/]");
-        _console.MarkupLine($"Ccu:     [bold yellow]{device.Uri.HostDisplayName}[/]");
-        _console.MarkupLine($"Type:    {device.DeviceType}");
+        _console.MarkupLine($"Name:    [bold teal]{device.DeviceData.Name}[/]");
+        _console.MarkupLine($"Address: [bold]{device.DeviceData.Uri.Address}[/]");
+        _console.MarkupLine($"Ccu:     [bold yellow]{device.DeviceData.Uri.HostDisplayName}[/]");
+        _console.MarkupLine($"Type:    {device.DeviceData.DeviceType}");
 
         _console.WriteLine();
 
         _console.WriteLine("Channels:");
 
         await device.Channels
-            .ForEachAsync(PrintChannelAsync);
+            .ForEachAsync(PrintChannelAsync).ConfigureAwait(false);
 
-        await PrintParamSetsAsync(device, "  ");
+        //await PrintParamSetsAsync(device, "  ");
     }
 
-    private async Task PrintChannelAsync(ICcuDeviceChannel channel)
+    private async Task PrintChannelAsync(ICompleteCcuDeviceChannel channel)
     {
-        _console.WriteLine($"  - Index:   {channel.Index}");
-        _console.WriteLine($"    Address: {channel.Uri.Address}");
-        _console.WriteLine($"    Type:    {channel.DeviceType}");
+        _console.WriteLine($"  - Index:   {channel.ChannelData.Index}");
+        _console.WriteLine($"    Address: {channel.ChannelData.Uri.Address}");
+        _console.WriteLine($"    Type:    {channel.ChannelData.DeviceType}");
         _console.WriteLine("    ParamSets:");
 
-        await PrintParamSetsAsync(channel, "    ").ConfigureAwait(false);
+        await PrintParamSetsAsync(channel.ParamSetValues, "    ").ConfigureAwait(false);
     }
 
-    private async Task PrintParamSetsAsync(ICcuDeviceBase deviceOrChannel, string indent)
+    private async Task PrintParamSetsAsync(IEnumerable<ParamSetValuesWithDescriptions> paramSetValuesWithDescriptions,
+        string indent)
     {
-        foreach (var paramSet in deviceOrChannel.ParamSets.Where(x => x != ParamSetKey.Link))
+        foreach (var paramSet in paramSetValuesWithDescriptions)
         {
-            var values = await deviceOrChannel.GetParamSetValuesAsync(paramSet).ConfigureAwait(false);
+            var values = paramSet.ParamSetValues;
 
             _console.WriteLine($"{indent}- ParamSet: {paramSet}");
 
             foreach (var paramSetValue in values)
             {
-                _console.WriteLine($"{indent}  - {paramSetValue.Name} : {paramSetValue.Value}");
+                _console.WriteLine(
+                    $"{indent}  - {paramSetValue.ParamSetValue.Name} : {paramSetValue.ParamSetValue.Value}");
             }
         }
     }

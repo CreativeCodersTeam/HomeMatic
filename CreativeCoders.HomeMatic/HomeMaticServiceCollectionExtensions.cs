@@ -15,6 +15,7 @@ public static class HomeMaticServiceCollectionExtensions
 
         services.TryAddTransient<ICcuClientFactory, CcuClientFactory>();
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
+        services.TryAddTransient<ICompleteCcuDeviceBuilder, CompleteCcuDeviceBuilder>();
 
         return services;
     }

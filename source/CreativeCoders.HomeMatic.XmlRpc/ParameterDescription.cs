@@ -12,7 +12,7 @@ public class ParameterDescription
 {
     [XmlRpcStructMember("ID")]
     public string? Id { get; set; }
-        
+
     [XmlRpcStructMember("DEFAULT")]
     public object? DefaultValue { get; set; }
 
@@ -38,8 +38,8 @@ public class ParameterDescription
     public string? Control { get; set; }
 
     [XmlRpcStructMember("VALUE_LIST", DefaultValue = new string[0])]
-    public IEnumerable<string> ValuesList { get; set; } = Array.Empty<string>();
+    public IEnumerable<string> ValuesList { get; set; } = [];
 
     [XmlRpcStructMember("SPECIAL")]
-    public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = Array.Empty<Dictionary<string, object>>();
+    public IEnumerable<Dictionary<string, object>> SpecialValues { get; set; } = [];
 }

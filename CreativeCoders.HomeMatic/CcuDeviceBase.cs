@@ -1,4 +1,3 @@
-using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
@@ -20,7 +19,7 @@ public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
 
     public required string[] ParamSets { get; init; }
 
-    public async Task<IEnumerable<IParamSetValue>> GetParamSetValuesAsync(string paramSetKey)
+    public async Task<IEnumerable<ParamSetValue>> GetParamSetValuesAsync(string paramSetKey)
     {
         var paramSets = await api.GetParamSetAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
 
@@ -29,5 +28,32 @@ public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
             Name = x.Key,
             Value = x.Value
         });
+    }
+
+    public async Task<CcuParameterDescriptions> GetParamSetDescriptionsAsync(string paramSetKey)
+    {
+        var paramSetDescriptions =
+            await api.GetParameterDescriptionAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
+
+        return new CcuParameterDescriptions()
+        {
+            ParamSetKey = paramSetKey,
+            Items = paramSetDescriptions
+                .Select(x => x.Value)
+                .Select(x => new CcuParameterDescription
+                {
+                    Id = x.Id,
+                    DefaultValue = x.DefaultValue,
+                    MinValue = x.MinValue,
+                    MaxValue = x.MaxValue,
+                    Type = x.Type,
+                    DataType = x.DataType,
+                    Unit = x.Unit,
+                    TabOrder = x.TabOrder,
+                    Control = x.Control,
+                    ValuesList = x.ValuesList,
+                    SpecialValues = x.SpecialValues
+                })
+        };
     }
 }

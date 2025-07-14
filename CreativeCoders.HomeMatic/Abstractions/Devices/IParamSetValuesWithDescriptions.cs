@@ -1,8 +1,8 @@
 namespace CreativeCoders.HomeMatic.Abstractions.Devices;
 
-public interface IParamSetValuesWithDescriptions
+public class ParamSetValuesWithDescriptions
 {
-    string ParamSetKey { get; }
+    public required string ParamSetKey { get; init; }
 
-    IEnumerable<IParamSetValueWithDescription> ParamSetValues { get; }
+    public required IEnumerable<ParamSetValueWithDescription> ParamSetValues { get; init; }
 }

@@ -63,7 +63,7 @@ public class CcuClient(
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDeviceAsync(string address)
+    public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
         throw new NotImplementedException();
     }

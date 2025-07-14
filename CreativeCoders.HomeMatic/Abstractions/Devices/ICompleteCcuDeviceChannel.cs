@@ -4,5 +4,5 @@ public interface ICompleteCcuDeviceChannel
 {
     ICcuDeviceChannelData ChannelData { get; }
 
-    IEnumerable<IParamSetValuesWithDescriptions> ParamSetValues { get; }
+    IEnumerable<ParamSetValuesWithDescriptions> ParamSetValues { get; }
 }

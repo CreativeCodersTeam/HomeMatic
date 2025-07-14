@@ -10,5 +10,5 @@ public interface ICcuClient
 
     Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync();
 
-    Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDeviceAsync(string address);
+    Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address);
 }

@@ -8,11 +8,6 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClien
     public Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
         return GetDataFromClientsAsync(x => x.GetDevicesAsync());
-        // var deviceTasks = ccuClients.Select(client => client.GetDevicesAsync());
-        //
-        // var devicesPerClient = await Task.WhenAll(deviceTasks).ConfigureAwait(false);
-        //
-        // return devicesPerClient.SelectMany(devices => devices);
     }
 
     public async Task<ICcuDevice> GetDeviceAsync(string address)
@@ -23,12 +18,14 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClien
 
     public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
     {
-        throw new NotImplementedException();
+        return GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync());
     }
 
-    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDeviceAsync(string address)
+    public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
-        throw new NotImplementedException();
+        return (await GetCompleteDevicesAsync().ConfigureAwait(false)).FirstOrDefault(x =>
+                   x.DeviceData.Uri.Address == address) ??
+               throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 
     private async Task<IEnumerable<T>> GetDataFromClientsAsync<T>(Func<ICcuClient, Task<IEnumerable<T>>> func)
