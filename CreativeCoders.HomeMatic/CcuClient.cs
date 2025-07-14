@@ -9,7 +9,8 @@ namespace CreativeCoders.HomeMatic;
 
 public class CcuClient(
     IHomeMaticJsonRpcClient jsonRpcClient,
-    IDictionary<CcuDeviceKind, XmlRpcApiConnection> xmlRpcApis) : ICcuClient
+    IDictionary<CcuDeviceKind, XmlRpcApiConnection> xmlRpcApis,
+    ICompleteCcuDeviceBuilder completeCcuDeviceBuilder) : ICcuClient
 {
     public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
@@ -58,13 +59,22 @@ public class CcuClient(
                ?? throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 
-    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
+    public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
     {
-        throw new NotImplementedException();
+        var completeDevices = new List<ICompleteCcuDevice>();
+
+        foreach (var ccuDevice in await GetDevicesAsync().ConfigureAwait(false))
+        {
+            completeDevices.Add(await completeCcuDeviceBuilder.BuildAsync(ccuDevice).ConfigureAwait(false));
+        }
+
+        return completeDevices;
     }
 
-    public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
+    public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
-        throw new NotImplementedException();
+        var ccuDevice = await GetDeviceAsync(address).ConfigureAwait(false);
+
+        return await completeCcuDeviceBuilder.BuildAsync(ccuDevice).ConfigureAwait(false);
     }
 }

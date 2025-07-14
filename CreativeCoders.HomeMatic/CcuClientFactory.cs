@@ -9,13 +9,14 @@ namespace CreativeCoders.HomeMatic;
 
 public class CcuClientFactory(
     IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
-    IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder) : ICcuClientFactory
+    IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder,
+    ICompleteCcuDeviceBuilder completeCcuDeviceBuilder) : ICcuClientFactory
 {
     public ICcuClient CreateClient(string ccuName, IEnumerable<CcuDeviceKind> deviceKinds, string host, string userName,
         string password)
     {
         return new CcuClient(CreateJsonRpcClient(host, userName, password),
-            CreateXmlRpcApis(deviceKinds, host, ccuName));
+            CreateXmlRpcApis(deviceKinds, host, ccuName), completeCcuDeviceBuilder);
     }
 
     private Dictionary<CcuDeviceKind, XmlRpcApiConnection> CreateXmlRpcApis(IEnumerable<CcuDeviceKind> deviceKinds,

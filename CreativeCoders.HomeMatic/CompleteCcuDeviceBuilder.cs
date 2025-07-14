@@ -43,7 +43,21 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
 
         foreach (var paramSetKey in device.ParamSets.Where(x => x != ParamSetKey.Link))
         {
-            var paramSets = await device.GetParamSetValuesAsync(paramSetKey).ConfigureAwait(false);
+            var descriptions = await device.GetParamSetDescriptionsAsync(paramSetKey).ConfigureAwait(false);
+
+            var paramSets = (await device.GetParamSetValuesAsync(paramSetKey).ConfigureAwait(false))
+                .Select(x => new ParamSetValueWithDescription
+                {
+                    ParamSetValue = x,
+                    Description = descriptions.Items.FirstOrDefault(y => y.Id == x.Name) ??
+                                  throw new KeyNotFoundException()
+                });
+
+            paramSetValues.Add(new ParamSetValuesWithDescriptions()
+            {
+                ParamSetKey = paramSetKey,
+                ParamSetValues = paramSets
+            });
         }
 
         return [..paramSetValues];
