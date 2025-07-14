@@ -1,4 +1,4 @@
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Abstractions.Devices;
 
 public interface IParamSetValue
 {

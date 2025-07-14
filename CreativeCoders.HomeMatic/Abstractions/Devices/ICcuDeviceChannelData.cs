@@ -1,8 +1,8 @@
 using CreativeCoders.HomeMatic.Core.Devices;
 
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Abstractions.Devices;
 
-public interface ICcuDeviceChannel : ICcuDeviceBase
+public interface ICcuDeviceChannelData : ICcuDeviceBaseData
 {
     int Index { get; }
 

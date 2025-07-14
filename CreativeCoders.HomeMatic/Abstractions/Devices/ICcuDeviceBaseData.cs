@@ -1,8 +1,6 @@
-using CreativeCoders.HomeMatic.Core.Devices;
+namespace CreativeCoders.HomeMatic.Abstractions.Devices;
 
-namespace CreativeCoders.HomeMatic.Abstractions;
-
-public interface ICcuDeviceBase
+public interface ICcuDeviceBaseData
 {
     CcuDeviceUri Uri { get; }
 
@@ -17,6 +15,4 @@ public interface ICcuDeviceBase
     bool Roaming { get; }
 
     string[] ParamSets { get; }
-
-    Task<IEnumerable<IParamSetValue>> GetParamSetValuesAsync(string paramSetKey);
 }

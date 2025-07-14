@@ -1,9 +1,9 @@
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Abstractions.Devices;
 
-public interface ICcuDevice : ICcuDeviceBase
+public interface ICcuDeviceData : ICcuDeviceBaseData
 {
     string Name { get; }
 
@@ -18,6 +18,4 @@ public interface ICcuDevice : ICcuDeviceBase
     bool CanBeUpdated { get; }
 
     DeviceFirmwareUpdateState FirmwareUpdateState { get; }
-
-    IEnumerable<ICcuDeviceChannel> Channels { get; }
 }

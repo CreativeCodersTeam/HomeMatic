@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.JsonRpc.Models;

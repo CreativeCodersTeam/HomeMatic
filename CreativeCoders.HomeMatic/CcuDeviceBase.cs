@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic;

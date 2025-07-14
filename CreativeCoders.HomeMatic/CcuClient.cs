@@ -1,7 +1,9 @@
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic;
 
@@ -15,7 +17,8 @@ public class CcuClient(
 
         foreach (var xmlRpcApiConnection in xmlRpcApis.Select(x => x.Value))
         {
-            var devices = await xmlRpcApiConnection.Api.ListDevicesAsync();
+            IReadOnlyCollection<DeviceDescription> devices =
+                [..await xmlRpcApiConnection.Api.ListDevicesAsync().ConfigureAwait(false)];
 
             allDevices.AddRange(devices.Where(x => string.IsNullOrEmpty(x.Parent)).Select(x =>
                 new CcuDeviceBuilder()
@@ -32,7 +35,7 @@ public class CcuClient(
                     .Build()));
         }
 
-        var jsonRpcDevices = await jsonRpcClient.ListAllDetailsAsync();
+        var jsonRpcDevices = await jsonRpcClient.ListAllDetailsAsync().ConfigureAwait(false);
 
         jsonRpcDevices.ForEach(x =>
         {
@@ -50,8 +53,18 @@ public class CcuClient(
 
     public async Task<ICcuDevice> GetDeviceAsync(string address)
     {
-        return (await GetDevicesAsync())
+        return (await GetDevicesAsync().ConfigureAwait(false))
                .FirstOrDefault(device => device.Uri.Address.Equals(address, StringComparison.OrdinalIgnoreCase))
                ?? throw new KeyNotFoundException($"Device with address '{address}' not found.");
+    }
+
+    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDeviceAsync(string address)
+    {
+        throw new NotImplementedException();
     }
 }

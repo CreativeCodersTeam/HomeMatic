@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
