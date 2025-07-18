@@ -80,10 +80,6 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
             {
                 _console.WriteLine(
                     $"{indent}  - {paramSetValue.ParamSetValue.Name} : {paramSetValue.ParamSetValue.Value}");
-                _console.WriteLine(
-                    $"{indent}    Control: {paramSetValue.Description.Control}");
-                _console.WriteLine(
-                    $"{indent}    Type: {paramSetValue.Description.Type}");
             }
         }
     }

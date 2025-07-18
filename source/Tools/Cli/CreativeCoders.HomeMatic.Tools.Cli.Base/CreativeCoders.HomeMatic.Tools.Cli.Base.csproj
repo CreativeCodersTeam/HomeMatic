@@ -13,10 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\..\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj"/>
         <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.Client.Core\CreativeCoders.HomeMatic.Client.Core.csproj"/>
         <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.Client\CreativeCoders.HomeMatic.Client.csproj"/>
         <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
+        <ProjectReference Include="..\..\..\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj"/>
     </ItemGroup>
 
 

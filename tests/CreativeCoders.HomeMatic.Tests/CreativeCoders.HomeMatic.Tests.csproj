@@ -31,7 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj"/>
+        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
+        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj"/>
     </ItemGroup>
 
 </Project>
