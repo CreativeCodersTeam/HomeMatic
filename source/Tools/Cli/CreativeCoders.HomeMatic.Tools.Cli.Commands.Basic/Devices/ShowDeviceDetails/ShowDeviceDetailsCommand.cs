@@ -1,4 +1,5 @@
-﻿using CreativeCoders.Core;
+﻿using AutoMapper.Internal;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Abstractions.Devices;
@@ -29,15 +30,16 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
         var device = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
 
+        device.GetType().IsDynamic();
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
 
-        await PrintDeviceAsync(device).ConfigureAwait(false);
+        PrintDevice(device);
 
         return 0;
     }
 
-    private async Task PrintDeviceAsync(ICompleteCcuDevice device)
+    private void PrintDevice(ICompleteCcuDevice device)
     {
         _console.MarkupLine($"Name:    [bold teal]{device.DeviceData.Name}[/]");
         _console.MarkupLine($"Address: [bold]{device.DeviceData.Uri.Address}[/]");
@@ -46,25 +48,26 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
         _console.WriteLine();
 
+        _console.WriteLine("  Device ParamSets:");
+
         _console.WriteLine("Channels:");
 
-        await device.Channels
-            .ForEachAsync(PrintChannelAsync).ConfigureAwait(false);
+        device.Channels.ForEach(PrintChannel);
 
-        //await PrintParamSetsAsync(device, "  ");
+        PrintParamSets(device.ParamSetValues, "  ");
     }
 
-    private async Task PrintChannelAsync(ICompleteCcuDeviceChannel channel)
+    private void PrintChannel(ICompleteCcuDeviceChannel channel)
     {
         _console.WriteLine($"  - Index:   {channel.ChannelData.Index}");
         _console.WriteLine($"    Address: {channel.ChannelData.Uri.Address}");
         _console.WriteLine($"    Type:    {channel.ChannelData.DeviceType}");
-        _console.WriteLine("    ParamSets:");
+        _console.WriteLine("    Channel ParamSets:");
 
-        await PrintParamSetsAsync(channel.ParamSetValues, "    ").ConfigureAwait(false);
+        PrintParamSets(channel.ParamSetValues, "    ");
     }
 
-    private async Task PrintParamSetsAsync(IEnumerable<ParamSetValuesWithDescriptions> paramSetValuesWithDescriptions,
+    private void PrintParamSets(IEnumerable<ParamSetValuesWithDescriptions> paramSetValuesWithDescriptions,
         string indent)
     {
         foreach (var paramSet in paramSetValuesWithDescriptions)

@@ -13,7 +13,8 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         var completeDevice = new CompleteCcuDevice
         {
             DeviceData = device,
-            Channels = channels
+            Channels = channels,
+            ParamSetValues = await GetParamSetValuesAsync(device).ConfigureAwait(false)
         };
 
         return completeDevice;
@@ -62,18 +63,4 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
 
         return [..paramSetValues];
     }
-}
-
-public class CompleteCcuDeviceChannel : ICompleteCcuDeviceChannel
-{
-    public required ICcuDeviceChannelData ChannelData { get; init; }
-
-    public required IEnumerable<ParamSetValuesWithDescriptions> ParamSetValues { get; init; }
-}
-
-public class CompleteCcuDevice : ICompleteCcuDevice
-{
-    public required ICcuDeviceData DeviceData { get; init; }
-
-    public required IEnumerable<ICompleteCcuDeviceChannel> Channels { get; init; }
 }
