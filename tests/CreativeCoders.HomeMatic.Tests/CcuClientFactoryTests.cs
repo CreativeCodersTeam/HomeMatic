@@ -1,4 +1,5 @@
 using System.Net;
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
@@ -19,7 +20,7 @@ public class CcuClientFactoryTests
         A.CallTo(() => jsonRpcApiBuilder.WithCredentials(A<NetworkCredential>._))
             .Returns(jsonRpcApiBuilder);
 
-        var ccuClientFactory = new CcuClientFactory(xmlRpcApiBuilder, jsonRpcApiBuilder);
+        var ccuClientFactory = new CcuClientFactory(xmlRpcApiBuilder, jsonRpcApiBuilder, A.Fake<IServiceProvider>());
 
         // Act
         var ccuClient = ccuClientFactory.CreateClient("TestCCU1", [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp],

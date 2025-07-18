@@ -22,18 +22,7 @@ public class CcuClient(
                 [..await xmlRpcApiConnection.Api.ListDevicesAsync().ConfigureAwait(false)];
 
             allDevices.AddRange(devices.Where(x => string.IsNullOrEmpty(x.Parent)).Select(x =>
-                new CcuDeviceBuilder()
-                    .FromDeviceDescription(x)
-                    .WithApi(xmlRpcApiConnection.Api)
-                    .WithUri(new CcuDeviceUri
-                    {
-                        CcuHost = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
-                        CcuName = xmlRpcApiConnection.CcuName,
-                        Address = x.Address,
-                        Kind = xmlRpcApiConnection.Endpoint.DeviceKind
-                    })
-                    .WithAllDevices(devices)
-                    .Build()));
+                CreateDevice(x, xmlRpcApiConnection, devices)));
         }
 
         var jsonRpcDevices = await jsonRpcClient.ListAllDetailsAsync().ConfigureAwait(false);
@@ -52,6 +41,23 @@ public class CcuClient(
         return [..allDevices];
     }
 
+    private CcuDevice CreateDevice(DeviceDescription deviceDescription, XmlRpcApiConnection xmlRpcApiConnection,
+        IEnumerable<DeviceDescription> allDevices)
+    {
+        return new CcuDeviceBuilder()
+            .FromDeviceDescription(deviceDescription)
+            .WithApi(xmlRpcApiConnection.Api)
+            .WithUri(new CcuDeviceUri
+            {
+                CcuHost = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
+                CcuName = xmlRpcApiConnection.CcuName,
+                Address = deviceDescription.Address,
+                Kind = xmlRpcApiConnection.Endpoint.DeviceKind
+            })
+            .WithAllDevices(allDevices)
+            .Build();
+    }
+
     public async Task<ICcuDevice> GetDeviceAsync(string address)
     {
         return (await GetDevicesAsync().ConfigureAwait(false))
@@ -68,7 +74,7 @@ public class CcuClient(
             completeDevices.Add(await completeCcuDeviceBuilder.BuildAsync(ccuDevice).ConfigureAwait(false));
         }
 
-        return completeDevices;
+        return [..completeDevices];
     }
 
     public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)

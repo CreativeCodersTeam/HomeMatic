@@ -259,7 +259,8 @@ public class CcuClientTests
 
     private static CcuClient CreateCcuClient(IHomeMaticJsonRpcClient jsonRpcClient,
         IHomeMaticXmlRpcApi homeMaticXmlRpcApi,
-        IHomeMaticXmlRpcApi homeMaticIpXmlRpcApi)
+        IHomeMaticXmlRpcApi homeMaticIpXmlRpcApi,
+        ICompleteCcuDeviceBuilder? completeCcuDeviceBuilder = null)
     {
         var homeMaticXmlRpcApiConnection = new XmlRpcApiConnection(
             new XmlRpcEndpoint(new Uri("http://example.com"), CcuDeviceKind.HomeMatic),
@@ -275,6 +276,7 @@ public class CcuClientTests
             { CcuDeviceKind.HomeMaticIp, homeMaticIpXmlRpcApiConnection }
         };
 
-        return new CcuClient(jsonRpcClient, xmlRpcApis);
+        return new CcuClient(jsonRpcClient, xmlRpcApis,
+            completeCcuDeviceBuilder ?? A.Fake<ICompleteCcuDeviceBuilder>());
     }
 }

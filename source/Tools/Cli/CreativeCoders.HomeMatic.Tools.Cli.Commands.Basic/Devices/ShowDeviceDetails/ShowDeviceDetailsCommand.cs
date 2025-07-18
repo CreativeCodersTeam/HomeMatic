@@ -71,7 +71,7 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
         {
             var values = paramSet.ParamSetValues;
 
-            _console.WriteLine($"{indent}- ParamSet: {paramSet}");
+            _console.WriteLine($"{indent}- ParamSet: {paramSet.ParamSetKey}");
 
             foreach (var paramSetValue in values)
             {

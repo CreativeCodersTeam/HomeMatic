@@ -4,19 +4,21 @@ using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic;
 
 public class CcuClientFactory(
     IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
     IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder,
-    ICompleteCcuDeviceBuilder completeCcuDeviceBuilder) : ICcuClientFactory
+    IServiceProvider serviceProvider) : ICcuClientFactory
 {
     public ICcuClient CreateClient(string ccuName, IEnumerable<CcuDeviceKind> deviceKinds, string host, string userName,
         string password)
     {
         return new CcuClient(CreateJsonRpcClient(host, userName, password),
-            CreateXmlRpcApis(deviceKinds, host, ccuName), completeCcuDeviceBuilder);
+            CreateXmlRpcApis(deviceKinds, host, ccuName),
+            serviceProvider.GetRequiredService<ICompleteCcuDeviceBuilder>());
     }
 
     private Dictionary<CcuDeviceKind, XmlRpcApiConnection> CreateXmlRpcApis(IEnumerable<CcuDeviceKind> deviceKinds,

@@ -3,7 +3,8 @@ using CreativeCoders.HomeMatic.Abstractions.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
-public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClient
+public class MultiCcuClient(
+    IEnumerable<ICcuClient> ccuClients) : IMultiCcuClient
 {
     public Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
@@ -23,16 +24,31 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients) : IMultiCcuClien
 
     public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
-        return (await GetCompleteDevicesAsync().ConfigureAwait(false)).FirstOrDefault(x =>
-                   x.DeviceData.Uri.Address == address) ??
-               throw new KeyNotFoundException($"Device with address '{address}' not found.");
+        foreach (var ccuClient in ccuClients)
+        {
+            try
+            {
+                var completeDevice = await ccuClient.GetCompleteDeviceAsync(address).ConfigureAwait(false);
+
+                return completeDevice;
+            }
+            catch (KeyNotFoundException e)
+            {
+            }
+        }
+
+        throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 
     private async Task<IEnumerable<T>> GetDataFromClientsAsync<T>(Func<ICcuClient, Task<IEnumerable<T>>> func)
     {
-        var tasks = ccuClients.Select(func);
+        var dataFromClients = new List<IEnumerable<T>>();
 
-        var dataFromClients = await Task.WhenAll(tasks).ConfigureAwait(false);
+        dataFromClients.Add(await func(ccuClients.First()).ConfigureAwait(false));
+        // foreach (var ccuClient in ccuClients)
+        // {
+        //     dataFromClients.Add(await func(ccuClient).ConfigureAwait(false));
+        // }
 
         return dataFromClients.SelectMany(x => x);
     }
