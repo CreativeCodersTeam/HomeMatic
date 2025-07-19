@@ -3,10 +3,12 @@ using CreativeCoders.Core.IO;
 using CreativeCoders.Core.Text;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
+using JetBrains.Annotations;
 using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevices;
 
+[UsedImplicitly]
 public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
     : IHomeMaticCliCommandWithOptions<ExportDevicesOptions>
 {
@@ -16,9 +18,9 @@ public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuild
 
         console.WriteLine("Export devices");
 
-        if (string.IsNullOrWhiteSpace(options.Address))
+        if (string.IsNullOrWhiteSpace(options.Address) || string.IsNullOrWhiteSpace(options.OutputFileName))
         {
-            console.WriteLine("No address specified");
+            console.WriteLine("No address or output file specified");
             return -1;
         }
 
@@ -27,12 +29,22 @@ public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuild
         var jsonData = new
         {
             Device = completeDevice.DeviceData,
-            Channels = completeDevice.Channels,
+            Channels = completeDevice.Channels.Select(x =>
+            {
+                var channel = new
+                {
+                    Info = x.ChannelData,
+                    ParamSets = x.ParamSetValues
+                };
+
+                return channel;
+            }),
             ParamSets = completeDevice.ParamSetValues
         };
 
-        FileSys.File.WriteAllText(options.OutputFileName,
-            jsonData.ToJson(new JsonSerializerOptions { WriteIndented = true }));
+        await FileSys.File.WriteAllTextAsync(options.OutputFileName,
+                jsonData.ToJson(new JsonSerializerOptions { WriteIndented = true }))
+            .ConfigureAwait(false);
 
         return 0;
     }
