@@ -1,6 +1,6 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
-using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevices;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ShowDeviceDetails;
 using CreativeCoders.SysConsole.Cli.Actions;
@@ -19,12 +19,16 @@ public class DevicesController
     {
         _commandExecutor = Ensure.NotNull(commandExecutor);
     }
-    
+
     [CliAction("list")]
     public Task<CliActionResult> ListAsync(ListDevicesOptions options)
         => _commandExecutor.ExecuteAsync<ListDevicesCommand, ListDevicesOptions>(options);
-    
+
     [CliAction("details")]
     public Task<CliActionResult> ShowDetailsAsync(ShowDeviceDetailsOptions options)
         => _commandExecutor.ExecuteAsync<ShowDeviceDetailsCommand, ShowDeviceDetailsOptions>(options);
+
+    [CliAction("export")]
+    public Task<CliActionResult> ExportAsync(ExportDevicesOptions options)
+        => _commandExecutor.ExecuteAsync<ExportDevicesCommand, ExportDevicesOptions>(options);
 }
