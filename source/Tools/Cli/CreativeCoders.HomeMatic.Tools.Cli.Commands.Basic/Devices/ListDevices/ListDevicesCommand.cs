@@ -10,17 +10,12 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
 
 [UsedImplicitly]
-public class ListDevicesCommand : IHomeMaticCliCommandWithOptions<ListDevicesOptions>
+public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
+    : IHomeMaticCliCommandWithOptions<ListDevicesOptions>
 {
-    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder;
+    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
 
-    private readonly IAnsiConsole _console;
-
-    public ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    {
-        _console = Ensure.NotNull(console);
-        _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
-    }
+    private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
     private static bool FilterDevices(ICcuDevice device, ListDevicesOptions options)
     {

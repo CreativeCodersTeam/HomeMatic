@@ -44,11 +44,12 @@ public class MultiCcuClient(
     {
         var dataFromClients = new List<IEnumerable<T>>();
 
-        dataFromClients.Add(await func(ccuClients.First()).ConfigureAwait(false));
-        // foreach (var ccuClient in ccuClients)
-        // {
-        //     dataFromClients.Add(await func(ccuClient).ConfigureAwait(false));
-        // }
+        foreach (var ccuClient in ccuClients)
+        {
+            var data = await func(ccuClient).ConfigureAwait(false);
+
+            dataFromClients.Add(data);
+        }
 
         return dataFromClients.SelectMany(x => x);
     }
