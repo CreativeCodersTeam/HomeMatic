@@ -9,10 +9,9 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevice
 
 [UsedImplicitly]
 public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, cliHomeMaticClientBuilder,
-        LoadDataAsync, TransformData)
+    : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, cliHomeMaticClientBuilder)
 {
-    private static object TransformData(ICompleteCcuDevice device)
+    protected override object TransformData(ICompleteCcuDevice device)
     {
         return new
         {
@@ -31,7 +30,7 @@ public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuild
         };
     }
 
-    private static Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
+    protected override Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
     {
         return ccuClient.GetCompleteDeviceAsync(options.Address);
     }

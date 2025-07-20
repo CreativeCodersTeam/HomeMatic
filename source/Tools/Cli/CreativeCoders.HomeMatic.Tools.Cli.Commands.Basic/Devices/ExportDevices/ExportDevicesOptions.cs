@@ -7,8 +7,8 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevice
 public class ExportDevicesOptions
 {
     [OptionValue(0, IsRequired = true)]
-    public string? Address { get; set; }
+    public string Address { get; set; } = string.Empty;
 
     [OptionParameter('o', "output", HelpText = "Output file")]
-    public string? OutputFileName { get; set; }
+    public string OutputFileName { get; set; } = string.Empty;
 }
