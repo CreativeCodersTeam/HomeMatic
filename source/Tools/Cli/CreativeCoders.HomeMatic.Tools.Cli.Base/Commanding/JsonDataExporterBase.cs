@@ -1,16 +1,28 @@
 using System.Text.Json;
 using CreativeCoders.Core.IO;
 using CreativeCoders.Core.Text;
+using CreativeCoders.HomeMatic.Abstractions;
+using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 
-public class JsonDataExporterBase<T>(Func<Task<T>> loadDataAsyncFunc, Func<T, object> transformData)
+public class JsonDataExporterBase<T, TOptions>(
+    IAnsiConsole console,
+    Func<IMultiCcuClient, TOptions, Task<T>> loadDataAsyncFunc,
+    Func<T, object> transformData)
+    where TOptions : class
 {
-    public async Task ExportAsync(string outputFileName)
+    public async Task ExportAsync(IMultiCcuClient ccuClient, TOptions options, string outputFileName)
     {
-        var data = await loadDataAsyncFunc().ConfigureAwait(false);
+        console.WriteLine("Load data for export");
+
+        var data = await loadDataAsyncFunc(ccuClient, options).ConfigureAwait(false);
+
+        console.WriteLine("Transform data for export");
 
         var outputData = transformData(data);
+
+        console.WriteLine($"Write data to json file '{outputFileName}'");
 
         await FileSys.File.WriteAllTextAsync(outputFileName,
                 outputData.ToJson(new JsonSerializerOptions { WriteIndented = true }))

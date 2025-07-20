@@ -1,3 +1,4 @@
+using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
@@ -8,60 +9,40 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevice
 
 [UsedImplicitly]
 public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    : IHomeMaticCliCommandWithOptions<ExportDevicesOptions>
+    : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, cliHomeMaticClientBuilder,
+        LoadDataAsync, TransformData)
 {
-    public async Task<int> ExecuteAsync(ExportDevicesOptions options)
+    private static object TransformData(ICompleteCcuDevice device)
     {
-        var ccuClient = await cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
-
-        console.WriteLine("Export devices");
-
-        if (string.IsNullOrWhiteSpace(options.Address) || string.IsNullOrWhiteSpace(options.OutputFileName))
+        return new
         {
-            console.WriteLine("No address or output file specified");
-            return -1;
-        }
-
-        await new JsonDataExporterBase<ICompleteCcuDevice>(() => ccuClient.GetCompleteDeviceAsync(options.Address),
-                device => new
+            Device = device.DeviceData,
+            Channels = device.Channels.Select(x =>
+            {
+                var channel = new
                 {
-                    Device = device.DeviceData,
-                    Channels = device.Channels.Select(x =>
-                    {
-                        var channel = new
-                        {
-                            Info = x.ChannelData,
-                            ParamSets = x.ParamSetValues
-                        };
+                    Info = x.ChannelData,
+                    ParamSets = x.ParamSetValues
+                };
 
-                        return channel;
-                    }),
-                    ParamSets = device.ParamSetValues
-                }).ExportAsync(options.OutputFileName)
-            .ConfigureAwait(false);
+                return channel;
+            }),
+            ParamSets = device.ParamSetValues
+        };
+    }
 
-        // var completeDevice = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
-        //
-        // var jsonData = new
-        // {
-        //     Device = completeDevice.DeviceData,
-        //     Channels = completeDevice.Channels.Select(x =>
-        //     {
-        //         var channel = new
-        //         {
-        //             Info = x.ChannelData,
-        //             ParamSets = x.ParamSetValues
-        //         };
-        //
-        //         return channel;
-        //     }),
-        //     ParamSets = completeDevice.ParamSetValues
-        // };
-        //
-        // await FileSys.File.WriteAllTextAsync(options.OutputFileName,
-        //         jsonData.ToJson(new JsonSerializerOptions { WriteIndented = true }))
-        //     .ConfigureAwait(false);
+    private static Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
+    {
+        return ccuClient.GetCompleteDeviceAsync(options.Address);
+    }
 
-        return 0;
+    protected override bool ValidateOptions(ExportDevicesOptions options)
+    {
+        return !string.IsNullOrWhiteSpace(options.Address) && !string.IsNullOrWhiteSpace(options.OutputFileName);
+    }
+
+    protected override string GetOutputFileName(ExportDevicesOptions options)
+    {
+        return options.OutputFileName;
     }
 }
