@@ -1,9 +1,7 @@
 ﻿using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.Tools.Cli.Base;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic;
 using CreativeCoders.HomeMatic.XmlRpc;
-using CreativeCoders.SysConsole.App;
 using CreativeCoders.SysConsole.Cli.Actions;
 using CreativeCoders.SysConsole.Cli.Actions.Runtime;
 using CreativeCoders.SysConsole.Cli.Actions.Runtime.Middleware;
@@ -34,7 +32,7 @@ public class Startup : ICliStartup
     {
         runtimeBuilder.AddController<ConnectionController>();
         runtimeBuilder.AddController<DevicesController>();
-        
+
         runtimeBuilder.UseMiddleware<DebugExceptionMiddleware>();
 
         runtimeBuilder.UseRouting();

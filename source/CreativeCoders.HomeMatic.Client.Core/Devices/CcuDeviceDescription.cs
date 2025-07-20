@@ -1,6 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Api.Core.Devices;
-
-namespace CreativeCoders.HomeMatic.Client.Core.Devices;
+﻿namespace CreativeCoders.HomeMatic.Client.Core.Devices;
 
 public class CcuDeviceDescription(ICcuDevice ccuDevice) : ICcuDevice
 {

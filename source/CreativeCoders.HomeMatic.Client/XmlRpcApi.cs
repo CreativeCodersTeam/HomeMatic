@@ -1,5 +1,4 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Client.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 

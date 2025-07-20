@@ -1,6 +1,4 @@
-using System.Text.Json;
-using CreativeCoders.Core.IO;
-using CreativeCoders.Core.Text;
+using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
@@ -24,27 +22,45 @@ public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuild
             return -1;
         }
 
-        var completeDevice = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
-
-        var jsonData = new
-        {
-            Device = completeDevice.DeviceData,
-            Channels = completeDevice.Channels.Select(x =>
-            {
-                var channel = new
+        await new JsonDataExporterBase<ICompleteCcuDevice>(() => ccuClient.GetCompleteDeviceAsync(options.Address),
+                device => new
                 {
-                    Info = x.ChannelData,
-                    ParamSets = x.ParamSetValues
-                };
+                    Device = device.DeviceData,
+                    Channels = device.Channels.Select(x =>
+                    {
+                        var channel = new
+                        {
+                            Info = x.ChannelData,
+                            ParamSets = x.ParamSetValues
+                        };
 
-                return channel;
-            }),
-            ParamSets = completeDevice.ParamSetValues
-        };
-
-        await FileSys.File.WriteAllTextAsync(options.OutputFileName,
-                jsonData.ToJson(new JsonSerializerOptions { WriteIndented = true }))
+                        return channel;
+                    }),
+                    ParamSets = device.ParamSetValues
+                }).ExportAsync(options.OutputFileName)
             .ConfigureAwait(false);
+
+        // var completeDevice = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
+        //
+        // var jsonData = new
+        // {
+        //     Device = completeDevice.DeviceData,
+        //     Channels = completeDevice.Channels.Select(x =>
+        //     {
+        //         var channel = new
+        //         {
+        //             Info = x.ChannelData,
+        //             ParamSets = x.ParamSetValues
+        //         };
+        //
+        //         return channel;
+        //     }),
+        //     ParamSets = completeDevice.ParamSetValues
+        // };
+        //
+        // await FileSys.File.WriteAllTextAsync(options.OutputFileName,
+        //         jsonData.ToJson(new JsonSerializerOptions { WriteIndented = true }))
+        //     .ConfigureAwait(false);
 
         return 0;
     }

@@ -1,6 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Api.Core.Devices;
-using CreativeCoders.HomeMatic.Api.Devices;
-using CreativeCoders.HomeMatic.XmlRpc;
+﻿using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic.Client.Core.Devices;

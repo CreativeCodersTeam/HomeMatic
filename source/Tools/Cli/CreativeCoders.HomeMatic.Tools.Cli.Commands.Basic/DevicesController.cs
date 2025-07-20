@@ -11,24 +11,19 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic;
 
 [UsedImplicitly]
 [CliController("device")]
-public class DevicesController
+public class DevicesController(ICliCommandExecutor commandExecutor)
 {
-    private readonly ICliCommandExecutor _commandExecutor;
+    private readonly ICliCommandExecutor _commandExecutor = Ensure.NotNull(commandExecutor);
 
-    public DevicesController(ICliCommandExecutor commandExecutor)
-    {
-        _commandExecutor = Ensure.NotNull(commandExecutor);
-    }
-
-    [CliAction("list")]
+    [CliAction("list", HelpText = "List all devices for all CCUs")]
     public Task<CliActionResult> ListAsync(ListDevicesOptions options)
         => _commandExecutor.ExecuteAsync<ListDevicesCommand, ListDevicesOptions>(options);
 
-    [CliAction("details")]
+    [CliAction("show", HelpText = "Show details of a device")]
     public Task<CliActionResult> ShowDetailsAsync(ShowDeviceDetailsOptions options)
         => _commandExecutor.ExecuteAsync<ShowDeviceDetailsCommand, ShowDeviceDetailsOptions>(options);
 
-    [CliAction("export")]
+    [CliAction("export", HelpText = "Export device to a json file")]
     public Task<CliActionResult> ExportAsync(ExportDevicesOptions options)
         => _commandExecutor.ExecuteAsync<ExportDevicesCommand, ExportDevicesOptions>(options);
 }

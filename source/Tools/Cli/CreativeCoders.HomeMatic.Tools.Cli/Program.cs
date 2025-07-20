@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using CreativeCoders.Core.IO;
+﻿using CreativeCoders.Core.IO;
 using CreativeCoders.Core.SysEnvironment;
 using CreativeCoders.HomeMatic.Tools.Cli.Base;
 using CreativeCoders.SysConsole.App;
@@ -31,7 +29,6 @@ public static class Program
                 {
                     x.AddJsonFile(toolConfigurationFile);
                 }
-                    
             })
             .Build();
     }

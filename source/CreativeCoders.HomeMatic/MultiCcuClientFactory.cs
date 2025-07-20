@@ -1,6 +1,5 @@
 using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic;
 

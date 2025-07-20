@@ -32,7 +32,7 @@ public class MultiCcuClient(
 
                 return completeDevice;
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
             }
         }
