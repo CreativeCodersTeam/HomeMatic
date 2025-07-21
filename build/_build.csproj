@@ -14,8 +14,8 @@
     <ItemGroup>
         <PackageReference Include="CreativeCoders.NukeBuild.Components" Version="4.2.0"/>
         <PackageReference Include="CreativeCoders.NukeBuild" Version="4.2.0"/>
-        <PackageReference Include="Nuke.Common" Version="8.0.0"/>
-        <PackageReference Include="ReportGenerator" Version="5.2.1"/>
+        <PackageReference Include="Nuke.Common" Version="8.1.4"/>
+        <PackageReference Include="ReportGenerator" Version="5.4.9"/>
         <PackageDownload Include="GitVersion.Tool" Version="[5.12.0]"/>
     </ItemGroup>
 

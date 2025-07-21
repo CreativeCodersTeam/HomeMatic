@@ -30,6 +30,7 @@ using Nuke.Common.ProjectModel;
     InvokedTargets = [NukeTargets.Rebuild, NukeTargets.CodeCoverage, NukeTargets.Pack],
     EnableGitHubToken = true,
     PublishArtifacts = true,
+    PublishCondition = "runner.os == 'Linux'",
     FetchDepth = 0
 )]
 [GitHubActions("main", GitHubActionsImage.UbuntuLatest,

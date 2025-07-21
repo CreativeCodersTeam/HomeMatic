@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Library</OutputType>
-		<Description>Classes for HomeMatic API</Description>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Description>Classes for HomeMatic API</Description>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\CreativeCoders.HomeMatic.Api.Core\CreativeCoders.HomeMatic.Api.Core.csproj" />
-		<ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj" />
-		<ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Api.Core\CreativeCoders.HomeMatic.Api.Core.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="13.0.1" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="14.0.0"/>
+    </ItemGroup>
 
 </Project>
