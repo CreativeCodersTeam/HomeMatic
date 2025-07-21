@@ -6,5 +6,9 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
 [UsedImplicitly]
 public class ListDevicesOptions
 {
-    [OptionValue(0)] public string FilterPattern { get; set; } = string.Empty;
+    [OptionValue(0)]
+    public string FilterPattern { get; set; } = string.Empty;
+
+    [OptionParameter('s', "sort")]
+    public string SortField { get; set; } = string.Empty;
 }

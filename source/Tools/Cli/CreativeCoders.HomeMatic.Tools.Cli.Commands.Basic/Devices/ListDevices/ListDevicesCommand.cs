@@ -30,8 +30,13 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
                PatternMatcher.MatchesPattern(device.Uri.CcuHost, options.FilterPattern);
     }
 
-    private void PrintDevices(IEnumerable<ICcuDevice> devices)
+    private void PrintDevices(IEnumerable<ICcuDevice> devices, ListDevicesOptions options)
     {
+        if (!string.IsNullOrWhiteSpace(options.SortField))
+        {
+            devices = devices.OrderBy(x => GetSortValue(x, options.SortField)).ToArray();
+        }
+
         var devicesTable = new Table()
             .Border(TableBorder.None)
             .AddColumn("Name", x => x.Padding(new Padding(3, 0)))
@@ -60,10 +65,22 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
         var multiCcuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
 
         PrintDevices((await multiCcuClient.GetDevicesAsync().ConfigureAwait(false)).Where(device =>
-            FilterDevices(device, options)));
+            FilterDevices(device, options)), options);
 
         _console.WriteLine();
 
         return 0;
+    }
+
+    private static string GetSortValue(ICcuDevice device, string sortField)
+    {
+        return sortField.ToLower() switch
+        {
+            "name" => device.Name,
+            "address" => device.Uri.Address,
+            "ccu" => device.Uri.HostDisplayName,
+            "type" => device.DeviceType,
+            _ => device.Name
+        };
     }
 }
