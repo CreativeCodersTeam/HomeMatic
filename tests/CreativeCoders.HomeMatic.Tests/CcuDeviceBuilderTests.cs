@@ -44,6 +44,7 @@ public class CcuDeviceBuilderTests
         var builder = new CcuDeviceBuilder()
             .WithUri(uri)
             .WithApi(api)
+            .WithAllDevices([])
             .FromDeviceDescription(deviceDescription);
 
         // Act
@@ -81,7 +82,7 @@ public class CcuDeviceBuilderTests
 
         // Assert
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Uri and Api must be set");
+            .WithMessage("Uri, Api and Devices must be set");
     }
 
     [Fact]
