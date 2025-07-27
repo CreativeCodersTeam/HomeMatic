@@ -1,4 +1,7 @@
-namespace CreativeCoders.HomeMatic.Abstractions.Devices;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace CreativeCoders.HomeMatic.Core.Devices;
 
 public interface ICcuDeviceBase : ICcuDeviceBaseData
 {

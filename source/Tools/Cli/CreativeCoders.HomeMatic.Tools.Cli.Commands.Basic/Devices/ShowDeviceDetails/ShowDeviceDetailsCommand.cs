@@ -1,6 +1,6 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
-using CreativeCoders.HomeMatic.Abstractions.Devices;
+using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;

@@ -1,6 +1,8 @@
-using CreativeCoders.HomeMatic.Abstractions.Devices;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CreativeCoders.HomeMatic.Core.Devices;
 
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Core;
 
 public interface ICcuClient
 {

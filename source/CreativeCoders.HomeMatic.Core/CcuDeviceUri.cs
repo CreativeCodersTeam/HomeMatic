@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using CreativeCoders.HomeMatic.Core;
 
-namespace CreativeCoders.HomeMatic;
+namespace CreativeCoders.HomeMatic.Core;
 
 [ExcludeFromCodeCoverage]
 public class CcuDeviceUri

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using CreativeCoders.HomeMatic.Core.Parameters;
 
-namespace CreativeCoders.HomeMatic.Abstractions.Devices;
+namespace CreativeCoders.HomeMatic.Core.Devices;
 
 public class CcuParameterDescription
 {

@@ -1,7 +1,6 @@
 using CreativeCoders.Core.Collections;
-using CreativeCoders.HomeMatic.Abstractions;
-using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc;
 

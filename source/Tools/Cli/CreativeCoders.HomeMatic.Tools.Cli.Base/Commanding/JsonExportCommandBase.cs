@@ -1,4 +1,4 @@
-using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using Spectre.Console;
 

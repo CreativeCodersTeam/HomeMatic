@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using CreativeCoders.HomeMatic.Abstractions.Devices;
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;

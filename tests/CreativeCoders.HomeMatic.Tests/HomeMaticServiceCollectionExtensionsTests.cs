@@ -1,4 +1,4 @@
-using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Core;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 

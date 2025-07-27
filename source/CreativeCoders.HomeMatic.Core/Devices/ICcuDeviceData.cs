@@ -1,7 +1,6 @@
-using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 
-namespace CreativeCoders.HomeMatic.Abstractions.Devices;
+namespace CreativeCoders.HomeMatic.Core.Devices;
 
 public interface ICcuDeviceData : ICcuDeviceBaseData
 {

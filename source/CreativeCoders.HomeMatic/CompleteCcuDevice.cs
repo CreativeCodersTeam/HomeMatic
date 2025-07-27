@@ -1,4 +1,4 @@
-using CreativeCoders.HomeMatic.Abstractions.Devices;
+using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 

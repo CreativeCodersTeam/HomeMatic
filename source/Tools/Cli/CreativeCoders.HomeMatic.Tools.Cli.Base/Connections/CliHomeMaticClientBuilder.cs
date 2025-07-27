@@ -1,6 +1,5 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
-using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;

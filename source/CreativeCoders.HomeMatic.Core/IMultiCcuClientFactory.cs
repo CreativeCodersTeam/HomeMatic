@@ -1,6 +1,4 @@
-using CreativeCoders.HomeMatic.Core;
-
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Core;
 
 public interface IMultiCcuClientFactory
 {

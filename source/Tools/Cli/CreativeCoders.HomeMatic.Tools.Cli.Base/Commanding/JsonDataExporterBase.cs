@@ -1,7 +1,7 @@
 using System.Text.Json;
 using CreativeCoders.Core.IO;
 using CreativeCoders.Core.Text;
-using CreativeCoders.HomeMatic.Abstractions;
+using CreativeCoders.HomeMatic.Core;
 using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;

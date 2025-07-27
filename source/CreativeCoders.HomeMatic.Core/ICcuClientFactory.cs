@@ -1,6 +1,6 @@
-using CreativeCoders.HomeMatic.Core;
+using System.Collections.Generic;
 
-namespace CreativeCoders.HomeMatic.Abstractions;
+namespace CreativeCoders.HomeMatic.Core;
 
 public interface ICcuClientFactory
 {

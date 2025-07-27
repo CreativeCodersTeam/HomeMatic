@@ -1,4 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Abstractions;
+﻿using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 

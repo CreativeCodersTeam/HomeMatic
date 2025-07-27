@@ -1,6 +1,5 @@
 using System.Net;
 using CreativeCoders.Core.Collections;
-using CreativeCoders.HomeMatic.Abstractions;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;

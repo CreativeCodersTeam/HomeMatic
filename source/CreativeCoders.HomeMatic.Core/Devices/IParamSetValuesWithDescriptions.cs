@@ -1,4 +1,6 @@
-namespace CreativeCoders.HomeMatic.Abstractions.Devices;
+using System.Collections.Generic;
+
+namespace CreativeCoders.HomeMatic.Core.Devices;
 
 public class ParamSetValuesWithDescriptions
 {
