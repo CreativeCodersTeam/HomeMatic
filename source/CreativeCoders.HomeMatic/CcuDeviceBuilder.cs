@@ -6,6 +6,8 @@ using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+
 namespace CreativeCoders.HomeMatic;
 
 // public class CcuDeviceBuilder
@@ -181,7 +183,7 @@ public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
         }
 
         var channels = devices
-            .Where(x => x.Parent?.Equals(deviceDescription.Address, StringComparison.OrdinalIgnoreCase) ?? false)
+            .Where(x => x.Parent.Equals(deviceDescription.Address, StringComparison.OrdinalIgnoreCase))
             .Select(x => new CcuDeviceChannel(_api!)
             {
                 Uri = new CcuDeviceUri

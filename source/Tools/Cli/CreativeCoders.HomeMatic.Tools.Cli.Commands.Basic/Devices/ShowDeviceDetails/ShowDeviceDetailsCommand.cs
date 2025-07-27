@@ -1,5 +1,4 @@
-﻿using AutoMapper.Internal;
-using CreativeCoders.Core;
+﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Abstractions.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
@@ -28,7 +27,6 @@ public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDevi
 
         var device = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
 
-        device.GetType().IsDynamic();
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
 

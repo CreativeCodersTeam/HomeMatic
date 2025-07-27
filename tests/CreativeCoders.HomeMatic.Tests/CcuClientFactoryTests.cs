@@ -5,7 +5,6 @@ using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using FakeItEasy;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic.Tests;
 
