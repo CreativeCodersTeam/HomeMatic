@@ -14,7 +14,7 @@ var apiBuilder = sp.GetRequiredService<IHomeMaticJsonRpcApiBuilder>();
 
 var api = apiBuilder.ForUrl(new Uri("http://192.168.2.210/api/homematic.cgi")).Build();
 
-var password = Console.ReadLine();
+var password = Console.ReadLine() ?? string.Empty;
 
 var loginResponse = await api.LoginAsync("Admin", password ?? string.Empty);
 
