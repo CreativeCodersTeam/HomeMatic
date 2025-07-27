@@ -9,17 +9,12 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ShowDeviceDetails;
 
 [UsedImplicitly]
-public class ShowDeviceDetailsCommand : IHomeMaticCliCommandWithOptions<ShowDeviceDetailsOptions>
+public class ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
+    : IHomeMaticCliCommandWithOptions<ShowDeviceDetailsOptions>
 {
-    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder;
+    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
 
-    private readonly IAnsiConsole _console;
-
-    public ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    {
-        _console = Ensure.NotNull(console);
-        _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
-    }
+    private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
     public async Task<int> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
