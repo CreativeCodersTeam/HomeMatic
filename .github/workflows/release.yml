@@ -35,8 +35,8 @@ jobs:
       - name: 'Publish: cli dist package'
         uses: actions/upload-artifact@v4
         with:
-          name: GitTool.Cli
-          path: .artifacts/dist/GitTool.Cli.tar.gz
+          name: HomeMatic.Cli
+          path: .artifacts/dist/HomeMatic.Cli.tar.gz
   windows-latest:
     name: windows-latest
     runs-on: windows-latest
@@ -50,8 +50,8 @@ jobs:
           path: |
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Build with target: CreateWinSetupAndGitHubRelease'
-        run: ./build.cmd -t pack -t publish -t createdistpackages -t CreateWin64Setup -t creategithubrelease
+      - name: 'Build with target: CreateGitHubRelease'
+        run: ./build.cmd -t pack -t publish -t createdistpackages -t creategithubrelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Publish: coverage_report'
@@ -59,8 +59,3 @@ jobs:
         with:
           name: coverage-report-windows
           path: .tests/coverage-report
-      - name: 'Publish: setups'
-        uses: actions/upload-artifact@v4
-        with:
-          name: setups
-          path: .artifacts/setups

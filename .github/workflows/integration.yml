@@ -31,8 +31,8 @@ jobs:
       - name: 'Publish: cli dist package'
         uses: actions/upload-artifact@v4
         with:
-          name: GitTool.Cli
-          path: .artifacts/dist/GitTool.Cli.tar.gz
+          name: HomeMatic.Cli
+          path: .artifacts/dist/HomeMatic.Cli.tar.gz
   windows-latest:
     name: windows-latest
     runs-on: windows-latest
@@ -55,11 +55,6 @@ jobs:
         with:
           name: coverage-report-windows
           path: .tests/coverage-report
-      - name: 'Publish: Win64 Setup'
-        uses: actions/upload-artifact@v4
-        with:
-          name: setups
-          path: .artifacts/setups
   macos-latest:
     name: macos-latest
     runs-on: macos-latest
