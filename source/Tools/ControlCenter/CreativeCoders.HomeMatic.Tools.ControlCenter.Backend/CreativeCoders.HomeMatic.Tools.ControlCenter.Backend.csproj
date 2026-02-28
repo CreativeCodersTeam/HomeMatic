@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.AspNetCore.TokenAuth.Jwt" Version="4.2.0"/>
-        <PackageReference Include="CreativeCoders.AspNetCore.TokenAuthApi.Jwt" Version="4.2.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="CreativeCoders.AspNetCore.TokenAuth.Jwt" Version="6.6.0" />
+        <PackageReference Include="CreativeCoders.AspNetCore.TokenAuthApi.Jwt" Version="6.6.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
     </ItemGroup>
 
     <ItemGroup>
