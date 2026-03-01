@@ -75,7 +75,7 @@ public class BuildContext(ICakeContext context)
         }
     ];
 
-    private const string DistPackageName = "GitTool.Cli";
+    private const string DistPackageName = "HomeMatic.Cli";
 
     public IEnumerable<DistPackage> DistPackages =>
     [
@@ -86,16 +86,12 @@ public class BuildContext(ICakeContext context)
 
     public string ReleaseVersion => $"v{Version.FullSemVer}";
 
-    public string ReleaseBody => "GitTools Release";
+    public string ReleaseBody => "HomeMatic Release";
 
     public bool IsPreRelease => !string.IsNullOrWhiteSpace(Version.PreReleaseTag);
 
-    private DirectoryPath SetupOutputDir => ArtifactsDir.Combine("setups");
-
     public IEnumerable<GitHubReleaseAsset> ReleaseAssets =>
     [
-        new GitHubReleaseFileAsset(
-            FileSys.Directory.EnumerateFiles(SetupOutputDir.FullPath, "*.exe").First(), null),
         new GitHubReleaseFileAsset(
             GetRequiredSettings<ICreateDistPackagesTaskSettings>().DistOutputPath
                 .CombineWithFilePath(DistPackageName + ".tar.gz").FullPath, null)

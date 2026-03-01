@@ -49,7 +49,7 @@ jobs:
       - name: 'Build with target: Pack'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./build.cmd -t pack -t publish -t CreateWin64Setup
+        run: ./build.cmd -t pack
       - name: 'Publish: coverage_report'
         uses: actions/upload-artifact@v4
         with:
