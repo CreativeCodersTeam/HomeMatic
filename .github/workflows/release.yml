@@ -24,7 +24,7 @@ jobs:
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
       - name: 'Build with target: NuGetPush'
-        run: ./build.cmd -t nugetpush -t publish -t createdistpackages
+        run: ./build.cmd -t pack -t nugetpush -t publish -t createdistpackages -t creategithubrelease
         env:
           NUGET_TOKEN: ${{ secrets.NUGET_ORG_TOKEN }}
       - name: 'Publish: coverage_report'
@@ -37,25 +37,3 @@ jobs:
         with:
           name: HomeMatic.Cli
           path: .artifacts/dist/HomeMatic.Cli.tar.gz
-  windows-latest:
-    name: windows-latest
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: 'Cache: ~/.nuget/packages'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.nuget/packages
-          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Build with target: CreateGitHubRelease'
-        run: ./build.cmd -t pack -t publish -t createdistpackages -t creategithubrelease
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: 'Publish: coverage_report'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-windows
-          path: .tests/coverage-report

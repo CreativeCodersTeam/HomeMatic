@@ -20,7 +20,7 @@ jobs:
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
       - name: 'Build with target: NuGetPush'
-        run: ./build.cmd -t nugetpush -t publish -t createdistpackages
+        run: ./build.cmd -t nugetpush -t publish -t createdistpackages -t creategithubrelease
         env:
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Publish: coverage_report'
@@ -46,8 +46,8 @@ jobs:
           path: |
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Build with target: CreateGitHubRelease'
-        run: ./build.cmd -t pack -t publish -t createdistpackages -t creategithubrelease
+      - name: 'Build with target: Pack'
+        run: ./build.cmd -t pack
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Publish: coverage_report'
@@ -68,7 +68,7 @@ jobs:
           path: |
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Build with target: NuGetPush'
+      - name: 'Build with target: Pack'
         run: ./build.cmd -t pack
       - name: 'Publish: coverage_report'
         uses: actions/upload-artifact@v4
