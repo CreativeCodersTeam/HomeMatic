@@ -1,17 +1,18 @@
-﻿using CreativeCoders.Core;
+﻿using CreativeCoders.Cli.Core;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.Core.Text;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.List;
 
 [UsedImplicitly]
+[CliCommand([DeviceCommandGroup.Name, "list"], Description = "List all devices for all CCUs")]
 public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    : IHomeMaticCliCommandWithOptions<ListDevicesOptions>
+    : ICliCommand<ListDevicesOptions>
 {
     private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
 
@@ -57,7 +58,7 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
         _console.Write(devicesTable);
     }
 
-    public async Task<int> ExecuteAsync(ListDevicesOptions options)
+    public async Task<CommandResult> ExecuteAsync(ListDevicesOptions options)
     {
         _console.MarkupLine("List all devices for all CCUs");
         _console.WriteLine();
@@ -69,7 +70,7 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
 
         _console.WriteLine();
 
-        return 0;
+        return CommandResult.Success;
     }
 
     private static string GetSortValue(ICcuDevice device, string sortField)

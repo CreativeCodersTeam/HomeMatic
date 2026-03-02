@@ -1,7 +1,7 @@
 using CreativeCoders.SysConsole.Cli.Parsing;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ExportDevices;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 
 [UsedImplicitly]
 public class ExportDevicesOptions

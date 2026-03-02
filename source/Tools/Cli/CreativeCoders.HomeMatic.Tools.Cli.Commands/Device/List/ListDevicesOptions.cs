@@ -1,7 +1,7 @@
 ﻿using CreativeCoders.SysConsole.Cli.Parsing;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ListDevices;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.List;
 
 [UsedImplicitly]
 public class ListDevicesOptions

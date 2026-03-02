@@ -1,22 +1,23 @@
-﻿using CreativeCoders.Core;
+﻿using CreativeCoders.Cli.Core;
+using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
+using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Devices.ShowDeviceDetails;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.ShowDetails;
 
 [UsedImplicitly]
 public class ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    : IHomeMaticCliCommandWithOptions<ShowDeviceDetailsOptions>
+    : ICliCommand<ShowDeviceDetailsOptions>
 {
     private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
 
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
-    public async Task<int> ExecuteAsync(ShowDeviceDetailsOptions options)
+    public async Task<CommandResult> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
         var ccuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
 
@@ -27,7 +28,7 @@ public class ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientB
 
         PrintDevice(device);
 
-        return 0;
+        return CommandResult.Success;
     }
 
     private void PrintDevice(ICompleteCcuDevice device)
@@ -67,11 +68,8 @@ public class ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientB
 
             _console.WriteLine($"{indent}- ParamSet: {paramSet.ParamSetKey}");
 
-            foreach (var paramSetValue in values)
-            {
-                _console.WriteLine(
-                    $"{indent}  - {paramSetValue.ParamSetValue.Name} : {paramSetValue.ParamSetValue.Value}");
-            }
+            _console.WriteLines(values.Select(x => $"{indent}  - {x.ParamSetValue.Name} : {x.ParamSetValue.Value}")
+                .ToArray());
         }
     }
 }

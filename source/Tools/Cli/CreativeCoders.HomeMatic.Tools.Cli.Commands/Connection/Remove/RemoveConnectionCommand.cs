@@ -1,26 +1,24 @@
-﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
+﻿using CreativeCoders.Cli.Core;
+using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
+using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Connections.RemoveConnection;
+namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Connection.Remove;
 
-public class RemoveConnectionCommand : IHomeMaticCliCommandWithOptions<RemoveConnectionOptions>
+[UsedImplicitly]
+[CliCommand([ConnectionCommandGroup.Name, "remove"], Description = "Remove a CCU connection")]
+public class RemoveConnectionCommand(IAnsiConsole console, ICcuConnectionsStore ccuConnectionsStore)
+    : ICliCommand<RemoveConnectionOptions>
 {
-    private readonly IAnsiConsole _console;
-    
-    private readonly ICcuConnectionsStore _ccuConnectionsStore;
+    private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
-    public RemoveConnectionCommand(IAnsiConsole console, ICcuConnectionsStore ccuConnectionsStore)
-    {
-        _console = Ensure.NotNull(console);
-        _ccuConnectionsStore = Ensure.NotNull(ccuConnectionsStore);
-    }
-    
-    public async Task<int> ExecuteAsync(RemoveConnectionOptions options)
+    private readonly ICcuConnectionsStore _ccuConnectionsStore = Ensure.NotNull(ccuConnectionsStore);
+
+    public async Task<CommandResult> ExecuteAsync(RemoveConnectionOptions options)
     {
         var removed = false;
-        
+
         if (options.Url is not null)
         {
             removed = await _ccuConnectionsStore
@@ -33,7 +31,7 @@ public class RemoveConnectionCommand : IHomeMaticCliCommandWithOptions<RemoveCon
             {
                 return -1;
             }
-            
+
             removed = await _ccuConnectionsStore
                 .RemoveConnectionAsync(options.Name)
                 .ConfigureAwait(false);
@@ -46,6 +44,6 @@ public class RemoveConnectionCommand : IHomeMaticCliCommandWithOptions<RemoveCon
         }
 
         _console.MarkupLine("[bold lime]Connection removed[/]");
-        return 0;
+        return CommandResult.Success;
     }
 }

@@ -1,6 +1,7 @@
 using CreativeCoders.Cli.Core;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Connection;
 
-[assembly: CliCommandGroup(["connection"], "Commands for managing CCU connections")]
+[assembly: CliCommandGroup([ConnectionCommandGroup.Name], "Commands for managing CCU connections")]
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Connection;
 

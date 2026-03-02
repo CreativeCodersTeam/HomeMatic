@@ -35,6 +35,6 @@ public class AddConnectionCommand(IAnsiConsole console, ICcuConnectionsStore ccu
         }
 
         _console.MarkupLine("[bold lime]Connection added[/]");
-        return 0;
+        return CommandResult.Success;
     }
 }
