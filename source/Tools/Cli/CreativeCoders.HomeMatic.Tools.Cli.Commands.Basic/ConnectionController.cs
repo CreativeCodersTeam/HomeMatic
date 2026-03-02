@@ -1,6 +1,5 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
-using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Connections.AddConnection;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Connections.ListConnections;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic.Connections.RemoveConnection;
 using CreativeCoders.SysConsole.Cli.Actions;
@@ -14,10 +13,6 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Basic;
 public class ConnectionController(ICliCommandExecutor commandExecutor)
 {
     private readonly ICliCommandExecutor _commandExecutor = Ensure.NotNull(commandExecutor);
-
-    [CliAction("add", HelpText = "Adds a new CCU connection to the available connections")]
-    public Task<CliActionResult> AddAsync(AddConnectionOptions options)
-        => _commandExecutor.ExecuteAsync<AddConnectionCommand, AddConnectionOptions>(options);
 
     [CliAction("remove", HelpText = "Removes a CCU connection from the available connections")]
     public Task<CliActionResult> RemoveAsync(RemoveConnectionOptions options)

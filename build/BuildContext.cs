@@ -35,9 +35,9 @@ public class BuildContext(ICakeContext context)
 
     public DirectoryPath PublishOutputDir => ArtifactsDir.Combine("published");
 
-    private const string CliPath = "source/Tools/Cli/CreativeCoders.HomeMatic.Tools.Cli";
+    private const string CliPath = "source/Tools/Cli/CreativeCoders.HomeMatic.Tools.Cli.Hmc";
 
-    private const string CliProjectFile = "CreativeCoders.HomeMatic.Tools.Cli.csproj";
+    private const string CliProjectFile = "CreativeCoders.HomeMatic.Tools.Cli.Hmc.csproj";
 
     public IEnumerable<PublishingItem> PublishingItems =>
     [
