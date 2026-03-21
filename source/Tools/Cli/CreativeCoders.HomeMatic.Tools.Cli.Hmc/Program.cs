@@ -5,6 +5,7 @@ using CreativeCoders.Core.IO;
 using CreativeCoders.Core.SysEnvironment;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.Tools.Cli.Base;
+using CreativeCoders.HomeMatic.Tools.Cli.Commands.Connection.Add;
 using CreativeCoders.HomeMatic.XmlRpc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,8 +24,8 @@ internal static class Program
                     Env.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     HomeMaticToolApp.ConfigFolderName,
                     HomeMaticToolApp.ConfigFileName)))
-            .EnableHelp(HelpCommandKind.CommandOrArgument)
-            //.ScanAssemblies(typeof(ShowConfigCommand).Assembly)
+            .EnableHelp(HelpCommandKind.CommandOrArgument, HelpCommandKind.EmptyArgs)
+            .ScanAssemblies(typeof(AddConnectionCommand).Assembly)
             .Build()
             .RunAsync(args)
             .ConfigureAwait(false);

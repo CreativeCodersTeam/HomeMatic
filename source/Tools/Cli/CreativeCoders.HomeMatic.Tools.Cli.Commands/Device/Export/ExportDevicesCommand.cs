@@ -9,7 +9,7 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 
 [UsedImplicitly]
-[CliCommand([DeviceCommandGroup.Name, "export"], Description = "Export device to json file")]
+//[CliCommand([DeviceCommandGroup.Name, "export"], Description = "Export device to json file")]
 public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
     : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, cliHomeMaticClientBuilder)
 {

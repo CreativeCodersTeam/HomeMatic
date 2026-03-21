@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Commands\CreativeCoders.HomeMatic.Tools.Cli.Commands.csproj"/>
     </ItemGroup>
 
 </Project>
