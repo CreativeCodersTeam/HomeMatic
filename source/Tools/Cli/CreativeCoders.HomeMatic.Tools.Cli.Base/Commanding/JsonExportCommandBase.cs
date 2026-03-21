@@ -1,18 +1,15 @@
 using CreativeCoders.HomeMatic.Core;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 
 public abstract class JsonExportCommandBase<T, TOptions>(
     IAnsiConsole console,
-    ICliHomeMaticClientBuilder cliHomeMaticClientBuilder) : IHomeMaticCliCommandWithOptions<TOptions>
+    IMultiCcuClient multiCcuClient) : IHomeMaticCliCommandWithOptions<TOptions>
     where TOptions : class
 {
     public async Task<int> ExecuteAsync(TOptions options)
     {
-        var ccuClient = await cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
-
         console.WriteLine("Export data to json file");
 
         if (!ValidateOptions(options))
@@ -22,7 +19,7 @@ public abstract class JsonExportCommandBase<T, TOptions>(
         }
 
         await new JsonDataExporterBase<T, TOptions>(console, LoadDataAsync, TransformData)
-            .ExportAsync(ccuClient, options, GetOutputFileName(options))
+            .ExportAsync(multiCcuClient, options, GetOutputFileName(options))
             .ConfigureAwait(false);
 
         return 0;

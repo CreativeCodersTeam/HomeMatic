@@ -1,8 +1,8 @@
 ﻿using CreativeCoders.Cli.Core;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
@@ -10,18 +10,16 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.ShowDetails;
 
 [UsedImplicitly]
-public class ShowDeviceDetailsCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
+public class ShowDeviceDetailsCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
     : ICliCommand<ShowDeviceDetailsOptions>
 {
-    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
+    private readonly IMultiCcuClient _multiCcuClient = Ensure.NotNull(multiCcuClient);
 
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
     public async Task<CommandResult> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
-        var ccuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
-
-        var device = await ccuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
+        var device = await _multiCcuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
 
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();

@@ -2,7 +2,6 @@ using CreativeCoders.Cli.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -10,8 +9,8 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 
 [UsedImplicitly]
 //[CliCommand([DeviceCommandGroup.Name, "export"], Description = "Export device to json file")]
-public class ExportDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
-    : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, cliHomeMaticClientBuilder)
+public class ExportDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
+    : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, multiCcuClient)
 {
     protected override object TransformData(ICompleteCcuDevice device)
     {
