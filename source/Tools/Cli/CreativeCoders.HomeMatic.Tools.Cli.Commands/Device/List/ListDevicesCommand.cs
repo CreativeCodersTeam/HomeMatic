@@ -4,6 +4,7 @@ using CreativeCoders.Core.Collections;
 using CreativeCoders.Core.Text;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
+using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -38,24 +39,13 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
             devices = devices.OrderBy(x => GetSortValue(x, options.SortField)).ToArray();
         }
 
-        var devicesTable = new Table()
-            .Border(TableBorder.None)
-            .AddColumn("Name", x => x.Padding(new Padding(3, 0)))
-            .AddColumn("Address", x => x.Padding(new Padding(3, 0)))
-            .AddColumn("CCU")
-            .AddColumn("Type", x => x.Padding(new Padding(3, 0)));
-
-        devices.ForEach(x =>
-        {
-            var nameColumn = new Markup($"[bold teal]{x.Name}[/]");
-            var addressColumn = new Markup($"[bold]{x.Uri.Address}[/]");
-            var ccuColumn = new Markup($"[bold yellow]{x.Uri.HostDisplayName}[/]");
-            var deviceTypeColumn = new Markup($"{x.DeviceType}");
-
-            devicesTable.AddRow(nameColumn, addressColumn, ccuColumn, deviceTypeColumn);
-        });
-
-        _console.Write(devicesTable);
+        _console.PrintTable(devices,
+        [
+            new TableColumnDef<ICcuDevice>(x => x.Name, "Name"),
+            new TableColumnDef<ICcuDevice>(x => x.Uri.Address, "Address"),
+            new TableColumnDef<ICcuDevice>(x => x.Uri.HostDisplayName, "CCU"),
+            new TableColumnDef<ICcuDevice>(x => x.DeviceType, "Type")
+        ]);
     }
 
     public async Task<CommandResult> ExecuteAsync(ListDevicesOptions options)
