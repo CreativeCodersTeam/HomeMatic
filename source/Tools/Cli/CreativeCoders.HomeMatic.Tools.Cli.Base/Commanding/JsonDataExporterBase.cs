@@ -25,7 +25,8 @@ public class JsonDataExporterBase<T, TOptions>(
         console.WriteLine($"Write data to json file '{outputFileName}'");
 
         await FileSys.File.WriteAllTextAsync(outputFileName,
-                outputData.ToJson(new JsonSerializerOptions { WriteIndented = true }))
+                outputData.ToJson(new JsonSerializerOptions
+                    { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase }))
             .ConfigureAwait(false);
     }
 }

@@ -8,7 +8,7 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 
 [UsedImplicitly]
-//[CliCommand([DeviceCommandGroup.Name, "export"], Description = "Export device to json file")]
+[CliCommand([DeviceCommandGroup.Name, "export"], Description = "Export device to json file")]
 public class ExportDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
     : JsonExportCommandBase<ICompleteCcuDevice, ExportDevicesOptions>(console, multiCcuClient)
 {
@@ -34,11 +34,6 @@ public class ExportDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcu
     protected override Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
     {
         return ccuClient.GetCompleteDeviceAsync(options.Address);
-    }
-
-    protected override bool ValidateOptions(ExportDevicesOptions options)
-    {
-        return !string.IsNullOrWhiteSpace(options.Address) && !string.IsNullOrWhiteSpace(options.OutputFileName);
     }
 
     protected override string GetOutputFileName(ExportDevicesOptions options)
