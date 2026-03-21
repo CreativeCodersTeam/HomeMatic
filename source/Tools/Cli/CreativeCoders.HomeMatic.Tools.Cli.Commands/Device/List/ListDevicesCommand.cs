@@ -1,9 +1,8 @@
 ﻿using CreativeCoders.Cli.Core;
 using CreativeCoders.Core;
-using CreativeCoders.Core.Collections;
 using CreativeCoders.Core.Text;
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
@@ -12,10 +11,10 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.List;
 
 [UsedImplicitly]
 [CliCommand([DeviceCommandGroup.Name, "list"], Description = "List all devices for all CCUs")]
-public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder cliHomeMaticClientBuilder)
+public class ListDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
     : ICliCommand<ListDevicesOptions>
 {
-    private readonly ICliHomeMaticClientBuilder _cliHomeMaticClientBuilder = Ensure.NotNull(cliHomeMaticClientBuilder);
+    private readonly IMultiCcuClient _multiCcuClient = Ensure.NotNull(multiCcuClient);
 
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
@@ -53,9 +52,7 @@ public class ListDevicesCommand(IAnsiConsole console, ICliHomeMaticClientBuilder
         _console.MarkupLine("List all devices for all CCUs");
         _console.WriteLine();
 
-        var multiCcuClient = await _cliHomeMaticClientBuilder.BuildMultiCcuClientAsync().ConfigureAwait(false);
-
-        PrintDevices((await multiCcuClient.GetDevicesAsync().ConfigureAwait(false)).Where(device =>
+        PrintDevices((await _multiCcuClient.GetDevicesAsync().ConfigureAwait(false)).Where(device =>
             FilterDevices(device, options)), options);
 
         _console.WriteLine();

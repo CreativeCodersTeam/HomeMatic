@@ -7,16 +7,11 @@ using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 
-public class CcuConnectionsStore : ICcuConnectionsStore
+public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
 {
-    private readonly IAnsiConsole _console;
+    private readonly IAnsiConsole _ansiConsole = Ensure.NotNull(console);
 
     private readonly ICredentialStore _credentialStore = CredentialManager.Create("HomeMatic");
-
-    public CcuConnectionsStore(IAnsiConsole console)
-    {
-        _console = Ensure.NotNull(console);
-    }
 
     public async Task<bool> AddConnectionAsync(CcuConnectionInfo connectionInfo)
     {
@@ -72,11 +67,26 @@ public class CcuConnectionsStore : ICcuConnectionsStore
             return [];
         }
 
-        var json = await FileSys.File.ReadAllTextAsync(GetConnectionsFileName())
-            .ConfigureAwait(false);
+        var stream = FileSys.File.OpenRead(GetConnectionsFileName());
+        await using (stream.ConfigureAwait(false))
+        {
+            return await JsonSerializer
+                       .DeserializeAsync<IReadOnlyCollection<CcuConnectionInfo>>(stream)
+                       .ConfigureAwait(false) ??
+                   [];
+        }
+    }
 
-        return JsonSerializer.Deserialize<IReadOnlyCollection<CcuConnectionInfo>>(json) ??
-               [];
+    public IReadOnlyCollection<CcuConnectionInfo> GetConnections()
+    {
+        if (!FileSys.File.Exists(GetConnectionsFileName()))
+        {
+            return [];
+        }
+
+        var json = FileSys.File.ReadAllText(GetConnectionsFileName());
+
+        return JsonSerializer.Deserialize<IReadOnlyCollection<CcuConnectionInfo>>(json) ?? [];
     }
 
     public NetworkCredential GetCredentials(CcuConnectionInfo ccuConnectionInfo)
@@ -88,11 +98,11 @@ public class CcuConnectionsStore : ICcuConnectionsStore
             return new NetworkCredential(credential.Account, credential.Password);
         }
 
-        _console.MarkupLine($"Input login credentials for {ccuConnectionInfo.Url.Host}");
+        _ansiConsole.MarkupLine($"Input login credentials for {ccuConnectionInfo.Url.Host}");
 
-        var userName = _console.Prompt(new TextPrompt<string>("User name: "));
+        var userName = _ansiConsole.Prompt(new TextPrompt<string>("User name: "));
 
-        var password = _console.Prompt(new TextPrompt<string>("Password: ") { IsSecret = true });
+        var password = _ansiConsole.Prompt(new TextPrompt<string>("Password: ") { IsSecret = true });
 
         _credentialStore.AddOrUpdate($"ccu://{ccuConnectionInfo.Url.Host}", userName, password);
 

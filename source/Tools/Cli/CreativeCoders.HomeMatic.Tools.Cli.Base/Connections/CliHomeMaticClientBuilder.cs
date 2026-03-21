@@ -28,4 +28,19 @@ public class CliHomeMaticClientBuilder(
 
         return _multiCcuClientFactory.Build();
     }
+
+    public IMultiCcuClient BuildMultiCcuClient()
+    {
+        var connections = _ccuConnectionsStore.GetConnections();
+
+        connections.ForEach(x =>
+        {
+            var credential = _ccuConnectionsStore.GetCredentials(x);
+
+            _multiCcuClientFactory.AddCcu(x.Name, x.Url.Host, credential.UserName, credential.Password,
+                [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp]);
+        });
+
+        return _multiCcuClientFactory.Build();
+    }
 }
