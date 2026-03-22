@@ -5,10 +5,11 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.CakeBuild" Version="6.7.0" />
+        <PackageReference Include="CreativeCoders.CakeBuild" Version="6.7.0"/>
     </ItemGroup>
 
 </Project>
