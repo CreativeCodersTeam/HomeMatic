@@ -1,41 +1,46 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
-using CreativeCoders.HomeMatic.Client.Core;
 using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 
-public class CliHomeMaticClientBuilder : ICliHomeMaticClientBuilder
+public class CliHomeMaticClientBuilder(
+    ICcuConnectionsStore ccuConnectionsStore,
+    IMultiCcuClientFactory multiCcuClientFactory)
+    : ICliHomeMaticClientBuilder
 {
-    private readonly ICcuConnectionsStore _ccuConnectionsStore;
-    
-    private readonly IHomeMaticClientBuilder _homeMaticClientBuilder;
+    private readonly IMultiCcuClientFactory _multiCcuClientFactory = Ensure.NotNull(multiCcuClientFactory);
 
-    public CliHomeMaticClientBuilder(ICcuConnectionsStore ccuConnectionsStore, IHomeMaticClientBuilder homeMaticClientBuilder)
-    {
-        _ccuConnectionsStore = Ensure.NotNull(ccuConnectionsStore);
-        _homeMaticClientBuilder = Ensure.NotNull(homeMaticClientBuilder);
-    }
-    
-    public async Task<IHomeMaticClient> BuildAsync()
+    private readonly ICcuConnectionsStore _ccuConnectionsStore = Ensure.NotNull(ccuConnectionsStore);
+
+    public async Task<IMultiCcuClient> BuildMultiCcuClientAsync()
     {
         var connections = await _ccuConnectionsStore.GetConnectionsAsync()
             .ConfigureAwait(false);
-        
+
         connections.ForEach(x =>
         {
             var credential = _ccuConnectionsStore.GetCredentials(x);
-            
-            _homeMaticClientBuilder.AddCcu(
-                new HomeMaticCcuConnectionInfo(x.Name, x.Url)
-                {
-                    Systems =
-                        HomeMaticDeviceSystem.HomeMatic | HomeMaticDeviceSystem.HomeMaticIp,
-                    Username = credential.UserName,
-                    Password = credential.Password
-                });
+
+            _multiCcuClientFactory.AddCcu(x.Name, x.Url.Host, credential.UserName, credential.Password,
+                [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp]);
         });
 
-        return _homeMaticClientBuilder.Build();
+        return _multiCcuClientFactory.Build();
+    }
+
+    public IMultiCcuClient BuildMultiCcuClient()
+    {
+        var connections = _ccuConnectionsStore.GetConnections();
+
+        connections.ForEach(x =>
+        {
+            var credential = _ccuConnectionsStore.GetCredentials(x);
+
+            _multiCcuClientFactory.AddCcu(x.Name, x.Url.Host, credential.UserName, credential.Password,
+                [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp]);
+        });
+
+        return _multiCcuClientFactory.Build();
     }
 }

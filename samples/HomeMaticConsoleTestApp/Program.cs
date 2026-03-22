@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Text.Json;
-using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.JsonRpc.Api;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,14 +14,14 @@ var apiBuilder = sp.GetRequiredService<IHomeMaticJsonRpcApiBuilder>();
 
 var api = apiBuilder.ForUrl(new Uri("http://192.168.2.210/api/homematic.cgi")).Build();
 
-var password = Console.ReadLine();
+var password = Console.ReadLine() ?? string.Empty;
 
-var loginResponse = await api.LoginAsync("Admin", password);
+var loginResponse = await api.LoginAsync("Admin", password ?? string.Empty);
 
 Console.WriteLine(JsonSerializer.Serialize(loginResponse));
 
 var doLoginResponse = await api.LoginAsync("Admin", password);
-        
+
 Console.WriteLine($"DoLogin with api builder Response: {doLoginResponse}");
 
 Console.WriteLine("Hello, World!");

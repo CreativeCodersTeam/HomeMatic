@@ -11,25 +11,25 @@ public class DefaultSharedData : ISharedData
 
     public DefaultSharedData(IAnsiConsole console)
     {
-        _console = Ensure.NotNull(console, nameof(console));
-        
+        _console = Ensure.NotNull(console);
+
         FileSys.Directory.CreateDirectory(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             HomeMaticToolApp.ConfigFolderName));
     }
-    
+
     private static string GetCliDataFileName() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         HomeMaticToolApp.ConfigFolderName,
         HomeMaticToolApp.CliDataFileName);
-    
+
     public CliSharedData LoadCliData()
     {
         if (!FileSys.File.Exists(GetCliDataFileName()))
         {
             return new CliSharedData();
         }
-        
+
         return JsonSerializer.Deserialize<CliSharedData>(FileSys.File.ReadAllText(GetCliDataFileName()))
             ?? new CliSharedData();
     }

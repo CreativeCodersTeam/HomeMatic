@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CreativeCoders.Core" Version="6.7.0" />
+        <PackageReference Include="CreativeCoders.Data.NoSql.LiteDb" Version="6.7.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,17 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Library</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<Authors>CreativeCoders</Authors>
-		<Description>Base classes and enums for HomeMatic CCU RPC</Description>
-		<RepositoryUrl>https://github.com/CreativeCodersTeam/HomeMatic</RepositoryUrl>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Description>Base classes and enums for HomeMatic CCU RPC</Description>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="CreativeCoders.Core" Version="2.7.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CreativeCoders.Core" Version="6.7.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    </ItemGroup>
 
 </Project>

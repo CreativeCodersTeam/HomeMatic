@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Core\CreativeCoders.HomeMatic.Core.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.JsonRpc\CreativeCoders.HomeMatic.JsonRpc.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
+    </ItemGroup>
+
+
+</Project>
