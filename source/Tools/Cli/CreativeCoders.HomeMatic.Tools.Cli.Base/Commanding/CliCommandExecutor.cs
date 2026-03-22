@@ -11,7 +11,7 @@ public class CliCommandExecutor : ICliCommandExecutor
 
     public CliCommandExecutor(IServiceProvider serviceProvider)
     {
-        _serviceProvider = Ensure.NotNull(serviceProvider, nameof(serviceProvider));
+        _serviceProvider = Ensure.NotNull(serviceProvider);
     }
 
     public async Task<CliActionResult> ExecuteAsync<TCommand, TOptions>(TOptions options)

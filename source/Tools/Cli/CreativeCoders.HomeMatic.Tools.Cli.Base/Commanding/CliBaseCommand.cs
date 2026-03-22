@@ -11,8 +11,8 @@ public abstract class CliBaseCommand
 
     protected CliBaseCommand(IHomeMaticXmlRpcApiBuilder apiBuilder, ISharedData sharedData)
     {
-        _apiBuilder = Ensure.NotNull(apiBuilder, nameof(apiBuilder));
-        SharedData = Ensure.NotNull(sharedData, nameof(sharedData));
+        _apiBuilder = Ensure.NotNull(apiBuilder);
+        SharedData = Ensure.NotNull(sharedData);
     }
     
     protected IHomeMaticXmlRpcApi BuildApi()

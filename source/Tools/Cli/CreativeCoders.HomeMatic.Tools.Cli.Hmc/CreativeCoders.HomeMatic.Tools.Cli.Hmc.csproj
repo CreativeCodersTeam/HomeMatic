@@ -6,6 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>hmc</AssemblyName>
+        <PackAsTool>true</PackAsTool>
+        <IsPackable>true</IsPackable>
+        <ToolCommandName>hmc</ToolCommandName>
+        <PackageId>CreativeCoders.HomeMatic.Cli</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
