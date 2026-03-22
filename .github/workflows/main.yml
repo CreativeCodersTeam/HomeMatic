@@ -23,6 +23,7 @@ jobs:
         run: ./build.cmd -t nugetpush -t publish -t createdistpackages -t creategithubrelease
         env:
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Publish: coverage_report'
         uses: actions/upload-artifact@v4
         with:
