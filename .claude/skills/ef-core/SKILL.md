@@ -1,6 +1,8 @@
 ---
 name: ef-core
-description: 'Get best practices for Entity Framework Core'
+description: 'Get EF Core best practices. Use when writing queries, creating migrations,
+  setting up DbContext, implementing repository pattern, or troubleshooting
+  performance issues with Entity Framework Core.'
 ---
 
 # Entity Framework Core Best Practices
