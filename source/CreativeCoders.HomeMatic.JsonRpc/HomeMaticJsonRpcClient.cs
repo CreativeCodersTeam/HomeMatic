@@ -7,25 +7,19 @@ using CreativeCoders.Net.JsonRpc;
 
 namespace CreativeCoders.HomeMatic.JsonRpc;
 
-public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
+public class HomeMaticJsonRpcClient(IHomeMaticJsonRpcApi jsonRpcApi) : IHomeMaticJsonRpcClient
 {
-    private readonly IHomeMaticJsonRpcApi _jsonRpcApi;
-    
-    private SynchronizedValue<string?> _sessionId = SynchronizedValue.Create<string?>(null);
+    private readonly IHomeMaticJsonRpcApi _jsonRpcApi = Ensure.NotNull(jsonRpcApi);
+ private readonly SynchronizedValue<string?> _sessionId = SynchronizedValue.Create<string?>(null);
 
-    public HomeMaticJsonRpcClient(IHomeMaticJsonRpcApi jsonRpcApi)
-    {
-        _jsonRpcApi = Ensure.NotNull(jsonRpcApi);
-    }
-    
     public async Task LoginAsync()
     {
         if (Credential == null)
         {
             throw new InvalidOperationException("No credentials specified");
         }
-        
-        var response = await _jsonRpcApi.LoginAsync(Credential.UserName, Credential.Password);
+
+        var response = await _jsonRpcApi.LoginAsync(Credential.UserName, Credential.Password).ConfigureAwait(false);
 
         _sessionId.Value = response.Result;
     }
@@ -36,7 +30,7 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
         {
             return;
         }
-        
+
         await _jsonRpcApi.LogoutAsync(_sessionId.Value).ConfigureAwait(false);
 
         _sessionId.Value = null;
@@ -44,8 +38,7 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
 
     public async Task<IEnumerable<DeviceDetails>> ListAllDetailsAsync()
     {
-        var jsonRpcResponse = await InvokeAsync(
-                sessionId => _jsonRpcApi.ListAllDetailsAsync(sessionId))
+        var jsonRpcResponse = await InvokeAsync(sessionId => _jsonRpcApi.ListAllDetailsAsync(sessionId))
             .ConfigureAwait(false);
 
         return jsonRpcResponse.Result ?? Array.Empty<DeviceDetails>();
@@ -62,12 +55,12 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
         {
             await LoginAsync().ConfigureAwait(false);
         }
-        
+
         if (_sessionId.Value == null)
         {
             throw new InvalidOperationException("No session id available. Logins seems to fail somehow.");
         }
-        
+
         try
         {
             return await executeFunc(_sessionId.Value).ConfigureAwait(false);
@@ -78,16 +71,15 @@ public class HomeMaticJsonRpcClient : IHomeMaticJsonRpcClient
             {
                 throw;
             }
-            
+
             await LoginAsync().ConfigureAwait(false);
-            
+
             if (_sessionId == null)
             {
                 throw new InvalidOperationException("No session id available. Logins seems to fail somehow.");
             }
-                
-            return await executeFunc(_sessionId.Value);
 
+            return await executeFunc(_sessionId.Value).ConfigureAwait(false);
         }
     }
 
