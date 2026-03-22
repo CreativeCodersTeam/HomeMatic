@@ -82,9 +82,10 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     private async Task<string> Event(string interfaceId, string address, string valueKey, object value)
     {
         _logger.LogDebug(
-            $"Event from CCU received. InterfaceId = {interfaceId}; Address = {address}; ValueKey = {valueKey}; Value = {value}");
+            "Event from CCU received. InterfaceId = {InterfaceId}; Address = {Address}; ValueKey = {ValueKey}; Value = {Value}",
+            interfaceId, address, valueKey, value);
 
-        await _eventHandlers.ForEachAsync(x => x.Event(address, valueKey, value));
+        await _eventHandlers.ForEachAsync(x => x.Event(address, valueKey, value)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -96,7 +97,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     [XmlRpcMethod("listDevices")]
     private Task<IEnumerable<XmlRpcValue>> ListDevices(string interfaceId)
     {
-        _logger.LogDebug($"List devices for InterfaceId = {interfaceId}");
+        _logger.LogDebug("List devices for InterfaceId = {InterfaceId}", interfaceId);
 
         return Task.FromResult(Array.Empty<XmlRpcValue>() as IEnumerable<XmlRpcValue>);
     }
@@ -108,11 +109,13 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     private async Task<string> NewDevices(string interfaceId, DeviceDescription[] deviceDescriptions)
     {
         _logger.LogDebug(
-            $"CCU notifies about new Devices for InterfaceId = {interfaceId}. New device count: {deviceDescriptions.Length}");
+            "CCU notifies about new Devices for InterfaceId = {InterfaceId}. New device count: {DeviceCount}",
+            interfaceId, deviceDescriptions.Length);
 
-        deviceDescriptions.ForEach(deviceDescription => _logger.LogTrace($"New device: Address = {deviceDescription.Address}"));
+        deviceDescriptions.ForEach(deviceDescription =>
+            _logger.LogTrace("New device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.NewDevices(deviceDescriptions));
+        await _eventHandlers.ForEachAsync(x => x.NewDevices(deviceDescriptions)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -123,11 +126,14 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     [XmlRpcMethod("deleteDevices")]
     private async Task<string> DeleteDevices(string interfaceId, DeviceDescription[] deviceDescriptions)
     {
-        _logger.LogDebug($"CCU notifies about deleted devices for InterfaceId = {interfaceId}. Deleted device count: {deviceDescriptions.Length}");
+        _logger.LogDebug(
+            "CCU notifies about deleted devices for InterfaceId = {InterfaceId}. Deleted device count: {DeviceCount}",
+            interfaceId, deviceDescriptions.Length);
 
-        deviceDescriptions.ForEach(deviceDescription => _logger.LogTrace($"Deleted device: Address = {deviceDescription.Address}"));
+        deviceDescriptions.ForEach(deviceDescription =>
+            _logger.LogTrace("Deleted device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(deviceDescriptions));
+        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(deviceDescriptions)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -138,9 +144,11 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     [XmlRpcMethod("updateDevice")]
     private async Task<string> UpdateDevice(string interfaceId, string address, int hint)
     {
-        _logger.LogDebug($"CCU device is updated. InterfaceId = {interfaceId}; Address = {address}; Hint = {hint}");
+        _logger.LogDebug(
+            "CCU device is updated. InterfaceId = {InterfaceId}; Address = {Address}; Hint = {Hint}",
+            interfaceId, address, hint);
 
-        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(address, hint));
+        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(address, hint)).ConfigureAwait(false);
 
         return string.Empty;
     }
