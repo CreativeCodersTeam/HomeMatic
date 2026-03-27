@@ -9,7 +9,7 @@ Write comprehensive unit tests for the specified code. Follow a multi-step proce
 
 - **Test Framework**: xUnit
 - **Mocking**: FakeItEasy
-- **Assertions**: AwesomeAssertions
+- **Assertions**: AwesomeAssertions (a fork of FluentAssertions with identical API — use `Should()` as usual)
 - **Structure**: Each test method has Arrange/Act/Assert blocks, marked with comments
 - **Language**: English for code, comments, and test names
 - **Style**: Adopt the existing test style from nearby test files in the project
@@ -22,7 +22,7 @@ Write comprehensive unit tests for the specified code. Follow a multi-step proce
   - Different code paths (if/else, switch, exceptions)
   - Edge Cases (null, empty collections, boundary values)
 
-2. **Identify test project**: Find the appropriate test project under `source/Test/`. Orient yourself to the existing project structure.
+2. **Identify test project**: Find the appropriate test project by looking for `*.Tests.csproj` files or `*Tests/` directories in the solution. Fall back to scanning for any project whose name ends in `.Tests` or `.Test`. Orient yourself to the existing project structure before adding files.
 
 3. **Create tests**: Write tests following this pattern:
 

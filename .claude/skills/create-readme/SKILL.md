@@ -1,6 +1,6 @@
 ---
 name: create-readme
-description: 'Create a README.md file for the project'
+description: Creates a comprehensive, professional README.md for a project. Use when a project has no README, when the existing README is outdated or incomplete, or when asked to document a project. Follows OSS conventions with GFM formatting, project logo detection, and concise writing style.
 ---
 
 ## Role

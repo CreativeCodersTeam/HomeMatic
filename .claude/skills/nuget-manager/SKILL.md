@@ -13,7 +13,8 @@ This skill ensures consistent and safe management of NuGet packages across .NET 
 
 - .NET SDK installed (typically .NET 8.0 SDK or later, or a version compatible with the target solution).
 - `dotnet` CLI available on your `PATH`.
-- `jq` (JSON processor) OR PowerShell (for version verification using `dotnet package search`).
+- `jq` (JSON processor) — Linux/macOS; OR
+- PowerShell (`pwsh`) — Windows/cross-platform; required for version verification using `dotnet package search`.
 
 ## Core Rules
 
@@ -54,6 +55,22 @@ When updating a version, follow these steps:
 
 4.  **Verify Stability**:
     Run `dotnet restore` on the project or solution. If errors occur, revert the change and investigate.
+
+### Listing Outdated Packages
+
+Use `dotnet list package --outdated` to find packages with newer versions available.
+
+**Per project:**
+```bash
+dotnet list src/MyProject/MyProject.csproj package --outdated
+```
+
+**Entire solution:**
+```bash
+dotnet list package --outdated
+```
+
+The output shows the current version, the latest resolved version, and the latest available version for each package. Use this as the basis for deciding which packages to update, then follow the **Updating Package Versions** workflow for each.
 
 ## Examples
 

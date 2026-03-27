@@ -1,8 +1,6 @@
 ---
 name: ef-core
-description: 'Get EF Core best practices. Use when writing queries, creating migrations,
-  setting up DbContext, implementing repository pattern, or troubleshooting
-  performance issues with Entity Framework Core.'
+description: Entity Framework Core best practices for .NET projects. Use when designing DbContext, creating entities or relationships, writing LINQ queries, managing migrations, implementing repository patterns, or troubleshooting N+1 queries and performance issues with EF Core.
 ---
 
 # Entity Framework Core Best Practices
@@ -54,9 +52,61 @@ Your goal is to help me follow best practices when working with Entity Framework
 
 - Use appropriate change tracking strategies
 - Batch your SaveChanges() calls
-- Implement concurrency control for multi-user scenarios
+- Implement concurrency control for multi-user scenarios (see below)
 - Consider using transactions for multiple operations
 - Use appropriate DbContext lifetimes (scoped for web apps)
+
+### Concurrency Control
+
+Use `[Timestamp]` for automatic row-version concurrency (SQL Server / PostgreSQL with `rowversion` or `xmin`):
+
+```csharp
+public class Order
+{
+    public int Id { get; set; }
+    public string Status { get; set; } = string.Empty;
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = [];
+}
+```
+
+Use `[ConcurrencyCheck]` to protect individual properties without a row version column:
+
+```csharp
+public class Product
+{
+    public int Id { get; set; }
+
+    [ConcurrencyCheck]
+    public decimal Price { get; set; }
+}
+```
+
+Or configure via fluent API:
+
+```csharp
+modelBuilder.Entity<Order>()
+    .Property(o => o.RowVersion)
+    .IsRowVersion();
+
+modelBuilder.Entity<Product>()
+    .Property(p => p.Price)
+    .IsConcurrencyToken();
+```
+
+Catch `DbUpdateConcurrencyException` at the call site and implement a retry or conflict-resolution strategy:
+
+```csharp
+try
+{
+    await context.SaveChangesAsync();
+}
+catch (DbUpdateConcurrencyException ex)
+{
+    // Reload the entity and resolve the conflict, or inform the user
+    await ex.Entries.Single().ReloadAsync();
+}
 
 ## Security
 
@@ -68,9 +118,24 @@ Your goal is to help me follow best practices when working with Entity Framework
 
 ## Testing
 
-- Use in-memory database provider for unit tests
-- Create separate testing contexts with SQLite for integration tests
-- Mock DbContext and DbSet for pure unit tests
+- Avoid the EF Core In-Memory provider for tests — it does not enforce constraints, referential integrity, or transactions, so tests can pass while real database behavior fails
+- Use **SQLite in-memory mode** for lightweight unit and integration tests that need realistic SQL semantics:
+  ```csharp
+  var connection = new SqliteConnection("DataSource=:memory:");
+  connection.Open();
+  var options = new DbContextOptionsBuilder<AppDbContext>()
+      .UseSqlite(connection)
+      .Options;
+  ```
+- Use **Testcontainers** for integration tests that must match production database behavior (e.g., PostgreSQL, SQL Server):
+  ```csharp
+  var container = new PostgreSqlBuilder().Build();
+  await container.StartAsync();
+  var options = new DbContextOptionsBuilder<AppDbContext>()
+      .UseNpgsql(container.GetConnectionString())
+      .Options;
+  ```
+- Mock DbContext and DbSet only for pure unit tests that do not execute queries
 - Test migrations in isolated environments
 - Consider snapshot testing for model changes
 

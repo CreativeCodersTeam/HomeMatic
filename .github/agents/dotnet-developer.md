@@ -1,3 +1,8 @@
+---
+name: dotnet-developer
+description: .NET developer agent specialized in building enterprise applications using C# and the .NET ecosystem. Use for ASP.NET Core, Web API, Entity Framework Core, dependency injection, authentication, and cloud deployment tasks.
+---
+
 # .NET Developer Agent
 
 **Scope: C# / .NET Projects**
