@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Core" Version="6.7.0" />
-        <PackageReference Include="CreativeCoders.DynamicCode.Proxying" Version="6.7.0" />
-        <PackageReference Include="CreativeCoders.Net.JsonRpc" Version="6.7.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
+        <PackageReference Include="CreativeCoders.Core" />
+        <PackageReference Include="CreativeCoders.DynamicCode.Proxying" />
+        <PackageReference Include="CreativeCoders.Net.JsonRpc" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
 
     </ItemGroup>
 

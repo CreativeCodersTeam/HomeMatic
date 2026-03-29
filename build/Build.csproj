@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.CakeBuild" Version="6.7.0"/>
+        <PackageReference Include="CreativeCoders.CakeBuild"/>
     </ItemGroup>
 
 </Project>
