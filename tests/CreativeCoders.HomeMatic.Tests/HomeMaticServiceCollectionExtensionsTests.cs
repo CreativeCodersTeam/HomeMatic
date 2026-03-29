@@ -1,5 +1,5 @@
 using CreativeCoders.HomeMatic.Core;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic.Tests;

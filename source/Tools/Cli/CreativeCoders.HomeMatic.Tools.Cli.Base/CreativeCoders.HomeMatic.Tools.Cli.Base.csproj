@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Cli.Core" Version="6.7.0"/>
-        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions" Version="6.7.0"/>
-        <PackageReference Include="Devlooped.CredentialManager" Version="2.6.1.1"/>
-        <PackageReference Include="Spectre.Console" Version="0.54.0"/>
+        <PackageReference Include="CreativeCoders.Cli.Core"/>
+        <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions"/>
+        <PackageReference Include="Devlooped.CredentialManager"/>
+        <PackageReference Include="Spectre.Console"/>
     </ItemGroup>
 
     <ItemGroup>

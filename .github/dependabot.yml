@@ -1,0 +1,46 @@
+version: 2
+
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    groups:
+      # Tier 1: Dev/Test dependencies — auto-merge on patch + minor
+      dev-dependencies:
+        patterns:
+          - "xunit*"
+          - "XunitXml.TestLogger"
+          - "FakeItEasy"
+          - "AwesomeAssertions"
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet.collector"
+          - "JetBrains.Annotations"
+          - "CreativeCoders.CakeBuild"
+      # Tier 2: Production dependencies — auto-merge on patch only
+      microsoft-packages:
+        patterns:
+          - "Microsoft.Extensions.*"
+      creativecoders-packages:
+        patterns:
+          - "CreativeCoders.Cli.*"
+          - "CreativeCoders.Configuration"
+          - "CreativeCoders.Core"
+          - "CreativeCoders.Net.*"
+          - "CreativeCoders.SysConsole.*"
+      runtime-libraries:
+        patterns:
+          - "Devlooped.CredentialManager"
+          - "Spectre.Console"
+      # Catch-all: Any package not matched by the groups above.
+      # Dependabot assigns each package to the first matching group only,
+      # so this will never include packages already covered above.
+      other-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "dependencies"

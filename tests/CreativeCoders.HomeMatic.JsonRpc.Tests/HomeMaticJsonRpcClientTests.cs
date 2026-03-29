@@ -2,7 +2,7 @@ using System.Net;
 using CreativeCoders.HomeMatic.JsonRpc.Api;
 using CreativeCoders.Net.JsonRpc;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace CreativeCoders.HomeMatic.JsonRpc.Tests;
 

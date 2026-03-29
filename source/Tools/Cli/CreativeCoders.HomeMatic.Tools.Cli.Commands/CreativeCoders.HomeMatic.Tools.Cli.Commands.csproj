@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Cli.Core" Version="6.7.0"/>
-        <PackageReference Include="Spectre.Console" Version="0.54.0"/>
+        <PackageReference Include="CreativeCoders.Cli.Core"/>
+        <PackageReference Include="Spectre.Console"/>
     </ItemGroup>
 
     <ItemGroup>

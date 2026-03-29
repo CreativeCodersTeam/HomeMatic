@@ -13,8 +13,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Cli.Hosting" Version="6.7.0"/>
-        <PackageReference Include="CreativeCoders.Configuration" Version="6.7.0"/>
+        <PackageReference Include="CreativeCoders.Cli.Hosting"/>
+        <PackageReference Include="CreativeCoders.Configuration"/>
     </ItemGroup>
 
     <ItemGroup>
