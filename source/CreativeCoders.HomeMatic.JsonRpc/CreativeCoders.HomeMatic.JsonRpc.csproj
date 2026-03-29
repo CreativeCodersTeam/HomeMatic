@@ -7,10 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Core" />
-        <PackageReference Include="CreativeCoders.DynamicCode.Proxying" />
-        <PackageReference Include="CreativeCoders.Net.JsonRpc" />
-        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="CreativeCoders.Core"/>
+        <PackageReference Include="CreativeCoders.Net.JsonRpc"/>
+        <PackageReference Include="Microsoft.Extensions.Http"/>
 
     </ItemGroup>
 

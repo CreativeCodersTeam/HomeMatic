@@ -30,7 +30,6 @@ updates:
           - "CreativeCoders.Cli.*"
           - "CreativeCoders.Configuration"
           - "CreativeCoders.Core"
-          - "CreativeCoders.DynamicCode.*"
           - "CreativeCoders.Net.*"
           - "CreativeCoders.SysConsole.*"
       runtime-libraries:
