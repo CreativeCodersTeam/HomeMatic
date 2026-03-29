@@ -4,7 +4,7 @@ using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.Exporting;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace CreativeCoders.HomeMatic.Tests.Exporting;
 

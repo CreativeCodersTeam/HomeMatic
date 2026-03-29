@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__global", "__global", "{73
 		LICENSE = LICENSE
 		GitVersion.yml = GitVersion.yml
 		Directory.Packages.props = Directory.Packages.props
+		.github\dependabot.yml = .github\dependabot.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{B79F3B3E-C9CE-4629-ADE3-B1659AF9C673}"
@@ -65,6 +66,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{386F9478-8C54-
 		.github\workflows\pull-request.yml = .github\workflows\pull-request.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\sync-ai-config.yml = .github\workflows\sync-ai-config.yml
+		.github\workflows\dependabot-auto-merge.yml = .github\workflows\dependabot-auto-merge.yml
+		.github\workflows\dependabot-manual.yml = .github\workflows\dependabot-manual.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.HomeMatic.Tools.Cli.Hmc", "source\Tools\Cli\CreativeCoders.HomeMatic.Tools.Cli.Hmc\CreativeCoders.HomeMatic.Tools.Cli.Hmc.csproj", "{A6E76585-17FA-4F7F-A8EE-C4C517C0ABEE}"

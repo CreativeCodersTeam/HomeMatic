@@ -4,7 +4,7 @@ using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace CreativeCoders.HomeMatic.Tests;
 

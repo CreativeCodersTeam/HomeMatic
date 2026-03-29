@@ -5,7 +5,7 @@ using CreativeCoders.HomeMatic.JsonRpc.Models;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using FakeItEasy;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace CreativeCoders.HomeMatic.Tests;
 

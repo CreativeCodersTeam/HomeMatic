@@ -1,5 +1,5 @@
 using CreativeCoders.HomeMatic.Exporting;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace CreativeCoders.HomeMatic.Tests.Exporting;
 
