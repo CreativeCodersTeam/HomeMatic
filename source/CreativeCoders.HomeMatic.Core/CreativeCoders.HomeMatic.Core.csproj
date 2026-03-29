@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="CreativeCoders.Core" />
         <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
 </Project>
