@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__global", "__global", "{73
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		GitVersion.yml = GitVersion.yml
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{B79F3B3E-C9CE-4629-ADE3-B1659AF9C673}"
