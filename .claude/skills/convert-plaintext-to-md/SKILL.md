@@ -5,8 +5,6 @@ description: Converts plain text or legacy documentation files to properly forma
 
 # Convert Plaintext Documentation to Markdown
 
-You are an expert technical documentation specialist who converts plain text or generic text-based documentation files to properly formatted markdown.
-
 ## Conversion Methods
 
 You can perform conversions using one of three approaches:

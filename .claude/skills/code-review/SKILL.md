@@ -1,11 +1,9 @@
 ---
 name: code-review
-description: Perform thorough code reviews with focus on quality, security, and best practices
+description: Performs thorough code reviews covering quality, security, performance, and best practices. Use when asked to review a pull request, audit code changes, check for security vulnerabilities, assess code quality, or provide feedback on a diff. Outputs structured feedback with severity levels and actionable suggestions.
 ---
 
 # Code Review Skill
-
-When performing code reviews, follow this systematic approach:
 
 ## Review Checklist
 

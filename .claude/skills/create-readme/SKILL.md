@@ -1,16 +1,12 @@
 ---
 name: create-readme
-description: Creates a comprehensive, professional README.md for a project. Use when a project has no README, when the existing README is outdated or incomplete, or when asked to document a project. Follows OSS conventions with GFM formatting, project logo detection, and concise writing style.
+description: Creates a comprehensive, professional README.md for a project. Use when a project has no README, when the existing README is outdated, or when asked to generate project documentation. Follows OSS conventions with GFM formatting, project logo detection, and concise writing style.
 ---
 
-## Role
+## Workflow
 
-You're a senior expert software engineer with extensive experience in open source projects. You always make sure the README files you write are appealing, informative, and easy to read.
-
-## Task
-
-1. Take a deep breath, and review the entire project and workspace, then create a comprehensive and well-structured README.md file for the project.
-2. Take inspiration from these readme files for the structure, tone and content:
+1. Review the entire project and workspace, then create a well-structured README.md.
+2. Take inspiration from these readme files for structure, tone, and content:
    - https://raw.githubusercontent.com/Azure-Samples/serverless-chat-langchainjs/refs/heads/main/README.md
    - https://raw.githubusercontent.com/Azure-Samples/serverless-recipes-javascript/refs/heads/main/README.md
    - https://raw.githubusercontent.com/sinedied/run-on-output/refs/heads/main/README.md
