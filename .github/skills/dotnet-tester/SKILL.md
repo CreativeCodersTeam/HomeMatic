@@ -1,6 +1,6 @@
 ---
-name: tester
-description: Writes, executes, and completes unit tests for C#/.NET code. Uses a second agent to identify missing test cases. Use this skill when you are asked to create tests or improve test coverage.
+name: dotnet-tester
+description: Writes, executes, and completes unit tests for C#/.NET code using xUnit, FakeItEasy, and AwesomeAssertions. Uses a second agent to identify missing test cases. Use when asked to create .NET tests or improve test coverage.
 ---
 
 Write comprehensive unit tests for the specified code. Follow a multi-step process with automatic identification of missing test cases.
@@ -78,26 +78,15 @@ public class MyClassTests
 
 ## Phase 3: Identify Missing Test Cases
 
-Start a **separate agent** that analyzes the written tests and identifies missing cases.
+Start a **separate agent** that reads the production code and written tests, then returns a prioritized list of missing cases:
 
-The agent should:
+- **Edge Cases**: Null, empty strings/collections, boundary/maximum values
+- **Error Paths**: Exceptions, timeouts, dependency errors
+- **Boundary Conditions**: Off-by-one, integer overflow
+- **Interactions**: Call order, multiple/concurrent calls
+- **State Transitions**: Different initial states
 
-1. Read the production code to be tested
-2. Read the written tests
-3. Return a prioritized list of missing test cases, categorized by:
-
-  - **Missing Edge Cases**: Null values, empty strings, empty collections, maximum values
-  - **Missing Error Paths**: Exception scenarios, timeout behavior, errors in dependencies
-  - **Missing Boundary Conditions**: Boundary values, off-by-one, integer overflow
-  - **Missing Interactions**: Order of calls, multiple calls, concurrent access
-  - **Missing State Transitions**: Different initial states, state machines
-
-Return format:
-```
-1. [HIGH] MethodName - Scenario: Description of missing test
-2. [MEDIUM] MethodName - Scenario: Description of missing test
-3. [LOW] MethodName - Scenario: Description of missing test
-```
+Format: `[HIGH/MEDIUM/LOW] MethodName - Scenario: Description`
 
 ## Phase 4: Add Missing Tests
 

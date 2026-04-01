@@ -5,8 +5,6 @@ description: Entity Framework Core best practices for .NET projects. Use when de
 
 # Entity Framework Core Best Practices
 
-Your goal is to help me follow best practices when working with Entity Framework Core.
-
 ## Data Context Design
 
 - Keep DbContext classes focused and cohesive
@@ -58,55 +56,7 @@ Your goal is to help me follow best practices when working with Entity Framework
 
 ### Concurrency Control
 
-Use `[Timestamp]` for automatic row-version concurrency (SQL Server / PostgreSQL with `rowversion` or `xmin`):
-
-```csharp
-public class Order
-{
-    public int Id { get; set; }
-    public string Status { get; set; } = string.Empty;
-
-    [Timestamp]
-    public byte[] RowVersion { get; set; } = [];
-}
-```
-
-Use `[ConcurrencyCheck]` to protect individual properties without a row version column:
-
-```csharp
-public class Product
-{
-    public int Id { get; set; }
-
-    [ConcurrencyCheck]
-    public decimal Price { get; set; }
-}
-```
-
-Or configure via fluent API:
-
-```csharp
-modelBuilder.Entity<Order>()
-    .Property(o => o.RowVersion)
-    .IsRowVersion();
-
-modelBuilder.Entity<Product>()
-    .Property(p => p.Price)
-    .IsConcurrencyToken();
-```
-
-Catch `DbUpdateConcurrencyException` at the call site and implement a retry or conflict-resolution strategy:
-
-```csharp
-try
-{
-    await context.SaveChangesAsync();
-}
-catch (DbUpdateConcurrencyException ex)
-{
-    // Reload the entity and resolve the conflict, or inform the user
-    await ex.Entries.Single().ReloadAsync();
-}
+See [concurrency-control.md](./references/concurrency-control.md) for `[Timestamp]`, `[ConcurrencyCheck]`, fluent API configuration, and `DbUpdateConcurrencyException` handling patterns.
 
 ## Security
 
@@ -138,5 +88,4 @@ catch (DbUpdateConcurrencyException ex)
 - Mock DbContext and DbSet only for pure unit tests that do not execute queries
 - Test migrations in isolated environments
 - Consider snapshot testing for model changes
-
-When reviewing my EF Core code, identify issues and suggest improvements that follow these best practices.
+- Use the `dotnet-tester` skill for generating unit and integration tests after schema changes
