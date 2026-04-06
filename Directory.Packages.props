@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.7.0"/>
+        <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.7.1"/>
         <PackageVersion Include="CreativeCoders.Cli.Core" Version="6.7.0"/>
         <PackageVersion Include="CreativeCoders.Cli.Hosting" Version="6.7.0"/>
         <PackageVersion Include="CreativeCoders.Configuration" Version="6.7.0"/>
