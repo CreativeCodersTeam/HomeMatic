@@ -19,6 +19,6 @@ public class MultiCcuClientFactory(ICcuClientFactory ccuClientFactory) : IMultiC
 
     public IMultiCcuClient Build()
     {
-        return new MultiCcuClient(_ccuClients);
+        return new MultiCcuClient(_ccuClients, new CcuRoutingTable());
     }
 }

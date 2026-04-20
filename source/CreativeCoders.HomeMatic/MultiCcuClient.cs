@@ -1,36 +1,97 @@
+using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
-public class MultiCcuClient(
-    IEnumerable<ICcuClient> ccuClients) : IMultiCcuClient
+public class MultiCcuClient : IMultiCcuClient
 {
-    public Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
+    private readonly IReadOnlyList<ICcuClient> _ccuClients;
+
+    private readonly ICcuRoutingTable _routingTable;
+
+    public MultiCcuClient(IEnumerable<ICcuClient> ccuClients)
+        : this(ccuClients, new CcuRoutingTable())
     {
-        return GetDataFromClientsAsync(x => x.GetDevicesAsync());
     }
 
-    public async Task<ICcuDevice> GetDeviceAsync(string address)
+    public MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
     {
-        return (await GetDevicesAsync().ConfigureAwait(false)).FirstOrDefault(x => x.Uri.Address == address) ??
-               throw new KeyNotFoundException($"Device with address '{address}' not found.");
+        Ensure.NotNull(ccuClients);
+
+        _ccuClients = ccuClients.ToList();
+        _routingTable = Ensure.NotNull(routingTable);
     }
 
-    public Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
+    public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
-        return GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync());
+        var results = await GetDataFromClientsAsync(x => x.GetDevicesAsync()).ConfigureAwait(false);
+
+        // Populate the routing table so that subsequent per-device calls can skip the full scan.
+        RegisterRoutes(results.SelectMany(pair => pair.Items.Select(item => (item.Uri.Address, pair.Client))));
+
+        return results.SelectMany(pair => pair.Items);
     }
 
-    public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
+    public Task<ICcuDevice> GetDeviceAsync(string address)
     {
-        foreach (var ccuClient in ccuClients)
+        Ensure.IsNotNullOrWhitespace(address);
+
+        return InvokeWithRoutingAsync(address, (client, deviceAddress) => client.GetDeviceAsync(deviceAddress));
+    }
+
+    public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
+    {
+        var results = await GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync()).ConfigureAwait(false);
+
+        RegisterRoutes(results.SelectMany(pair =>
+            pair.Items.Select(item => (item.DeviceData.Uri.Address, pair.Client))));
+
+        return results.SelectMany(pair => pair.Items);
+    }
+
+    public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
+    {
+        Ensure.IsNotNullOrWhitespace(address);
+
+        return InvokeWithRoutingAsync(address,
+            (client, deviceAddress) => client.GetCompleteDeviceAsync(deviceAddress));
+    }
+
+    // Generic helper that routes a per-device call through the routing table. Can be reused by future
+    // per-device methods without duplicating the lookup/fallback logic.
+    private async Task<TResult> InvokeWithRoutingAsync<TResult>(string address,
+        Func<ICcuClient, string, Task<TResult>> func)
+    {
+        var deviceAddress = NormalizeAddress(address);
+
+        if (_routingTable.TryGetClient(deviceAddress, out var cachedClient) && cachedClient is not null)
         {
             try
             {
-                var completeDevice = await ccuClient.GetCompleteDeviceAsync(address).ConfigureAwait(false);
+                return await func(cachedClient, address).ConfigureAwait(false);
+            }
+            catch (KeyNotFoundException)
+            {
+                // Cached mapping is stale; drop it and fall back to probing the remaining clients.
+                _routingTable.Invalidate(deviceAddress);
+            }
+        }
 
-                return completeDevice;
+        foreach (var ccuClient in _ccuClients)
+        {
+            if (ReferenceEquals(ccuClient, cachedClient))
+            {
+                continue;
+            }
+
+            try
+            {
+                var result = await func(ccuClient, address).ConfigureAwait(false);
+
+                _routingTable.Register(deviceAddress, ccuClient);
+
+                return result;
             }
             catch (KeyNotFoundException)
             {
@@ -40,17 +101,34 @@ public class MultiCcuClient(
         throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 
-    private async Task<IEnumerable<T>> GetDataFromClientsAsync<T>(Func<ICcuClient, Task<IEnumerable<T>>> func)
+    private void RegisterRoutes(IEnumerable<(string Address, ICcuClient Client)> entries)
     {
-        var dataFromClients = new List<IEnumerable<T>>();
+        _routingTable.Register(entries
+            .Where(entry => !string.IsNullOrWhiteSpace(entry.Address))
+            .Select(entry => new KeyValuePair<string, ICcuClient>(NormalizeAddress(entry.Address), entry.Client)));
+    }
 
-        foreach (var ccuClient in ccuClients)
+    // Device addresses may be suffixed with a channel index (e.g. "ABC0001234:1"). Routing is performed
+    // on the device level, so we strip the channel part for lookups and registrations.
+    private static string NormalizeAddress(string address)
+    {
+        var separatorIndex = address.IndexOf(':');
+
+        return separatorIndex < 0 ? address : address[..separatorIndex];
+    }
+
+    private async Task<List<(ICcuClient Client, IEnumerable<T> Items)>> GetDataFromClientsAsync<T>(
+        Func<ICcuClient, Task<IEnumerable<T>>> func)
+    {
+        var dataFromClients = new List<(ICcuClient Client, IEnumerable<T> Items)>();
+
+        foreach (var ccuClient in _ccuClients)
         {
             var data = await func(ccuClient).ConfigureAwait(false);
 
-            dataFromClients.Add(data);
+            dataFromClients.Add((ccuClient, data));
         }
 
-        return dataFromClients.SelectMany(x => x);
+        return dataFromClients;
     }
 }
