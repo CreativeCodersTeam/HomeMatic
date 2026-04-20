@@ -1,27 +1,16 @@
+using System.Diagnostics.CodeAnalysis;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
-public class MultiCcuClient : IMultiCcuClient
+public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
+    : IMultiCcuClient
 {
-    private readonly IReadOnlyList<ICcuClient> _ccuClients;
+    private readonly IReadOnlyList<ICcuClient> _ccuClients = Ensure.NotNull(ccuClients).ToList();
 
-    private readonly ICcuRoutingTable _routingTable;
-
-    public MultiCcuClient(IEnumerable<ICcuClient> ccuClients)
-        : this(ccuClients, new CcuRoutingTable())
-    {
-    }
-
-    public MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
-    {
-        Ensure.NotNull(ccuClients);
-
-        _ccuClients = ccuClients.ToList();
-        _routingTable = Ensure.NotNull(routingTable);
-    }
+    private readonly ICcuRoutingTable _routingTable = Ensure.NotNull(routingTable);
 
     public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
@@ -78,13 +67,8 @@ public class MultiCcuClient : IMultiCcuClient
             }
         }
 
-        foreach (var ccuClient in _ccuClients)
+        foreach (var ccuClient in _ccuClients.Where(ccuClient => !ReferenceEquals(ccuClient, cachedClient)))
         {
-            if (ReferenceEquals(ccuClient, cachedClient))
-            {
-                continue;
-            }
-
             try
             {
                 var result = await func(ccuClient, address).ConfigureAwait(false);
@@ -95,6 +79,7 @@ public class MultiCcuClient : IMultiCcuClient
             }
             catch (KeyNotFoundException)
             {
+                // Device not found on this client; try the next one.
             }
         }
 
