@@ -4,8 +4,16 @@ using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic.Exporting;
 
+/// <summary>
+/// Default JSON implementation of <see cref="IDeviceExporter"/>.
+/// </summary>
+/// <remarks>
+/// The exporter uses <see cref="JsonSerializer"/> with camelCase property naming and skips
+/// <see langword="null"/> values.
+/// </remarks>
 public class DeviceExporter : IDeviceExporter
 {
+    /// <inheritdoc />
     public Task<string> ExportDeviceAsync(ICompleteCcuDevice device, DeviceExportOptions? options = null)
     {
         var exportData = BuildExportData(device, options);
@@ -13,6 +21,7 @@ public class DeviceExporter : IDeviceExporter
         return Task.FromResult(json);
     }
 
+    /// <inheritdoc />
     public Task<string> ExportDevicesAsync(IEnumerable<ICompleteCcuDevice> devices, DeviceExportOptions? options = null)
     {
         var exportDataList = devices.Select(d => BuildExportData(d, options)).ToList();
@@ -20,6 +29,7 @@ public class DeviceExporter : IDeviceExporter
         return Task.FromResult(json);
     }
 
+    /// <inheritdoc />
     public DeviceExportData BuildExportData(ICompleteCcuDevice device, DeviceExportOptions? options = null)
     {
         return new DeviceExportData

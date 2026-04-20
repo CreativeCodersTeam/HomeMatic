@@ -4,8 +4,13 @@ using CreativeCoders.HomeMatic.Core.Parameters;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <summary>
+/// Default implementation of <see cref="ICompleteCcuDeviceBuilder"/> that augments an <see cref="ICcuDevice"/>
+/// with the parameter-set values and descriptions of its device and channels.
+/// </summary>
 public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
 {
+    /// <inheritdoc />
     public async Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device)
     {
         var channels = await GetChannelsAsync(device).ConfigureAwait(false);

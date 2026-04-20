@@ -8,11 +8,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <summary>
+/// Creates <see cref="CcuClient"/> instances that are wired up with the required XML-RPC and JSON-RPC clients.
+/// </summary>
+/// <param name="xmlRpcApiBuilder">The builder used to create <see cref="IHomeMaticXmlRpcApi"/> instances.</param>
+/// <param name="jsonRpcClientBuilder">The builder used to create <see cref="IHomeMaticJsonRpcClient"/> instances.</param>
+/// <param name="serviceProvider">The service provider used to resolve additional dependencies such as <see cref="ICompleteCcuDeviceBuilder"/>.</param>
 public class CcuClientFactory(
     IHomeMaticXmlRpcApiBuilder xmlRpcApiBuilder,
     IHomeMaticJsonRpcClientBuilder jsonRpcClientBuilder,
     IServiceProvider serviceProvider) : ICcuClientFactory
 {
+    /// <inheritdoc />
     public ICcuClient CreateClient(string ccuName, IEnumerable<CcuDeviceKind> deviceKinds, string host, string userName,
         string password)
     {

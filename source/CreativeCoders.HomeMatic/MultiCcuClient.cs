@@ -5,6 +5,16 @@ using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <summary>
+/// Aggregates several <see cref="ICcuClient"/> instances into a single client that routes per-device
+/// calls to the CCU that owns the device.
+/// </summary>
+/// <param name="ccuClients">The underlying CCU clients to dispatch calls to.</param>
+/// <param name="routingTable">The routing table used to cache the mapping from device address to <see cref="ICcuClient"/>.</param>
+/// <remarks>
+/// The first call to <see cref="GetDevicesAsync"/> or <see cref="GetCompleteDevicesAsync"/> populates the
+/// <paramref name="routingTable"/> so that subsequent per-device calls can skip the full scan.
+/// </remarks>
 public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
     : IMultiCcuClient
 {
@@ -12,6 +22,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
 
     private readonly ICcuRoutingTable _routingTable = Ensure.NotNull(routingTable);
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
         var results = await GetDataFromClientsAsync(x => x.GetDevicesAsync()).ConfigureAwait(false);
@@ -22,6 +33,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
         return results.SelectMany(pair => pair.Items);
     }
 
+    /// <inheritdoc />
     public Task<ICcuDevice> GetDeviceAsync(string address)
     {
         Ensure.IsNotNullOrWhitespace(address);
@@ -29,6 +41,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
         return InvokeWithRoutingAsync(address, (client, deviceAddress) => client.GetDeviceAsync(deviceAddress));
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
     {
         var results = await GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync()).ConfigureAwait(false);
@@ -39,6 +52,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
         return results.SelectMany(pair => pair.Items);
     }
 
+    /// <inheritdoc />
     public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
         Ensure.IsNotNullOrWhitespace(address);
