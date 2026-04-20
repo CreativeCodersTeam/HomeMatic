@@ -58,12 +58,14 @@ public class DeviceExporter : IDeviceExporter
             .Select(ps => new ParamSetExportData
             {
                 ParamSetKey = ps.ParamSetKey,
-                Values = ps.ParamSetValues.Select(v => new ParamValueExportData
-                {
-                    Key = v.ParamSetValue.Name,
-                    Name = v.Description.Id,
-                    Value = v.ParamSetValue.Value
-                }).ToList()
+                Values = ps.ParamSetValues
+                    .Where(v => options?.IsParamValueNameAllowed(v.ParamSetValue.Name) ?? true)
+                    .Select(v => new ParamValueExportData
+                    {
+                        Key = v.ParamSetValue.Name,
+                        Name = v.Description.Id == v.ParamSetValue.Name ? null : v.Description.Id,
+                        Value = v.ParamSetValue.Value
+                    }).ToList()
             })
             .ToList();
     }

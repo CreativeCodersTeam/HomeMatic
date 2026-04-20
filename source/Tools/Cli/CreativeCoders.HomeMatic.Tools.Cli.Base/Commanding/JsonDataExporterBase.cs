@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CreativeCoders.Core.IO;
 using CreativeCoders.Core.Text;
 using CreativeCoders.HomeMatic.Core;
@@ -26,7 +27,10 @@ public class JsonDataExporterBase<T, TOptions>(
 
         await FileSys.File.WriteAllTextAsync(outputFileName,
                 outputData.ToJson(new JsonSerializerOptions
-                    { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase }))
+                {
+                    WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                }))
             .ConfigureAwait(false);
     }
 }

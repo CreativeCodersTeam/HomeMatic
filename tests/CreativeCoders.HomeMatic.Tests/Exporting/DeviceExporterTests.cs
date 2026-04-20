@@ -633,4 +633,192 @@ public class DeviceExporterTests
         result.ParamSetValues.Should().HaveCount(1);
         result.ParamSetValues.First().Values.Should().BeEmpty();
     }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelist_FiltersOutNonWhitelistedValues()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("MASTER",
+                ("BOOST_TIME", 5, "Boost Time"),
+                ("DECALCIFICATION_TIME", 22, "Decalcification Time"),
+                ("PARTY_MODE", false, "Party Mode"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME", "PARTY_MODE"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Should().HaveCount(1);
+        var values = result.ParamSetValues.First().Values.ToList();
+        values.Should().HaveCount(2);
+        values.Select(v => v.Key).Should().BeEquivalentTo("BOOST_TIME", "PARTY_MODE");
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelistNonMatching_ReturnsEmptyValues()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("VALUES", ("SET_TEMPERATURE", 21.5, "Set Temperature"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["NONEXISTENT"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Should().HaveCount(1);
+        result.ParamSetValues.First().Values.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void BuildExportData_WithNullParamValueNameWhitelist_IncludesAllValues()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("MASTER",
+                ("BOOST_TIME", 5, "Boost Time"),
+                ("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = null };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.First().Values.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void BuildExportData_WithEmptyParamValueNameWhitelist_IncludesAllValues()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("MASTER",
+                ("BOOST_TIME", 5, "Boost Time"),
+                ("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = [] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.First().Values.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void BuildExportData_WithBothWhitelists_StacksFilters()
+    {
+        // Arrange – two ParamSets with different values each
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("MASTER",
+                ("BOOST_TIME", 5, "Boost Time"),
+                ("DECALCIFICATION_TIME", 22, "Decalcification Time")),
+            CreateParamSetValues("LINK",
+                ("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        // Allow only MASTER ParamSet and only BOOST_TIME value
+        var options = new DeviceExportOptions
+        {
+            ParamSetWhitelist = ["MASTER"],
+            ParamValueNameWhitelist = ["BOOST_TIME"]
+        };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert – LINK is filtered out by ParamSetWhitelist, DECALCIFICATION_TIME by ParamValueNameWhitelist
+        result.ParamSetValues.Should().HaveCount(1);
+        result.ParamSetValues.First().ParamSetKey.Should().Be("MASTER");
+        result.ParamSetValues.First().Values.Should().HaveCount(1);
+        result.ParamSetValues.First().Values.First().Key.Should().Be("BOOST_TIME");
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelistCaseInsensitive_FiltersCorrectly()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("VALUES",
+                ("SET_TEMPERATURE", 21.5, "Set Temperature"),
+                ("ACTUAL_TEMPERATURE", 20.1, "Actual Temperature"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["set_temperature"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.First().Values.Should().HaveCount(1);
+        result.ParamSetValues.First().Values.First().Key.Should().Be("SET_TEMPERATURE");
+    }
+
+    [Fact]
+    public void BuildExportData_WithChannelAndParamValueNameWhitelist_FiltersChannelValues()
+    {
+        // Arrange
+        var channelParamSetValues = new[]
+        {
+            CreateParamSetValues("VALUES",
+                ("SET_TEMPERATURE", 21.5, "Set Temperature"),
+                ("ACTUAL_TEMPERATURE", 20.1, "Actual Temperature"),
+                ("VALVE_STATE", 45, "Valve State"))
+        };
+        var channel = CreateFakeChannel(paramSetValues: channelParamSetValues);
+        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel] });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["SET_TEMPERATURE", "VALVE_STATE"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        var channelResult = result.Channels.First();
+        channelResult.ParamSetValues.First().Values.Should().HaveCount(2);
+        channelResult.ParamSetValues.First().Values.Select(v => v.Key)
+            .Should().BeEquivalentTo("SET_TEMPERATURE", "VALVE_STATE");
+    }
+
+    [Fact]
+    public async Task ExportDevicesAsync_WithParamValueNameWhitelist_FiltersValuesPerDevice()
+    {
+        // Arrange
+        var paramSetValues = new[]
+        {
+            CreateParamSetValues("MASTER",
+                ("BOOST_TIME", 5, "Boost Time"),
+                ("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+        };
+        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDevicesAsync([device], options);
+
+        // Assert
+        json.Should().Contain("BOOST_TIME");
+        json.Should().NotContain("DECALCIFICATION_TIME");
+    }
 }

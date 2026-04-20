@@ -100,6 +100,100 @@ public class DeviceExportOptionsTests
     }
 
     [Fact]
+    public void IsParamValueNameAllowed_WithNullWhitelist_ReturnsTrue()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = null };
+
+        // Act
+        var result = options.IsParamValueNameAllowed("BOOST_TIME");
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsParamValueNameAllowed_WithEmptyWhitelist_ReturnsTrue()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = [] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed("BOOST_TIME");
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsParamValueNameAllowed_WithMatchingName_ReturnsTrue()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME", "SET_TEMPERATURE"] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed("BOOST_TIME");
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsParamValueNameAllowed_WithNonMatchingName_ReturnsFalse()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME", "SET_TEMPERATURE"] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed("ACTUAL_TEMPERATURE");
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("boost_time")]
+    [InlineData("Boost_Time")]
+    [InlineData("BOOST_TIME")]
+    public void IsParamValueNameAllowed_WithDifferentCasing_ReturnsTrue(string name)
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME"] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed(name);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsParamValueNameAllowed_WithEmptyStringName_ReturnsFalseWhenNotInWhitelist()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME"] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed(string.Empty);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsParamValueNameAllowed_WithEmptyStringNameAndEmptyWhitelist_ReturnsTrue()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = [] };
+
+        // Act
+        var result = options.IsParamValueNameAllowed(string.Empty);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
     public void WriteIndented_DefaultValue_IsTrue()
     {
         // Arrange & Act

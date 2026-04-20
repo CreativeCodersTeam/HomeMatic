@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ public static class HomeMaticServiceCollectionExtensions
         services.TryAddTransient<ICcuClientFactory, CcuClientFactory>();
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
         services.TryAddTransient<ICompleteCcuDeviceBuilder, CompleteCcuDeviceBuilder>();
+        services.TryAddSingleton<IDeviceExporter, DeviceExporter>();
 
         return services;
     }
