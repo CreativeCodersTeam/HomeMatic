@@ -6,7 +6,7 @@ namespace CreativeCoders.HomeMatic.Core.Parameters;
 /// Defines the well-known parameter-set key names used by the CCU.
 /// </summary>
 [PublicAPI]
-public class ParamSetKey
+public static class ParamSetKey
 {
     /// <summary>
     /// The parameter set containing master (configuration) parameters.
