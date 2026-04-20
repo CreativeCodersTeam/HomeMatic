@@ -1,6 +1,7 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;

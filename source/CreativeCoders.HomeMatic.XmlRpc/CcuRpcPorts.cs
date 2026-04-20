@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core;
+namespace CreativeCoders.HomeMatic.XmlRpc;
 
 [PublicAPI]
 public static class CcuRpcPorts
@@ -23,18 +23,6 @@ public static class CcuRpcPorts
             HomeMaticDeviceSystems.HomeMaticWired => HomeMaticWired,
             HomeMaticDeviceSystems.CoupledDevice => CoupledDevices,
             _ => throw new ArgumentOutOfRangeException(nameof(deviceSystems), deviceSystems, null)
-        };
-    }
-
-    public static int ToPort(this CcuDeviceKind deviceKind)
-    {
-        return deviceKind switch
-        {
-            CcuDeviceKind.HomeMatic => HomeMatic,
-            CcuDeviceKind.HomeMaticIp => HomeMaticIp,
-            CcuDeviceKind.HomeMaticWired => HomeMaticWired,
-            CcuDeviceKind.Coupled => CoupledDevices,
-            _ => throw new ArgumentOutOfRangeException(nameof(deviceKind), deviceKind, null)
         };
     }
 }

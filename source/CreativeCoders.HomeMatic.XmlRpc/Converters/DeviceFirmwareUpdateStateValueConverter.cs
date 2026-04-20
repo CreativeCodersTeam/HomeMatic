@@ -1,4 +1,4 @@
-﻿using CreativeCoders.HomeMatic.Core.Devices;
+﻿using CreativeCoders.HomeMatic.XmlRpc.Devices;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Model;
 using CreativeCoders.Net.XmlRpc.Model.Values;

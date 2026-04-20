@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions;
+namespace CreativeCoders.HomeMatic.XmlRpc.Exceptions;
 
 [PublicAPI]
 public abstract class CcuXmlRpcException : HomeMaticException

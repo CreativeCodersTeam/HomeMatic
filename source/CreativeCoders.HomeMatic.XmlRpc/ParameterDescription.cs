@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CreativeCoders.HomeMatic.Core.Parameters;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Converters;
 using CreativeCoders.Net.XmlRpc.Definition;
 using JetBrains.Annotations;

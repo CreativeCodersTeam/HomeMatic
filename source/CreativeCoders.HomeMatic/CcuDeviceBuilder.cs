@@ -2,8 +2,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
+using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value

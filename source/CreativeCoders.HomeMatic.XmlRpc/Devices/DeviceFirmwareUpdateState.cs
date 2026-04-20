@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Devices;
+namespace CreativeCoders.HomeMatic.XmlRpc.Devices;
 
 [PublicAPI]
 public enum DeviceFirmwareUpdateState

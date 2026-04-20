@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CreativeCoders.HomeMatic.Core.Parameters;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Model;
 using CreativeCoders.Net.XmlRpc.Model.Values;

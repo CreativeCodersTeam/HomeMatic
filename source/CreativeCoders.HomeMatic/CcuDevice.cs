@@ -1,6 +1,7 @@
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
+using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 
 namespace CreativeCoders.HomeMatic;
 

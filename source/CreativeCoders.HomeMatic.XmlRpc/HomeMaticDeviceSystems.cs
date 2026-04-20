@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core;
+namespace CreativeCoders.HomeMatic.XmlRpc;
 
 [Flags]
 public enum HomeMaticDeviceSystems

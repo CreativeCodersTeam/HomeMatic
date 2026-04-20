@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace CreativeCoders.HomeMatic.Core.Parameters;
+namespace CreativeCoders.HomeMatic.XmlRpc.Parameters;
 
 [PublicAPI]
 public enum ParameterDataType

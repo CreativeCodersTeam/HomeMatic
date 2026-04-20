@@ -1,6 +1,6 @@
 ﻿using System;
 using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic.XmlRpc;
 

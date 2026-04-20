@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
+using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Converters;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Definition.MemberConverters;
@@ -104,7 +104,7 @@ public class DeviceDescription
     /// <summary>
     /// Gets or sets the reception mode flags for this device. Only present for BidCoS-RF devices.
     /// </summary>
-    /// <value>A bitwise combination of <see cref="CreativeCoders.HomeMatic.Core.Parameters.RxMode"/> values.</value>
+    /// <value>A bitwise combination of <see cref="RxMode"/> values.</value>
     [XmlRpcStructMember("RX_MODE", DefaultValue = RxMode.None, Converter = typeof(FlagsMemberValueConverter<RxMode>))]
     public RxMode RxMode { get; set; }
 
@@ -165,7 +165,7 @@ public class DeviceDescription
     /// <summary>
     /// Gets or sets the direction of this channel in a direct device link. Only present for channels.
     /// </summary>
-    /// <value>One of the <see cref="CreativeCoders.HomeMatic.Core.Devices.ChannelDirection"/> values.</value>
+    /// <value>One of the <see cref="ChannelDirection"/> values.</value>
     [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None, Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
     public ChannelDirection ChannelDirection { get; set; }
 

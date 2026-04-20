@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CreativeCoders.HomeMatic.Core.Exceptions;
+namespace CreativeCoders.HomeMatic.XmlRpc.Exceptions;
 
 public class DeviceAddressExpectedException : CcuXmlRpcException
 {

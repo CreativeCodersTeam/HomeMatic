@@ -1,6 +1,7 @@
 using System.Net;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using FakeItEasy;
 using AwesomeAssertions;

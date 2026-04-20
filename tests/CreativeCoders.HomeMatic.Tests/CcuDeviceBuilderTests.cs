@@ -1,8 +1,9 @@
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
+using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using FakeItEasy;
 using AwesomeAssertions;
 
