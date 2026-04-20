@@ -1,31 +1,28 @@
 <Project>
-
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.7.1"/>
-        <PackageVersion Include="CreativeCoders.Cli.Core" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.Cli.Hosting" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.Configuration" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.Core" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.Net.JsonRpc" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.Net.XmlRpc" Version="6.7.0"/>
-        <PackageVersion Include="CreativeCoders.SysConsole.Cli.Actions" Version="6.7.0"/>
-        <PackageVersion Include="coverlet.collector" Version="8.0.1"/>
-        <PackageVersion Include="Devlooped.CredentialManager" Version="2.7.0"/>
-        <PackageVersion Include="FakeItEasy" Version="9.0.1"/>
-        <PackageVersion Include="AwesomeAssertions" Version="9.4.0"/>
-        <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6"/>
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6"/>
-        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0"/>
-        <PackageVersion Include="Spectre.Console" Version="0.54.0"/>
-        <PackageVersion Include="xunit" Version="2.9.3"/>
-        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
-        <PackageVersion Include="XunitXml.TestLogger" Version="8.0.0"/>
-    </ItemGroup>
-
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Cli.Core" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Cli.Hosting" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Configuration" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Core" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Net.JsonRpc" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.Net.XmlRpc" Version="6.7.2" />
+    <PackageVersion Include="CreativeCoders.SysConsole.Cli.Actions" Version="6.7.2" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.1" />
+    <PackageVersion Include="Devlooped.CredentialManager" Version="2.7.0" />
+    <PackageVersion Include="FakeItEasy" Version="9.0.1" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.55.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="XunitXml.TestLogger" Version="8.0.0" />
+  </ItemGroup>
 </Project>
