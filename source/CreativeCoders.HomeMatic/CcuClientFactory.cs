@@ -2,6 +2,7 @@ using System.Net;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,8 +34,8 @@ public class CcuClientFactory(
 
         deviceKinds.ForEach(x =>
         {
-            var xmlRpcEndpoint = new XmlRpcEndpoint(baseUrl.Uri, x);
-            xmlRpcApis[x] = new XmlRpcApiConnection(xmlRpcEndpoint, CreateXmlRpcApi(xmlRpcEndpoint))
+            var apiAddress = new XmlRpcApiAddress(baseUrl.Uri, x);
+            xmlRpcApis[x] = new XmlRpcApiConnection(apiAddress, CreateXmlRpcApi(apiAddress))
             {
                 CcuName = ccuName
             };
@@ -43,10 +44,10 @@ public class CcuClientFactory(
         return xmlRpcApis;
     }
 
-    private IHomeMaticXmlRpcApi CreateXmlRpcApi(XmlRpcEndpoint xmlRpcEndpoint)
+    private IHomeMaticXmlRpcApi CreateXmlRpcApi(XmlRpcApiAddress apiAddress)
     {
         return xmlRpcApiBuilder
-            .ForUrl(xmlRpcEndpoint.ToApiUrl())
+            .ForUrl(apiAddress.ToApiUrl())
             .Build();
     }
 

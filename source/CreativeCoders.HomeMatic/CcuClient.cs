@@ -48,10 +48,10 @@ public class CcuClient(
             .WithApi(xmlRpcApiConnection.Api)
             .WithUri(new CcuDeviceUri
             {
-                CcuHost = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
+                CcuHost = xmlRpcApiConnection.Address.BaseUrl.Host,
                 CcuName = xmlRpcApiConnection.CcuName,
                 Address = deviceDescription.Address,
-                Kind = xmlRpcApiConnection.Endpoint.DeviceKind
+                Kind = xmlRpcApiConnection.Address.DeviceKind
             })
             .WithAllDevices(allDevices)
             .Build();

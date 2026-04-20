@@ -1,6 +1,7 @@
 ﻿using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 

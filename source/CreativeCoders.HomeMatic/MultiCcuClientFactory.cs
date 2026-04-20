@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic;
 

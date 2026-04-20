@@ -262,11 +262,11 @@ public class CcuClientTests
         ICompleteCcuDeviceBuilder? completeCcuDeviceBuilder = null)
     {
         var homeMaticXmlRpcApiConnection = new XmlRpcApiConnection(
-            new XmlRpcEndpoint(new Uri("http://example.com"), CcuDeviceKind.HomeMatic),
+            new XmlRpcApiAddress(new Uri("http://example.com"), CcuDeviceKind.HomeMatic),
             homeMaticXmlRpcApi);
 
         var homeMaticIpXmlRpcApiConnection = new XmlRpcApiConnection(
-            new XmlRpcEndpoint(new Uri("http://example.com"), CcuDeviceKind.HomeMaticIp),
+            new XmlRpcApiAddress(new Uri("http://example.com"), CcuDeviceKind.HomeMaticIp),
             homeMaticIpXmlRpcApi);
 
         var xmlRpcApis = new Dictionary<CcuDeviceKind, XmlRpcApiConnection>

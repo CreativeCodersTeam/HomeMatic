@@ -1,11 +1,12 @@
 using CreativeCoders.Core;
+using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic;
 
-public class XmlRpcApiConnection(XmlRpcEndpoint endpoint, IHomeMaticXmlRpcApi api)
+public class XmlRpcApiConnection(XmlRpcApiAddress address, IHomeMaticXmlRpcApi api)
 {
-    public XmlRpcEndpoint Endpoint { get; } = Ensure.NotNull(endpoint);
+    public XmlRpcApiAddress Address { get; } = Ensure.NotNull(address);
 
     public string CcuName { get; set; } = string.Empty;
 
