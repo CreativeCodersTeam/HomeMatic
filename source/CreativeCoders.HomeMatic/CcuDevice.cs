@@ -9,7 +9,7 @@ public class CcuDevice(IHomeMaticXmlRpcApi api) : CcuDeviceBase(api), ICcuDevice
 {
     public string Name { get; set; } = string.Empty;
 
-    public required RxMode RxMode { get; init; }
+    public required RxModes RxMode { get; init; }
 
     public required int RfAddress { get; init; }
 

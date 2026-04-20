@@ -11,7 +11,7 @@ namespace CreativeCoders.HomeMatic.Core.Parameters;
 /// </remarks>
 [PublicAPI]
 [Flags]
-public enum ParameterFlags
+public enum ParameterUiAttributes
 {
     /// <summary>
     /// No flags are set.

@@ -11,7 +11,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Parameters;
 /// </remarks>
 [PublicAPI]
 [Flags]
-public enum RxMode
+public enum RxModes
 {
     /// <summary>
     /// No reception mode is set.

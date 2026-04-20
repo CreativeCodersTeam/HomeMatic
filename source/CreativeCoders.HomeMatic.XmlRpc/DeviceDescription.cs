@@ -105,8 +105,8 @@ public class DeviceDescription
     /// Gets or sets the reception mode flags for this device. Only present for BidCoS-RF devices.
     /// </summary>
     /// <value>A bitwise combination of <see cref="RxMode"/> values.</value>
-    [XmlRpcStructMember("RX_MODE", DefaultValue = RxMode.None, Converter = typeof(FlagsMemberValueConverter<RxMode>))]
-    public RxMode RxMode { get; set; }
+    [XmlRpcStructMember("RX_MODE", DefaultValue = RxModes.None, Converter = typeof(FlagsMemberValueConverter<RxModes>))]
+    public RxModes RxMode { get; set; }
 
     /// <summary>
     /// Gets or sets the address of the paired channel in a button group. Only present for grouped channels.
@@ -149,7 +149,8 @@ public class DeviceDescription
     /// Gets or sets the current firmware update state of the device. Only present for devices.
     /// </summary>
     /// <value>One of the <see cref="DeviceFirmwareUpdateState"/> values indicating the update progress.</value>
-    [XmlRpcStructMember("FIRMWARE_UPDATE_STATE", DefaultValue = DeviceFirmwareUpdateState.None, Converter = typeof(DeviceFirmwareUpdateStateValueConverter))]
+    [XmlRpcStructMember("FIRMWARE_UPDATE_STATE", DefaultValue = DeviceFirmwareUpdateState.None,
+        Converter = typeof(DeviceFirmwareUpdateStateValueConverter))]
     public DeviceFirmwareUpdateState FirmwareUpdateState { get; set; }
 
     /// <summary>
@@ -166,7 +167,8 @@ public class DeviceDescription
     /// Gets or sets the direction of this channel in a direct device link. Only present for channels.
     /// </summary>
     /// <value>One of the <see cref="ChannelDirection"/> values.</value>
-    [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None, Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
+    [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None,
+        Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
     public ChannelDirection ChannelDirection { get; set; }
 
     /// <summary>

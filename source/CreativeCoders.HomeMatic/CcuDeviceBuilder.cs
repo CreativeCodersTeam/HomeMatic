@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using CreativeCoders.HomeMatic.Core;
@@ -11,7 +12,9 @@ namespace CreativeCoders.HomeMatic;
 
 public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
 {
-    #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+    [SuppressMessage("csharpsquid", "S3459",
+        Justification = "Fields are set via WithField method and not directly assigned to.")]
     private CcuDeviceUri? _uri;
 
     private DeviceDescription? _deviceDescription;
@@ -51,7 +54,7 @@ public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
             Version = _deviceDescription?.Version ?? 0,
             IsAesActive = _deviceDescription?.IsAesActive ?? false,
             Interface = _deviceDescription?.Interface ?? string.Empty,
-            RxMode = _deviceDescription?.RxMode ?? RxMode.None,
+            RxMode = _deviceDescription?.RxMode ?? RxModes.None,
             RfAddress = _deviceDescription?.RfAddress ?? 0,
             Firmware = _deviceDescription?.Firmware ?? string.Empty,
             AvailableFirmware = _deviceDescription?.AvailableFirmware ?? string.Empty,
@@ -110,6 +113,7 @@ public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
 public abstract class ObjectBuilderBase<TBuilderImpl, TOutput>
     where TBuilderImpl : class, new()
 {
+    [SuppressMessage("csharpsquid", "S3011", Justification = "Reflection only used for writing own private fields")]
     protected TBuilderImpl WithField<TProperty>(Expression<Func<TBuilderImpl, TProperty>> property, TProperty value)
     {
         var member = (MemberExpression)property.Body;

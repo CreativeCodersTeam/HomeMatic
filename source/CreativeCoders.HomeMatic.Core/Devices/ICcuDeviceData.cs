@@ -19,7 +19,7 @@ public interface ICcuDeviceData : ICcuDeviceBaseData
     /// Gets the reception mode flags for the device.
     /// </summary>
     /// <value>A bitwise combination of the enumeration values that specifies the reception mode.</value>
-    RxMode RxMode { get; }
+    RxModes RxMode { get; }
 
     /// <summary>
     /// Gets the RF address of the device on the BidCoS radio bus.

@@ -22,7 +22,7 @@ public class CcuDeviceBuilderTests
             Index = 2,
             IsAesActive = true,
             Interface = "TestInterface",
-            RxMode = RxMode.Always,
+            RxMode = RxModes.Always,
             Group = "TestGroup",
             RfAddress = 12345,
             Firmware = "1.0.0",
@@ -57,7 +57,7 @@ public class CcuDeviceBuilderTests
         ccuDevice.Version.Should().Be(1);
         ccuDevice.IsAesActive.Should().BeTrue();
         ccuDevice.Interface.Should().Be("TestInterface");
-        ccuDevice.RxMode.Should().Be(RxMode.Always);
+        ccuDevice.RxMode.Should().Be(RxModes.Always);
         ccuDevice.RfAddress.Should().Be(12345);
         ccuDevice.Firmware.Should().Be("1.0.0");
         ccuDevice.AvailableFirmware.Should().Be("1.1.0");
@@ -133,7 +133,7 @@ public class CcuDeviceBuilderTests
         ccuDevice.Version.Should().Be(0);
         ccuDevice.IsAesActive.Should().BeFalse();
         ccuDevice.Interface.Should().Be(string.Empty);
-        ccuDevice.RxMode.Should().Be(RxMode.None);
+        ccuDevice.RxMode.Should().Be(RxModes.None);
         ccuDevice.RfAddress.Should().Be(0);
         ccuDevice.Firmware.Should().Be(string.Empty);
         ccuDevice.AvailableFirmware.Should().Be(string.Empty);
