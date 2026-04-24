@@ -1,4 +1,3 @@
-using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 

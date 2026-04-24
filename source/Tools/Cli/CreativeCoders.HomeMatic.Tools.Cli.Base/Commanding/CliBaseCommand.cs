@@ -1,5 +1,4 @@
 ﻿using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.SharedData;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
@@ -15,11 +14,11 @@ public abstract class CliBaseCommand
         _apiBuilder = Ensure.NotNull(apiBuilder);
         SharedData = Ensure.NotNull(sharedData);
     }
-    
+
     protected IHomeMaticXmlRpcApi BuildApi()
     {
         var cliData = SharedData.LoadCliData();
-        
+
         return _apiBuilder
             .ForUrl(new Uri($"http://{cliData.CcuHost}:{CcuRpcPorts.HomeMaticIp}"))
             .Build();

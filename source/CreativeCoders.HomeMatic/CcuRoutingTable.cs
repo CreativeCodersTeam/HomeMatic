@@ -4,9 +4,10 @@ using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <inheritdoc />
 /// <summary>
-/// Default thread-safe implementation of <see cref="ICcuRoutingTable"/> backed by a
-/// <see cref="ConcurrentDictionary{TKey,TValue}"/>.
+/// Default thread-safe implementation of <see cref="T:CreativeCoders.HomeMatic.Core.ICcuRoutingTable">ICcuRoutingTable</see> backed by a
+/// <see cref="T:System.Collections.Concurrent.ConcurrentDictionary`2">ConcurrentDictionary{TKey,TValue}</see>.
 /// </summary>
 public class CcuRoutingTable : ICcuRoutingTable
 {
@@ -32,9 +33,7 @@ public class CcuRoutingTable : ICcuRoutingTable
     /// <inheritdoc />
     public void Register(IEnumerable<KeyValuePair<string, ICcuClient>> entries)
     {
-        Ensure.NotNull(entries);
-
-        foreach (var entry in entries)
+        foreach (var entry in Ensure.NotNull(entries))
         {
             Register(entry.Key, entry.Value);
         }

@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CreativeCoders.HomeMatic.XmlRpc.Exceptions;
 
 /// <summary>
 /// The exception that is thrown when the CCU does not recognize the requested parameter set.
 /// </summary>
+[SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
 public class UnknownParamSetException : CcuXmlRpcException
 {
     /// <summary>

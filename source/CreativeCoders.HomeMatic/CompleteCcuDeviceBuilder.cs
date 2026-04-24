@@ -4,8 +4,9 @@ using CreativeCoders.HomeMatic.Core.Parameters;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <inheritdoc />
 /// <summary>
-/// Default implementation of <see cref="ICompleteCcuDeviceBuilder"/> that augments an <see cref="ICcuDevice"/>
+/// Default implementation of <see cref="T:CreativeCoders.HomeMatic.Core.ICompleteCcuDeviceBuilder">ICompleteCcuDeviceBuilder</see> that augments an <see cref="T:CreativeCoders.HomeMatic.Core.Devices.ICcuDevice">ICcuDevice</see>
 /// with the parameter-set values and descriptions of its device and channels.
 /// </summary>
 public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder

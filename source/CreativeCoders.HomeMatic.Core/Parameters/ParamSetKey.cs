@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Core.Parameters;
 
@@ -31,7 +31,7 @@ public static class ParamSetKey
     /// <summary>
     /// All known parameter-set keys.
     /// </summary>
-    public static readonly string[] ParamSetKeys = {Master, Values, Link, Service};
+    public static readonly string[] ParamSetKeys = [Master, Values, Link, Service];
 
     /// <summary>
     /// Converts a parameter-set key string into the corresponding <see cref="ParameterKind"/> value.

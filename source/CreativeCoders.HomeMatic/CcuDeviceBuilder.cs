@@ -59,11 +59,12 @@ public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
         return this;
     }
 
+    /// <inheritdoc />
     /// <summary>
-    /// Builds the <see cref="CcuDevice"/> from the previously configured values.
+    /// Builds the <see cref="T:CreativeCoders.HomeMatic.CcuDevice">CcuDevice</see> from the previously configured values.
     /// </summary>
-    /// <returns>A new <see cref="CcuDevice"/> instance populated with device and channel data.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when <see cref="WithUri"/>, <see cref="WithApi"/> or <see cref="WithAllDevices"/> has not been called.</exception>
+    /// <returns>A new <see cref="T:CreativeCoders.HomeMatic.CcuDevice">CcuDevice</see> instance populated with device and channel data.</returns>
+    /// <exception cref="T:System.InvalidOperationException">Thrown when <see cref="M:CreativeCoders.HomeMatic.CcuDeviceBuilder.WithUri(CreativeCoders.HomeMatic.Core.CcuDeviceUri)">WithUri</see>, <see cref="M:CreativeCoders.HomeMatic.CcuDeviceBuilder.WithApi(CreativeCoders.HomeMatic.XmlRpc.Client.IHomeMaticXmlRpcApi)">WithApi</see> or <see cref="M:CreativeCoders.HomeMatic.CcuDeviceBuilder.WithAllDevices(System.Collections.Generic.IEnumerable{CreativeCoders.HomeMatic.XmlRpc.DeviceDescription})">WithAllDevices</see> has not been called.</exception>
     public override CcuDevice Build()
     {
         if (_uri == null || _api == null || _devices == null)

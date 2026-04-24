@@ -68,7 +68,7 @@ public class CcuClientTests
                 Address = "1234567890",
                 Interface = "BidCos-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDevice0",
+                Name = "TestDevice0"
             }
         ];
 
@@ -123,7 +123,7 @@ public class CcuClientTests
                 Address = "9876543210",
                 Interface = "HmIP-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDeviceIp",
+                Name = "TestDeviceIp"
             }
         ];
 
@@ -181,14 +181,14 @@ public class CcuClientTests
                 Address = "1234567890",
                 Interface = "BidCos-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDevice0",
+                Name = "TestDevice0"
             },
             new DeviceDetails
             {
                 Address = "9876543210",
                 Interface = "HmIP-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDeviceIp",
+                Name = "TestDeviceIp"
             }
         ];
 
@@ -489,7 +489,7 @@ public class CcuClientTests
         var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
 
         // Act
-        var act = () => ccuClient.GetCompleteDevicesAsync();
+        var act = ccuClient.GetCompleteDevicesAsync;
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("boom");

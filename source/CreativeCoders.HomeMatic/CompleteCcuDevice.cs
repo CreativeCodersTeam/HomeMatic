@@ -2,6 +2,7 @@ using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <inheritdoc />
 /// <summary>
 /// Represents a HomeMatic device combined with all its parameter-set values and descriptions.
 /// </summary>

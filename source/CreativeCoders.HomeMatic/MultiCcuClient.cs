@@ -1,19 +1,19 @@
-using System.Diagnostics.CodeAnalysis;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <inheritdoc />
 /// <summary>
-/// Aggregates several <see cref="ICcuClient"/> instances into a single client that routes per-device
+/// Aggregates several <see cref="T:CreativeCoders.HomeMatic.Core.ICcuClient">ICcuClient</see> instances into a single client that routes per-device
 /// calls to the CCU that owns the device.
 /// </summary>
 /// <param name="ccuClients">The underlying CCU clients to dispatch calls to.</param>
-/// <param name="routingTable">The routing table used to cache the mapping from device address to <see cref="ICcuClient"/>.</param>
+/// <param name="routingTable">The routing table used to cache the mapping from device address to <see cref="T:CreativeCoders.HomeMatic.Core.ICcuClient">ICcuClient</see>.</param>
 /// <remarks>
-/// The first call to <see cref="GetDevicesAsync"/> or <see cref="GetCompleteDevicesAsync"/> populates the
-/// <paramref name="routingTable"/> so that subsequent per-device calls can skip the full scan.
+/// The first call to <see cref="M:CreativeCoders.HomeMatic.MultiCcuClient.GetDevicesAsync">GetDevicesAsync</see> or <see cref="M:CreativeCoders.HomeMatic.MultiCcuClient.GetCompleteDevicesAsync">GetCompleteDevicesAsync</see> populates the
+/// <paramref name="routingTable" /> so that subsequent per-device calls can skip the full scan.
 /// </remarks>
 public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
     : IMultiCcuClient

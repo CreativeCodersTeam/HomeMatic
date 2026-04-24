@@ -43,7 +43,7 @@ public class CcuClientFactoryTests
         A.CallTo(() => xmlRpcApiBuilder.ForUrl(new Uri($"http://example.com:{CcuRpcPorts.CoupledDevices}")))
             .MustNotHaveHappened();
 
-        A.CallTo(() => jsonRpcApiBuilder.ForUrl(new Uri($"http://example.com")))
+        A.CallTo(() => jsonRpcApiBuilder.ForUrl(new Uri("http://example.com")))
             .MustHaveHappenedOnceExactly();
 
         ccuClient
