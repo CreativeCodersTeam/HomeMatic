@@ -35,6 +35,6 @@ When converting documentation, do **not** halt the conversion when the text docu
 
 When in doubt, consult these resources for markdown best practices:
 
-- [GitHub Basic Writing and Formatting Syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
-- [Markdown Extended Syntax](https://www.markdownguide.org/extended-syntax/)
-- [Azure DevOps Markdown Guidance](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops)
+- [GitHub Basic Writing and Formatting Syntax](./github-basic-formatting.md)
+- [Markdown Extended Syntax](./markdown-extended-syntax.md)
+- [Azure DevOps Markdown Guidance](./azure-devops-markdown-guidance.md)
