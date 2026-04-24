@@ -49,7 +49,7 @@ public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
         var paramSetDescriptions =
             await api.GetParameterDescriptionAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
 
-        return new CcuParameterDescriptions()
+        return new CcuParameterDescriptions
         {
             ParamSetKey = paramSetKey,
             Items = paramSetDescriptions

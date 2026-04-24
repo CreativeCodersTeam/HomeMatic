@@ -324,3 +324,4 @@ ASALocalRun/
 .artifacts
 
 .tests
+.tokensave

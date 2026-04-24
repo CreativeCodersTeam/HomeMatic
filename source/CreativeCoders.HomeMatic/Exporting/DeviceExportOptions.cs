@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace CreativeCoders.HomeMatic.Exporting;
 
+[PublicAPI]
 public class DeviceExportOptions
 {
     /// <summary>

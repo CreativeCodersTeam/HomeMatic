@@ -38,16 +38,13 @@ public class CcuClient(
             var device =
                 allDevices.FirstOrDefault(d => d.Uri.Address.Equals(x.Address, StringComparison.OrdinalIgnoreCase));
 
-            if (device != null)
-            {
-                device.Name = x?.Name ?? string.Empty;
-            }
+            device?.Name = x?.Name ?? string.Empty;
         });
 
         return [..allDevices];
     }
 
-    private CcuDevice CreateDevice(DeviceDescription deviceDescription, XmlRpcApiConnection xmlRpcApiConnection,
+    private static CcuDevice CreateDevice(DeviceDescription deviceDescription, XmlRpcApiConnection xmlRpcApiConnection,
         IEnumerable<DeviceDescription> allDevices)
     {
         return new CcuDeviceBuilder()

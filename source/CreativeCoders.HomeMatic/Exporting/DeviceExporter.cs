@@ -59,7 +59,7 @@ public class DeviceExporter : IDeviceExporter
         };
     }
 
-    private static IEnumerable<ParamSetExportData> BuildParamSetExportData(
+    private static ParamSetExportData[] BuildParamSetExportData(
         IEnumerable<ParamSetValuesWithDescriptions> paramSetValues,
         DeviceExportOptions? options)
     {
@@ -77,7 +77,7 @@ public class DeviceExporter : IDeviceExporter
                         Value = v.ParamSetValue.Value
                     }).ToList()
             })
-            .ToList();
+            .ToArray();
     }
 
     private static string Serialize<T>(T data, DeviceExportOptions? options)

@@ -44,7 +44,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         return [..channels];
     }
 
-    private async Task<IEnumerable<ParamSetValuesWithDescriptions>> GetParamSetValuesAsync(ICcuDeviceBase device)
+    private static async Task<IEnumerable<ParamSetValuesWithDescriptions>> GetParamSetValuesAsync(ICcuDeviceBase device)
     {
         var paramSetValues = new List<ParamSetValuesWithDescriptions>();
 
@@ -60,7 +60,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
                                   throw new KeyNotFoundException()
                 });
 
-            paramSetValues.Add(new ParamSetValuesWithDescriptions()
+            paramSetValues.Add(new ParamSetValuesWithDescriptions
             {
                 ParamSetKey = paramSetKey,
                 ParamSetValues = paramSets

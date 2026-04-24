@@ -2,6 +2,7 @@ using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -10,6 +11,7 @@ namespace CreativeCoders.HomeMatic;
 /// <summary>
 /// Provides extension methods for registering the HomeMatic services on an <see cref="IServiceCollection"/>.
 /// </summary>
+[PublicAPI]
 public static class HomeMaticServiceCollectionExtensions
 {
     /// <summary>

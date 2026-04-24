@@ -1,11 +1,13 @@
 using CreativeCoders.HomeMatic.XmlRpc.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Parameters;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Core.Devices;
 
 /// <summary>
 /// Defines the device-level data of a HomeMatic device.
 /// </summary>
+[PublicAPI]
 public interface ICcuDeviceData : ICcuDeviceBaseData
 {
     /// <summary>

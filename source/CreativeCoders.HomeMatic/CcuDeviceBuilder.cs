@@ -87,7 +87,7 @@ public class CcuDeviceBuilder : ObjectBuilderBase<CcuDeviceBuilder, CcuDevice>
             FirmwareUpdateState = _deviceDescription?.FirmwareUpdateState ?? DeviceFirmwareUpdateState.None,
             Roaming = _deviceDescription?.Roaming ?? false,
             ParamSets = _deviceDescription?.ParamSets ?? [],
-            Channels = CreateChannelsForDevice(_deviceDescription, _devices),
+            Channels = CreateChannelsForDevice(_deviceDescription, _devices)
         };
 
         return ccuDevice;

@@ -12,3 +12,4 @@ trim_trailing_whitespace = true
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = warning
 configure_await_analysis_mode = library
+resharper_inheritdoc_consider_usage_highlighting = none
