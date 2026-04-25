@@ -1,16 +1,15 @@
-﻿using System;
+using System;
 using CreativeCoders.Core;
-using CreativeCoders.HomeMatic.Core;
 
 namespace CreativeCoders.HomeMatic.XmlRpc;
 
 /// <summary>
-/// Combines a CCU base URL with a HomeMatic device system to produce the final XML-RPC API endpoint URL.
+/// Combines a CCU base URL with a HomeMatic device kind to produce the final XML-RPC API endpoint URL.
 /// </summary>
 /// <remarks>
-/// The HomeMatic CCU exposes separate XML-RPC servers on different ports for each device system.
+/// The HomeMatic CCU exposes separate XML-RPC servers on different ports for each device kind.
 /// BidCoS-RF (wireless) uses port 2001, HM-IP uses port 2010 and BidCoS-Wired uses port 2000.
-/// This class derives the correct port from the <see cref="DeviceSystems"/> value via
+/// This class derives the correct port from the <see cref="DeviceKind"/> value via
 /// <see cref="ToApiUrl"/>.
 /// </remarks>
 public class XmlRpcApiAddress
@@ -19,21 +18,23 @@ public class XmlRpcApiAddress
     /// Initializes a new instance of the <see cref="XmlRpcApiAddress"/> class.
     /// </summary>
     /// <param name="baseUrl">The base URL of the HomeMatic CCU (host and scheme, without port).</param>
-    /// <param name="deviceSystems">One of the enumeration values that specifies the target HomeMatic device system.</param>
-    public XmlRpcApiAddress(Uri baseUrl, HomeMaticDeviceSystems deviceSystems)
+    /// <param name="deviceKind">One of the enumeration values that specifies the target HomeMatic device kind.</param>
+    public XmlRpcApiAddress(Uri baseUrl, CcuDeviceKind deviceKind)
     {
         BaseUrl = Ensure.NotNull(baseUrl);
-        DeviceSystems = deviceSystems;
+        DeviceKind = deviceKind;
     }
 
     /// <summary>
-    /// Builds the final XML-RPC API URL by combining <see cref="BaseUrl"/> with the port derived from <see cref="DeviceSystems"/>.
+    /// Builds the final XML-RPC API URL by combining <see cref="BaseUrl"/> with the port derived from <see cref="DeviceKind"/>.
     /// </summary>
-    /// <returns>The complete URL to the XML-RPC endpoint for the configured device system.</returns>
+    /// <returns>The complete URL to the XML-RPC endpoint for the configured device kind.</returns>
     public Uri ToApiUrl()
     {
-        var uriBuilder = new UriBuilder(BaseUrl);
-        uriBuilder.Port = DeviceSystems.ToPort();
+        var uriBuilder = new UriBuilder(BaseUrl)
+        {
+            Port = DeviceKind.ToPort()
+        };
 
         return uriBuilder.Uri;
     }
@@ -45,8 +46,8 @@ public class XmlRpcApiAddress
     public Uri BaseUrl { get; }
 
     /// <summary>
-    /// Gets the HomeMatic device system that determines the target XML-RPC port.
+    /// Gets the HomeMatic device kind that determines the target XML-RPC port.
     /// </summary>
-    /// <value>One of the <see cref="HomeMaticDeviceSystems"/> values.</value>
-    public HomeMaticDeviceSystems DeviceSystems { get; }
+    /// <value>One of the <see cref="CcuDeviceKind"/> values.</value>
+    public CcuDeviceKind DeviceKind { get; }
 }

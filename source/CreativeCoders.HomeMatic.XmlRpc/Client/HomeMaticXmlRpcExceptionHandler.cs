@@ -1,5 +1,5 @@
 ﻿using System;
-using CreativeCoders.HomeMatic.Core.Exceptions;
+using CreativeCoders.HomeMatic.XmlRpc.Exceptions;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Exceptions;
 

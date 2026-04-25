@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 
@@ -11,6 +12,7 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 /// Register with the CCU by calling <see cref="Client.IHomeMaticXmlRpcApi.InitAsync"/> with the
 /// server's URL and an interface identifier.
 /// </remarks>
+[PublicAPI]
 public interface ICcuXmlRpcEventServer
 {
     /// <summary>

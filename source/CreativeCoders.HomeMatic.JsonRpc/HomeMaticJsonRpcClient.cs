@@ -10,7 +10,7 @@ namespace CreativeCoders.HomeMatic.JsonRpc;
 public class HomeMaticJsonRpcClient(IHomeMaticJsonRpcApi jsonRpcApi) : IHomeMaticJsonRpcClient
 {
     private readonly IHomeMaticJsonRpcApi _jsonRpcApi = Ensure.NotNull(jsonRpcApi);
- private readonly SynchronizedValue<string?> _sessionId = SynchronizedValue.Create<string?>(null);
+    private readonly SynchronizedValue<string?> _sessionId = SynchronizedValue.Create<string?>(null);
 
     public async Task LoginAsync()
     {
@@ -41,7 +41,7 @@ public class HomeMaticJsonRpcClient(IHomeMaticJsonRpcApi jsonRpcApi) : IHomeMati
         var jsonRpcResponse = await InvokeAsync(sessionId => _jsonRpcApi.ListAllDetailsAsync(sessionId))
             .ConfigureAwait(false);
 
-        return jsonRpcResponse.Result ?? Array.Empty<DeviceDetails>();
+        return jsonRpcResponse.Result ?? [];
     }
 
     public IAsyncDisposable AutoLogout()

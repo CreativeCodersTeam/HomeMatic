@@ -1,120 +1,25 @@
 using System.Text.Json;
-using CreativeCoders.HomeMatic.Core;
-using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
-using CreativeCoders.HomeMatic.Exporting;
-using FakeItEasy;
 using AwesomeAssertions;
+using CreativeCoders.HomeMatic.Exporting;
 
 namespace CreativeCoders.HomeMatic.Tests.Exporting;
 
 public class DeviceExporterTests
 {
-    private static CcuDeviceUri CreateDeviceUri(string host = "ccu2.local", string address = "ABC123456")
-    {
-        return new CcuDeviceUri
-        {
-            CcuHost = host,
-            Kind = CcuDeviceKind.HomeMatic,
-            Address = address
-        };
-    }
-
-    /// <summary>
-    /// Parameter object for configuring a fake <see cref="ICompleteCcuDevice"/> in tests.
-    /// </summary>
-    private sealed class FakeDeviceOptions
-    {
-        public string Name { get; init; } = "TestDevice";
-        public string Address { get; init; } = "ABC123456";
-        public string DeviceType { get; init; } = "HM-CC-RT-DN";
-        public string Firmware { get; init; } = "1.4";
-        public string CcuHost { get; init; } = "ccu2.local";
-        public string[]? ParamSetKeys { get; init; }
-        public IEnumerable<ParamSetValuesWithDescriptions>? ParamSetValues { get; init; }
-        public IEnumerable<ICompleteCcuDeviceChannel>? Channels { get; init; }
-    }
-
-    private static ICompleteCcuDevice CreateFakeDevice(FakeDeviceOptions? options = null)
-    {
-        var opts = options ?? new FakeDeviceOptions();
-        var device = A.Fake<ICompleteCcuDevice>();
-        var deviceData = A.Fake<ICcuDeviceData>();
-        var uri = CreateDeviceUri(opts.CcuHost, opts.Address);
-
-        A.CallTo(() => deviceData.Name).Returns(opts.Name);
-        A.CallTo(() => deviceData.Uri).Returns(uri);
-        A.CallTo(() => deviceData.DeviceType).Returns(opts.DeviceType);
-        A.CallTo(() => deviceData.Firmware).Returns(opts.Firmware);
-        A.CallTo(() => deviceData.ParamSets).Returns(opts.ParamSetKeys ?? ["MASTER", "VALUES"]);
-
-        A.CallTo(() => device.DeviceData).Returns(deviceData);
-        A.CallTo(() => device.ParamSetValues).Returns(opts.ParamSetValues ?? []);
-        A.CallTo(() => device.Channels).Returns(opts.Channels ?? []);
-
-        return device;
-    }
-
-    private static ICompleteCcuDeviceChannel CreateFakeChannel(
-        string address = "ABC123456:1",
-        string deviceType = "HM-CC-RT-DN:01",
-        int index = 1,
-        string[]? paramSets = null,
-        IEnumerable<ParamSetValuesWithDescriptions>? paramSetValues = null)
-    {
-        var channel = A.Fake<ICompleteCcuDeviceChannel>();
-        var channelData = A.Fake<ICcuDeviceChannelData>();
-        var uri = new CcuDeviceUri
-        {
-            CcuHost = "ccu2.local",
-            Kind = CcuDeviceKind.HomeMatic,
-            Address = address
-        };
-
-        A.CallTo(() => channelData.Uri).Returns(uri);
-        A.CallTo(() => channelData.DeviceType).Returns(deviceType);
-        A.CallTo(() => channelData.Index).Returns(index);
-        A.CallTo(() => channelData.ParamSets).Returns(paramSets ?? ["VALUES"]);
-
-        A.CallTo(() => channel.ChannelData).Returns(channelData);
-        A.CallTo(() => channel.ParamSetValues).Returns(paramSetValues ?? []);
-
-        return channel;
-    }
-
-    private static ParamSetValuesWithDescriptions CreateParamSetValues(
-        string paramSetKey,
-        params (string name, object value, string descriptionId)[] values)
-    {
-        return new ParamSetValuesWithDescriptions
-        {
-            ParamSetKey = paramSetKey,
-            ParamSetValues = values.Select(v => new ParamSetValueWithDescription
-            {
-                ParamSetValue = new ParamSetValue { Name = v.name, Value = v.value },
-                Description = new CcuParameterDescription
-                {
-                    Id = v.descriptionId,
-                    DefaultValue = null,
-                    MinValue = null,
-                    MaxValue = null,
-                    Type = null,
-                    DataType = ParameterDataType.Float,
-                    Unit = null,
-                    TabOrder = 0,
-                    Control = null,
-                    ValuesList = [],
-                    SpecialValues = []
-                }
-            }).ToList()
-        };
-    }
+    // ---- Mapping: BuildExportData -----------------------------------------
 
     [Fact]
-    public void BuildExportData_WithValidDevice_MapsNameCorrectly()
+    public void BuildExportData_WithFullyPopulatedDevice_MapsAllScalarProperties()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Name = "MyDevice" });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithName("MyDevice")
+            .WithAddress("DEF789")
+            .WithDeviceType("HM-ES-PMSw1-Pl")
+            .WithFirmware("2.7.1")
+            .WithCcuHost("192.168.1.100")
+            .WithParamSetKeys("MASTER", "VALUES", "LINK")
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
@@ -122,83 +27,52 @@ public class DeviceExporterTests
 
         // Assert
         result.Name.Should().Be("MyDevice");
-    }
-
-    [Fact]
-    public void BuildExportData_WithValidDevice_MapsAddressCorrectly()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Address = "DEF789" });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
         result.Address.Should().Be("DEF789");
-    }
-
-    [Fact]
-    public void BuildExportData_WithValidDevice_MapsDeviceTypeCorrectly()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { DeviceType = "HM-ES-PMSw1-Pl" });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
         result.DeviceType.Should().Be("HM-ES-PMSw1-Pl");
-    }
-
-    [Fact]
-    public void BuildExportData_WithValidDevice_MapsFirmwareVersionCorrectly()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Firmware = "2.7.1" });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
         result.FirmwareVersion.Should().Be("2.7.1");
-    }
-
-    [Fact]
-    public void BuildExportData_WithCcuHostName_UsesCcuNameAsHostDisplayName()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { CcuHost = "192.168.1.100" });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
         result.Ccu.Should().Be("192.168.1.100");
+        result.ParamSetKeys.Should().BeEquivalentTo("MASTER", "VALUES", "LINK");
     }
 
     [Fact]
-    public void BuildExportData_WithParamSetKeys_MapsParamSetKeysCorrectly()
+    public void BuildExportData_WithCcuNameSet_UsesCcuNameForCcu()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetKeys = ["MASTER", "VALUES", "LINK"] });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithCcuHost("192.168.1.100")
+            .WithCcuName("MyCCU2")
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
         var result = sut.BuildExportData(device);
 
         // Assert
-        result.ParamSetKeys.Should().BeEquivalentTo("MASTER", "VALUES", "LINK");
+        result.Ccu.Should().Be("MyCCU2");
+    }
+
+    [Fact]
+    public void BuildExportData_WithCcuNameEmpty_FallsBackToCcuHost()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithCcuHost("ccu2.local")
+            .WithCcuName(string.Empty)
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.Ccu.Should().Be("ccu2.local");
     }
 
     [Fact]
     public void BuildExportData_WithNoChannels_ReturnsEmptyChannelsList()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [] });
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
         var sut = new DeviceExporter();
 
         // Act
@@ -209,58 +83,199 @@ public class DeviceExporterTests
     }
 
     [Fact]
-    public void BuildExportData_WithChannels_MapsChannelsCorrectly()
+    public void BuildExportData_WithMultipleChannels_MapsAllInOrder()
     {
         // Arrange
-        var channel = CreateFakeChannel(address: "XYZ:1", deviceType: "HM-CC-RT-DN:01", index: 1);
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel] });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithAddress("XYZ:1").WithIndex(1))
+            .WithChannel(c => c.WithAddress("XYZ:2").WithIndex(2))
+            .WithChannel(c => c.WithAddress("XYZ:3").WithIndex(3))
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
         var result = sut.BuildExportData(device);
 
         // Assert
-        result.Channels.Should().HaveCount(1);
-        var channelResult = result.Channels.First();
-        channelResult.Address.Should().Be("XYZ:1");
-        channelResult.DeviceType.Should().Be("HM-CC-RT-DN:01");
-        channelResult.Index.Should().Be(1);
+        result.Channels.Should().HaveCount(3);
+        result.Channels.Select(c => c.Index).Should().ContainInOrder(1, 2, 3);
+        result.Channels.Select(c => c.Address).Should().ContainInOrder("XYZ:1", "XYZ:2", "XYZ:3");
     }
 
     [Fact]
-    public void BuildExportData_WithParamSetValues_MapsParamSetValuesCorrectly()
+    public void BuildExportData_WithChannel_MapsChannelScalarProperties()
     {
         // Arrange
-        var paramSetValues = new[]
-        {
-            CreateParamSetValues("MASTER", ("BOOST_TIME", 5, "Boost Time"))
-        };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithAddress("XYZ:1")
+                .WithDeviceType("HM-CC-RT-DN:01")
+                .WithIndex(1)
+                .WithParamSets("VALUES", "MASTER"))
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
         var result = sut.BuildExportData(device);
 
         // Assert
-        result.ParamSetValues.Should().HaveCount(1);
-        var paramSet = result.ParamSetValues.First();
+        var channel = result.Channels.Single();
+        channel.Address.Should().Be("XYZ:1");
+        channel.DeviceType.Should().Be("HM-CC-RT-DN:01");
+        channel.Index.Should().Be(1);
+        channel.ParamSets.Should().BeEquivalentTo("VALUES", "MASTER");
+    }
+
+    [Fact]
+    public void BuildExportData_WithNoParamSetValues_ReturnsEmptyList()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.ParamSetValues.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamSetValues_MapsKeyAndValues()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var paramSet = result.ParamSetValues.Single();
         paramSet.ParamSetKey.Should().Be("MASTER");
-        paramSet.Values.Should().HaveCount(1);
-        paramSet.Values.First().Key.Should().Be("BOOST_TIME");
-        paramSet.Values.First().Value.Should().Be(5);
-        paramSet.Values.First().Name.Should().Be("Boost Time");
+
+        var value = paramSet.Values.Single();
+        value.Key.Should().Be("BOOST_TIME");
+        value.Value.Should().Be(5);
+        value.Name.Should().Be("Boost Time");
     }
 
     [Fact]
-    public void BuildExportData_WithOptionsWhitelistingParamSet_FiltersOutNonWhitelistedParamSets()
+    public void BuildExportData_WithEmptyParamSet_ReturnsParamSetWithEmptyValues()
     {
         // Arrange
-        var paramSetValues = new[]
-        {
-            CreateParamSetValues("MASTER", ("BOOST_TIME", 5, "Boost Time")),
-            CreateParamSetValues("LINK", ("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
-        };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER")
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var paramSet = result.ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("MASTER");
+        paramSet.Values.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void BuildExportData_WithDescriptionIdEqualToName_SetsNameToNull()
+    {
+        // Arrange – same name used for key and description id → dedup to null
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("ACTIVE", true, "ACTIVE"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Single().Name.Should().BeNull();
+    }
+
+    [Fact]
+    public void BuildExportData_WithDescriptionIdDifferentFromName_SetsNameToDescriptionId()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Single().Name.Should().Be("Boost Time");
+    }
+
+    [Fact]
+    public void BuildExportData_WithDescriptionIdNull_SetsNameToNull()
+    {
+        // Arrange – descriptionId null → Description.Id is null, Name is null
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("ACTIVE", true, descriptionId: null))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Single().Name.Should().BeNull();
+    }
+
+    [Fact]
+    public void BuildExportData_WithChannelParamSetValues_MapsChannelParamSetValues()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithParamSet("VALUES",
+                p => p.Add("SET_TEMPERATURE", 21.5, "Set Temperature")))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var channel = result.Channels.Single();
+        var paramSet = channel.ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("VALUES");
+        paramSet.Values.Single().Key.Should().Be("SET_TEMPERATURE");
+    }
+
+    // ---- Filter: BuildExportData + Options --------------------------------
+
+    [Fact]
+    public void BuildExportData_WithNullOptions_IncludesAllParamSets()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .WithParamSet("VALUES", p => p.Add("SET_TEMPERATURE", 21.0, "Set Temperature"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, null);
+
+        // Assert
+        result.ParamSetValues.Select(p => p.ParamSetKey)
+            .Should().BeEquivalentTo("MASTER", "VALUES");
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamSetWhitelist_FiltersDeviceParamSets()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .WithParamSet("LINK", p => p.Add("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
+            .Build();
         var options = new DeviceExportOptions { ParamSetWhitelist = ["MASTER"] };
         var sut = new DeviceExporter();
 
@@ -268,56 +283,205 @@ public class DeviceExporterTests
         var result = sut.BuildExportData(device, options);
 
         // Assert
-        result.ParamSetValues.Should().HaveCount(1);
-        result.ParamSetValues.First().ParamSetKey.Should().Be("MASTER");
+        result.ParamSetValues.Select(p => p.ParamSetKey).Should().BeEquivalentTo("MASTER");
     }
 
     [Fact]
-    public void BuildExportData_WithNullOptions_IncludesAllParamSets()
+    public void BuildExportData_WithParamSetWhitelist_FiltersChannelParamSets()
     {
         // Arrange
-        var paramSetValues = new[]
-        {
-            CreateParamSetValues("MASTER", ("BOOST_TIME", 5, "Boost Time")),
-            CreateParamSetValues("VALUES", ("SET_TEMPERATURE", 21.0, "Set Temperature"))
-        };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithParamSet("VALUES", p => p.Add("SET_TEMPERATURE", 21.5, "Set Temperature"))
+                .WithParamSet("LINK", p => p.Add("PEER_NEEDS_BURST", true, "Peer Needs Burst")))
+            .Build();
+        var options = new DeviceExportOptions { ParamSetWhitelist = ["VALUES"] };
         var sut = new DeviceExporter();
 
         // Act
-        var result = sut.BuildExportData(device, null);
+        var result = sut.BuildExportData(device, options);
 
         // Assert
-        result.ParamSetValues.Should().HaveCount(2);
+        result.Channels.Single().ParamSetValues.Select(p => p.ParamSetKey)
+            .Should().BeEquivalentTo("VALUES");
     }
 
     [Fact]
-    public void BuildExportData_WithChannelParamSetValues_MapsChannelParamSetValuesCorrectly()
+    public void BuildExportData_WithParamValueNameWhitelist_FiltersDeviceValues()
     {
         // Arrange
-        var channelParamSetValues = new[]
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p
+                .Add("BOOST_TIME", 5, "Boost Time")
+                .Add("DECALCIFICATION_TIME", 22, "Decalcification Time")
+                .Add("PARTY_MODE", false, "Party Mode"))
+            .Build();
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["BOOST_TIME", "PARTY_MODE"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Select(v => v.Key)
+            .Should().BeEquivalentTo("BOOST_TIME", "PARTY_MODE");
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelist_FiltersChannelValues()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithParamSet("VALUES", p => p
+                .Add("SET_TEMPERATURE", 21.5, "Set Temperature")
+                .Add("ACTUAL_TEMPERATURE", 20.1, "Actual Temperature")
+                .Add("VALVE_STATE", 45, "Valve State")))
+            .Build();
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["SET_TEMPERATURE", "VALVE_STATE"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.Channels.Single().ParamSetValues.Single().Values.Select(v => v.Key)
+            .Should().BeEquivalentTo("SET_TEMPERATURE", "VALVE_STATE");
+    }
+
+    [Fact]
+    public void BuildExportData_WithBothWhitelists_AppliesBothFilters()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p
+                .Add("BOOST_TIME", 5, "Boost Time")
+                .Add("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+            .WithParamSet("LINK", p => p.Add("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
+            .Build();
+        var options = new DeviceExportOptions
         {
-            CreateParamSetValues("VALUES", ("SET_TEMPERATURE", 21.5, "Set Temperature"))
+            ParamSetWhitelist = ["MASTER"],
+            ParamValueNameWhitelist = ["BOOST_TIME"]
         };
-        var channel = CreateFakeChannel(paramSetValues: channelParamSetValues);
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel] });
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        var paramSet = result.ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("MASTER");
+        paramSet.Values.Select(v => v.Key).Should().BeEquivalentTo("BOOST_TIME");
+    }
+
+    [Theory]
+    [InlineData("master")]
+    [InlineData("Master")]
+    [InlineData("MASTER")]
+    public void BuildExportData_WithParamSetWhitelistCaseVariants_MatchesCaseInsensitively(string whitelistKey)
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .Build();
+        var options = new DeviceExportOptions { ParamSetWhitelist = [whitelistKey] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Select(p => p.ParamSetKey).Should().BeEquivalentTo("MASTER");
+    }
+
+    [Theory]
+    [InlineData("boost_time")]
+    [InlineData("Boost_Time")]
+    [InlineData("BOOST_TIME")]
+    public void BuildExportData_WithParamValueNameWhitelistCaseVariants_MatchesCaseInsensitively(string whitelistName)
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p
+                .Add("BOOST_TIME", 5, "Boost Time")
+                .Add("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+            .Build();
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = [whitelistName] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Select(v => v.Key)
+            .Should().BeEquivalentTo("BOOST_TIME");
+    }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelistFilteringAllValues_ReturnsParamSetWithEmptyValues()
+    {
+        // Arrange – paramset itself stays, but all its values are filtered out
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p
+                .Add("BOOST_TIME", 5, "Boost Time")
+                .Add("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+            .Build();
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["NONEXISTENT"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        var paramSet = result.ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("MASTER");
+        paramSet.Values.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData(42)]
+    [InlineData(3.14)]
+    [InlineData(true)]
+    [InlineData("on")]
+    public void BuildExportData_WithVariousValueTypes_PreservesValue(object value)
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("VAL", value, "Val"))
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
         var result = sut.BuildExportData(device);
 
         // Assert
-        var channelResult = result.Channels.First();
-        channelResult.ParamSetValues.Should().HaveCount(1);
-        channelResult.ParamSetValues.First().ParamSetKey.Should().Be("VALUES");
-        channelResult.ParamSetValues.First().Values.First().Key.Should().Be("SET_TEMPERATURE");
+        result.ParamSetValues.Single().Values.Single().Value.Should().Be(value);
     }
+
+    [Fact]
+    public void BuildExportData_WithParamValueNameWhitelistNonMatching_ReturnsEmptyValues()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("SET_TEMPERATURE", 21.5, "Set Temperature"))
+            .Build();
+        var options = new DeviceExportOptions { ParamValueNameWhitelist = ["NONEXISTENT"] };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.ParamSetValues.Single().Values.Should().BeEmpty();
+    }
+
+    // ---- ExportDeviceAsync / JSON -----------------------------------------
 
     [Fact]
     public async Task ExportDeviceAsync_WithValidDevice_ReturnsValidJson()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Name = "TestDevice" });
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
         var sut = new DeviceExporter();
 
         // Act
@@ -329,24 +493,36 @@ public class DeviceExporterTests
     }
 
     [Fact]
-    public async Task ExportDeviceAsync_WithValidDevice_ContainsDeviceName()
+    public async Task ExportDeviceAsync_WithDefaultOptions_UsesCamelCasePropertyNames()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Name = "MyThermostat" });
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .WithChannel()
+            .Build();
         var sut = new DeviceExporter();
 
         // Act
         var json = await sut.ExportDeviceAsync(device);
 
         // Assert
-        json.Should().Contain("MyThermostat");
+        using var document = JsonDocument.Parse(json);
+        var root = document.RootElement;
+        root.TryGetProperty("name", out _).Should().BeTrue();
+        root.TryGetProperty("address", out _).Should().BeTrue();
+        root.TryGetProperty("deviceType", out _).Should().BeTrue();
+        root.TryGetProperty("firmwareVersion", out _).Should().BeTrue();
+        root.TryGetProperty("ccu", out _).Should().BeTrue();
+        root.TryGetProperty("paramSetKeys", out _).Should().BeTrue();
+        root.TryGetProperty("paramSetValues", out _).Should().BeTrue();
+        root.TryGetProperty("channels", out _).Should().BeTrue();
     }
 
     [Fact]
     public async Task ExportDeviceAsync_WithWriteIndentedTrue_ReturnsIndentedJson()
     {
         // Arrange
-        var device = CreateFakeDevice();
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
         var options = new DeviceExportOptions { WriteIndented = true };
         var sut = new DeviceExporter();
 
@@ -361,7 +537,7 @@ public class DeviceExporterTests
     public async Task ExportDeviceAsync_WithWriteIndentedFalse_ReturnsCompactJson()
     {
         // Arrange
-        var device = CreateFakeDevice();
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
         var options = new DeviceExportOptions { WriteIndented = false };
         var sut = new DeviceExporter();
 
@@ -373,21 +549,79 @@ public class DeviceExporterTests
     }
 
     [Fact]
-    public async Task ExportDevicesAsync_WithMultipleDevices_ReturnsJsonArray()
+    public async Task ExportDeviceAsync_WithNullOptions_ReturnsIndentedJson()
     {
-        // Arrange
-        var device1 = CreateFakeDevice(new FakeDeviceOptions { Name = "Device1", Address = "ADDR1" });
-        var device2 = CreateFakeDevice(new FakeDeviceOptions { Name = "Device2", Address = "ADDR2" });
+        // Arrange – default behavior when no options are provided is indented
+        var device = new CompleteCcuDeviceFakeBuilder().Build();
         var sut = new DeviceExporter();
 
         // Act
-        var json = await sut.ExportDevicesAsync([device1, device2]);
+        var json = await sut.ExportDeviceAsync(device);
 
         // Assert
-        var document = JsonDocument.Parse(json);
-        document.RootElement.ValueKind.Should().Be(JsonValueKind.Array);
-        document.RootElement.GetArrayLength().Should().Be(2);
+        json.Should().Contain("\n");
     }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithNullParamValueName_OmitsNamePropertyFromJson()
+    {
+        // Arrange – descriptionId == name triggers Name=null, which should be omitted
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("ACTIVE", true, "ACTIVE"))
+            .Build();
+        var options = new DeviceExportOptions { WriteIndented = false };
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device, options);
+
+        // Assert
+        json.Should().NotContain("\"name\":null");
+    }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithPopulatedDevice_RoundTripsToEquivalentStructure()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithName("RoundTripDevice")
+            .WithAddress("RT001")
+            .WithDeviceType("HM-CC-RT-DN")
+            .WithFirmware("1.4")
+            .WithParamSetKeys("MASTER", "VALUES")
+            .WithParamSet("MASTER", p => p.Add("BOOST_TIME", 5, "Boost Time"))
+            .WithChannel(c => c
+                .WithAddress("RT001:1")
+                .WithIndex(1)
+                .WithParamSet("VALUES", p => p.Add("SET_TEMPERATURE", 21.5, "Set Temperature")))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device);
+        var deserialized = JsonSerializer.Deserialize<DeviceExportData>(
+            json,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        // Assert
+        deserialized.Should().NotBeNull();
+        deserialized!.Name.Should().Be("RoundTripDevice");
+        deserialized.Address.Should().Be("RT001");
+        deserialized.DeviceType.Should().Be("HM-CC-RT-DN");
+        deserialized.FirmwareVersion.Should().Be("1.4");
+        deserialized.ParamSetKeys.Should().BeEquivalentTo("MASTER", "VALUES");
+
+        var paramSet = deserialized.ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("MASTER");
+        paramSet.Values.Single().Key.Should().Be("BOOST_TIME");
+
+        var channel = deserialized.Channels.Single();
+        channel.Address.Should().Be("RT001:1");
+        channel.Index.Should().Be(1);
+        channel.ParamSetValues.Single().Values.Single().Key.Should().Be("SET_TEMPERATURE");
+    }
+
+    // ---- ExportDevicesAsync / JSON ----------------------------------------
 
     [Fact]
     public async Task ExportDevicesAsync_WithEmptyList_ReturnsEmptyJsonArray()
@@ -399,237 +633,74 @@ public class DeviceExporterTests
         var json = await sut.ExportDevicesAsync([]);
 
         // Assert
-        var document = JsonDocument.Parse(json);
+        using var document = JsonDocument.Parse(json);
         document.RootElement.ValueKind.Should().Be(JsonValueKind.Array);
         document.RootElement.GetArrayLength().Should().Be(0);
-    }
-
-    [Fact]
-    public async Task ExportDevicesAsync_WithOptions_FiltersParamSetsPerDevice()
-    {
-        // Arrange
-        var paramSetValues = new[]
-        {
-            CreateParamSetValues("MASTER", ("BOOST_TIME", 5, "Boost Time")),
-            CreateParamSetValues("LINK", ("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
-        };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
-        var options = new DeviceExportOptions { ParamSetWhitelist = ["MASTER"] };
-        var sut = new DeviceExporter();
-
-        // Act
-        var json = await sut.ExportDevicesAsync([device], options);
-
-        // Assert
-        json.Should().Contain("MASTER");
-        json.Should().NotContain("LINK");
-    }
-
-    [Fact]
-    public async Task ExportDeviceAsync_WithCamelCasePolicy_UsesCamelCasePropertyNames()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Name = "TestDevice" });
-        var sut = new DeviceExporter();
-
-        // Act
-        var json = await sut.ExportDeviceAsync(device);
-
-        // Assert
-        json.Should().Contain("\"name\"");
-        json.Should().Contain("\"address\"");
-        json.Should().Contain("\"deviceType\"");
-        json.Should().NotContain("\"Name\"");
-        json.Should().NotContain("\"Address\"");
-    }
-
-    [Fact]
-    public void BuildExportData_WithMultipleChannels_MapsAllChannels()
-    {
-        // Arrange
-        var channel1 = CreateFakeChannel(address: "XYZ:1", index: 1);
-        var channel2 = CreateFakeChannel(address: "XYZ:2", index: 2);
-        var channel3 = CreateFakeChannel(address: "XYZ:3", index: 3);
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel1, channel2, channel3] });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
-        result.Channels.Should().HaveCount(3);
-        result.Channels.Select(c => c.Index).Should().BeEquivalentTo([1, 2, 3]);
-    }
-
-    [Fact]
-    public void BuildExportData_WithChannelOptionsWhitelist_FiltersChannelParamSets()
-    {
-        // Arrange
-        var channelParamSetValues = new[]
-        {
-            CreateParamSetValues("VALUES", ("SET_TEMPERATURE", 21.5, "Set Temperature")),
-            CreateParamSetValues("LINK", ("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
-        };
-        var channel = CreateFakeChannel(paramSetValues: channelParamSetValues);
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel] });
-        var options = new DeviceExportOptions { ParamSetWhitelist = ["VALUES"] };
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device, options);
-
-        // Assert
-        result.Channels.First().ParamSetValues.Should().HaveCount(1);
-        result.Channels.First().ParamSetValues.First().ParamSetKey.Should().Be("VALUES");
-    }
-
-    [Fact]
-    public void BuildExportData_WithChannelOptionsWhitelistCaseInsensitive_FiltersCorrectly()
-    {
-        // Arrange
-        var channelParamSetValues = new[]
-        {
-            CreateParamSetValues("VALUES", ("SET_TEMPERATURE", 21.5, "Set Temperature")),
-            CreateParamSetValues("LINK", ("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
-        };
-        var channel = CreateFakeChannel(paramSetValues: channelParamSetValues);
-        var device = CreateFakeDevice(new FakeDeviceOptions { Channels = [channel] });
-        // Use lowercase key in whitelist to test case-insensitive matching
-        var options = new DeviceExportOptions { ParamSetWhitelist = ["values"] };
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device, options);
-
-        // Assert
-        result.Channels.First().ParamSetValues.Should().HaveCount(1);
-        result.Channels.First().ParamSetValues.First().ParamSetKey.Should().Be("VALUES");
-    }
-
-    [Fact]
-    public void BuildExportData_WithEmptyParamSetValues_ReturnsEmptyParamSetValuesList()
-    {
-        // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = [] });
-        var sut = new DeviceExporter();
-
-        // Act
-        var result = sut.BuildExportData(device);
-
-        // Assert
-        result.ParamSetValues.Should().BeEmpty();
-    }
-
-    [Fact]
-    public async Task ExportDeviceAsync_WithNullParamValueName_OmitsNamePropertyFromJson()
-    {
-        // Arrange
-        var paramSetValues = new[]
-        {
-            new ParamSetValuesWithDescriptions
-            {
-                ParamSetKey = "VALUES",
-                ParamSetValues =
-                [
-                    new ParamSetValueWithDescription
-                    {
-                        ParamSetValue = new ParamSetValue { Name = "ACTIVE", Value = true },
-                        Description = new CcuParameterDescription
-                        {
-                            Id = null, // null description id → Name will be null
-                            DefaultValue = null,
-                            MinValue = null,
-                            MaxValue = null,
-                            Type = null,
-                            DataType = ParameterDataType.Bool,
-                            Unit = null,
-                            TabOrder = 0,
-                            Control = null,
-                            ValuesList = [],
-                            SpecialValues = []
-                        }
-                    }
-                ]
-            }
-        };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
-        var sut = new DeviceExporter();
-
-        // Act
-        var json = await sut.ExportDeviceAsync(device);
-
-        // Assert
-        // DefaultIgnoreCondition.WhenWritingNull should omit null name
-        json.Should().NotContain("\"name\":null");
     }
 
     [Fact]
     public async Task ExportDevicesAsync_WithSingleDevice_ReturnsArrayWithOneElement()
     {
         // Arrange
-        var device = CreateFakeDevice(new FakeDeviceOptions { Name = "OnlyDevice" });
+        var device = new CompleteCcuDeviceFakeBuilder().WithName("OnlyDevice").Build();
         var sut = new DeviceExporter();
 
         // Act
         var json = await sut.ExportDevicesAsync([device]);
 
         // Assert
-        var document = JsonDocument.Parse(json);
+        using var document = JsonDocument.Parse(json);
         document.RootElement.ValueKind.Should().Be(JsonValueKind.Array);
         document.RootElement.GetArrayLength().Should().Be(1);
     }
 
     [Fact]
-    public async Task ExportDeviceAsync_WithCcuNameSet_UsesCcuNameInOutput()
+    public async Task ExportDevicesAsync_WithMultipleDevices_PreservesOrder()
     {
         // Arrange
-        var device = A.Fake<ICompleteCcuDevice>();
-        var deviceData = A.Fake<ICcuDeviceData>();
-        var uri = new CcuDeviceUri
-        {
-            CcuHost = "192.168.1.100",
-            CcuName = "MyCCU2",
-            Kind = CcuDeviceKind.HomeMatic,
-            Address = "ADDR1"
-        };
-        A.CallTo(() => deviceData.Name).Returns("Device");
-        A.CallTo(() => deviceData.Uri).Returns(uri);
-        A.CallTo(() => deviceData.DeviceType).Returns("HM-CC-RT-DN");
-        A.CallTo(() => deviceData.Firmware).Returns("1.0");
-        A.CallTo(() => deviceData.ParamSets).Returns([]);
-        A.CallTo(() => device.DeviceData).Returns(deviceData);
-        A.CallTo(() => device.ParamSetValues).Returns([]);
-        A.CallTo(() => device.Channels).Returns([]);
+        var device1 = new CompleteCcuDeviceFakeBuilder().WithName("Device1").WithAddress("ADDR1").Build();
+        var device2 = new CompleteCcuDeviceFakeBuilder().WithName("Device2").WithAddress("ADDR2").Build();
+        var device3 = new CompleteCcuDeviceFakeBuilder().WithName("Device3").WithAddress("ADDR3").Build();
         var sut = new DeviceExporter();
 
         // Act
-        var result = sut.BuildExportData(device);
+        var json = await sut.ExportDevicesAsync([device1, device2, device3]);
 
         // Assert
-        // HostDisplayName returns CcuName when set
-        result.Ccu.Should().Be("MyCCU2");
+        var deserialized = JsonSerializer.Deserialize<List<DeviceExportData>>(
+            json,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        deserialized.Should().NotBeNull();
+        deserialized!.Select(d => d.Name).Should().ContainInOrder("Device1", "Device2", "Device3");
     }
 
     [Fact]
-    public void BuildExportData_WithEmptyParamSetInParamSetValues_ReturnsParamSetWithEmptyValues()
+    public async Task ExportDevicesAsync_WithOptions_AppliesFilterToEachDevice()
     {
         // Arrange
-        var paramSetValues = new[]
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p
+                .Add("BOOST_TIME", 5, "Boost Time")
+                .Add("DECALCIFICATION_TIME", 22, "Decalcification Time"))
+            .WithParamSet("LINK", p => p.Add("PEER_NEEDS_BURST", true, "Peer Needs Burst"))
+            .Build();
+        var options = new DeviceExportOptions
         {
-            new ParamSetValuesWithDescriptions
-            {
-                ParamSetKey = "MASTER",
-                ParamSetValues = []
-            }
+            ParamSetWhitelist = ["MASTER"],
+            ParamValueNameWhitelist = ["BOOST_TIME"]
         };
-        var device = CreateFakeDevice(new FakeDeviceOptions { ParamSetValues = paramSetValues });
         var sut = new DeviceExporter();
 
         // Act
-        var result = sut.BuildExportData(device);
+        var json = await sut.ExportDevicesAsync([device], options);
 
         // Assert
-        result.ParamSetValues.Should().HaveCount(1);
-        result.ParamSetValues.First().Values.Should().BeEmpty();
+        var deserialized = JsonSerializer.Deserialize<List<DeviceExportData>>(
+            json,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        deserialized.Should().NotBeNull();
+        var paramSet = deserialized!.Single().ParamSetValues.Single();
+        paramSet.ParamSetKey.Should().Be("MASTER");
+        paramSet.Values.Select(v => v.Key).Should().BeEquivalentTo("BOOST_TIME");
     }
 }

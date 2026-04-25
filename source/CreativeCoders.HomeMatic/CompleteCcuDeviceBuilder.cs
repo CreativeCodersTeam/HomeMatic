@@ -4,8 +4,14 @@ using CreativeCoders.HomeMatic.Core.Parameters;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <inheritdoc />
+/// <summary>
+/// Default implementation of <see cref="T:CreativeCoders.HomeMatic.Core.ICompleteCcuDeviceBuilder">ICompleteCcuDeviceBuilder</see> that augments an <see cref="T:CreativeCoders.HomeMatic.Core.Devices.ICcuDevice">ICcuDevice</see>
+/// with the parameter-set values and descriptions of its device and channels.
+/// </summary>
 public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
 {
+    /// <inheritdoc />
     public async Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device)
     {
         var channels = await GetChannelsAsync(device).ConfigureAwait(false);
@@ -20,7 +26,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         return completeDevice;
     }
 
-    private async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device)
+    private static async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device)
     {
         var channels = new List<ICompleteCcuDeviceChannel>();
 
@@ -38,7 +44,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         return [..channels];
     }
 
-    private async Task<IEnumerable<ParamSetValuesWithDescriptions>> GetParamSetValuesAsync(ICcuDeviceBase device)
+    private static async Task<IEnumerable<ParamSetValuesWithDescriptions>> GetParamSetValuesAsync(ICcuDeviceBase device)
     {
         var paramSetValues = new List<ParamSetValuesWithDescriptions>();
 
@@ -54,7 +60,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
                                   throw new KeyNotFoundException()
                 });
 
-            paramSetValues.Add(new ParamSetValuesWithDescriptions()
+            paramSetValues.Add(new ParamSetValuesWithDescriptions
             {
                 ParamSetKey = paramSetKey,
                 ParamSetValues = paramSets

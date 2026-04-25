@@ -6,11 +6,18 @@ using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic;
 
+/// <summary>
+/// Provides access to the devices of a single HomeMatic CCU by combining the CCU's JSON-RPC and XML-RPC APIs.
+/// </summary>
+/// <param name="jsonRpcClient">The JSON-RPC client used to retrieve device metadata such as names.</param>
+/// <param name="xmlRpcApis">The XML-RPC API connections, keyed by the device kind they serve.</param>
+/// <param name="completeCcuDeviceBuilder">The builder used to augment a device with parameter descriptions.</param>
 public class CcuClient(
     IHomeMaticJsonRpcClient jsonRpcClient,
     IDictionary<CcuDeviceKind, XmlRpcApiConnection> xmlRpcApis,
     ICompleteCcuDeviceBuilder completeCcuDeviceBuilder) : ICcuClient
 {
+    /// <inheritdoc />
     public async Task<IEnumerable<ICcuDevice>> GetDevicesAsync()
     {
         var allDevices = new List<CcuDevice>();
@@ -31,16 +38,13 @@ public class CcuClient(
             var device =
                 allDevices.FirstOrDefault(d => d.Uri.Address.Equals(x.Address, StringComparison.OrdinalIgnoreCase));
 
-            if (device != null)
-            {
-                device.Name = x?.Name ?? string.Empty;
-            }
+            device?.Name = x?.Name ?? string.Empty;
         });
 
         return [..allDevices];
     }
 
-    private CcuDevice CreateDevice(DeviceDescription deviceDescription, XmlRpcApiConnection xmlRpcApiConnection,
+    private static CcuDevice CreateDevice(DeviceDescription deviceDescription, XmlRpcApiConnection xmlRpcApiConnection,
         IEnumerable<DeviceDescription> allDevices)
     {
         return new CcuDeviceBuilder()
@@ -48,15 +52,16 @@ public class CcuClient(
             .WithApi(xmlRpcApiConnection.Api)
             .WithUri(new CcuDeviceUri
             {
-                CcuHost = xmlRpcApiConnection.Endpoint.BaseUrl.Host,
+                CcuHost = xmlRpcApiConnection.Address.BaseUrl.Host,
                 CcuName = xmlRpcApiConnection.CcuName,
                 Address = deviceDescription.Address,
-                Kind = xmlRpcApiConnection.Endpoint.DeviceKind
+                Kind = xmlRpcApiConnection.Address.DeviceKind
             })
             .WithAllDevices(allDevices)
             .Build();
     }
 
+    /// <inheritdoc />
     public async Task<ICcuDevice> GetDeviceAsync(string address)
     {
         return (await GetDevicesAsync().ConfigureAwait(false))
@@ -64,6 +69,7 @@ public class CcuClient(
                ?? throw new KeyNotFoundException($"Device with address '{address}' not found.");
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
     {
         var completeDevices = new List<ICompleteCcuDevice>();
@@ -76,6 +82,7 @@ public class CcuClient(
         return [..completeDevices];
     }
 
+    /// <inheritdoc />
     public async Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
     {
         var ccuDevice = await GetDeviceAsync(address).ConfigureAwait(false);

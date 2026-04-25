@@ -4,13 +4,34 @@ using CreativeCoders.HomeMatic.Core.Devices;
 
 namespace CreativeCoders.HomeMatic.Core;
 
+/// <summary>
+/// Provides access to the devices of a single HomeMatic CCU.
+/// </summary>
 public interface ICcuClient
 {
+    /// <summary>
+    /// Asynchronously retrieves all devices known to the CCU.
+    /// </summary>
+    /// <returns>A task that yields an enumerable of <see cref="ICcuDevice"/> instances.</returns>
     Task<IEnumerable<ICcuDevice>> GetDevicesAsync();
 
+    /// <summary>
+    /// Asynchronously retrieves a single device by its address.
+    /// </summary>
+    /// <param name="address">The device address.</param>
+    /// <returns>A task that yields the matching <see cref="ICcuDevice"/>.</returns>
     Task<ICcuDevice> GetDeviceAsync(string address);
 
+    /// <summary>
+    /// Asynchronously retrieves all devices including their parameter descriptions.
+    /// </summary>
+    /// <returns>A task that yields an enumerable of <see cref="ICompleteCcuDevice"/> instances.</returns>
     Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync();
 
+    /// <summary>
+    /// Asynchronously retrieves a single device including its parameter descriptions.
+    /// </summary>
+    /// <param name="address">The device address.</param>
+    /// <returns>A task that yields the matching <see cref="ICompleteCcuDevice"/>.</returns>
     Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address);
 }

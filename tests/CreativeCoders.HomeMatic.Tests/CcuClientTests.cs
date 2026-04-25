@@ -68,7 +68,7 @@ public class CcuClientTests
                 Address = "1234567890",
                 Interface = "BidCos-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDevice0",
+                Name = "TestDevice0"
             }
         ];
 
@@ -123,7 +123,7 @@ public class CcuClientTests
                 Address = "9876543210",
                 Interface = "HmIP-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDeviceIp",
+                Name = "TestDeviceIp"
             }
         ];
 
@@ -181,14 +181,14 @@ public class CcuClientTests
                 Address = "1234567890",
                 Interface = "BidCos-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDevice0",
+                Name = "TestDevice0"
             },
             new DeviceDetails
             {
                 Address = "9876543210",
                 Interface = "HmIP-RF",
                 Type = "HmIP-SWDO",
-                Name = "TestDeviceIp",
+                Name = "TestDeviceIp"
             }
         ];
 
@@ -256,17 +256,287 @@ public class CcuClientTests
             .Match<ICcuDevice>(x => x.Name == string.Empty);
     }
 
+    [Fact]
+    public async Task GetDeviceAsync_UnknownAddress_ThrowsKeyNotFoundException()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi);
+
+        // Act
+        var act = () => ccuClient.GetDeviceAsync("UNKNOWN");
+
+        // Assert
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage("Device with address 'UNKNOWN' not found.");
+    }
+
+    [Fact]
+    public async Task GetDeviceAsync_MatchingAddressCaseInsensitive_ReturnsDevice()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "ABC1234", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi);
+
+        // Act
+        var device = await ccuClient.GetDeviceAsync("abc1234");
+
+        // Assert
+        device.Uri.Address.Should().Be("ABC1234");
+    }
+
+    [Fact]
+    public async Task GetCompleteDevicesAsync_DelegatesBuildingToCompleteCcuDeviceBuilder()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "A", Interface = "BidCos-RF" },
+                new DeviceDescription { Address = "B", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var completeDevice = A.Fake<ICompleteCcuDevice>();
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._))
+            .Returns(Task.FromResult(completeDevice));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var devices = (await ccuClient.GetCompleteDevicesAsync()).ToList();
+
+        // Assert
+        devices.Should().HaveCount(2);
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._))
+            .MustHaveHappenedTwiceExactly();
+    }
+
+    [Fact]
+    public async Task GetCompleteDevicesAsync_NoDevices_ReturnsEmptyAndDoesNotCallBuilder()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var devices = await ccuClient.GetCompleteDevicesAsync();
+
+        // Assert
+        devices.Should().BeEmpty();
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._)).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async Task GetCompleteDevicesAsync_ReturnsBuilderProducedDevices()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "A", Interface = "BidCos-RF" },
+                new DeviceDescription { Address = "B", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var completeDeviceA = A.Fake<ICompleteCcuDevice>();
+        var completeDeviceB = A.Fake<ICompleteCcuDevice>();
+
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>.That.Matches(d => d.Uri.Address == "A")))
+            .Returns(Task.FromResult(completeDeviceA));
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>.That.Matches(d => d.Uri.Address == "B")))
+            .Returns(Task.FromResult(completeDeviceB));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var devices = (await ccuClient.GetCompleteDevicesAsync()).ToList();
+
+        // Assert
+        devices.Should().HaveCount(2);
+        devices.Should().ContainInOrder(completeDeviceA, completeDeviceB);
+    }
+
+    [Fact]
+    public async Task GetCompleteDeviceAsync_KnownAddress_ReturnsBuilderResult()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "ABC1234", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var expected = A.Fake<ICompleteCcuDevice>();
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>.That.Matches(d => d.Uri.Address == "ABC1234")))
+            .Returns(Task.FromResult(expected));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var device = await ccuClient.GetCompleteDeviceAsync("abc1234");
+
+        // Assert
+        device.Should().BeSameAs(expected);
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task GetCompleteDeviceAsync_UnknownAddress_ThrowsKeyNotFoundException()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi);
+
+        // Act
+        var act = () => ccuClient.GetCompleteDeviceAsync("UNKNOWN");
+
+        // Assert
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task GetCompleteDevicesAsync_BuilderThrows_PropagatesException()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "A", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._))
+            .ThrowsAsync(new InvalidOperationException("boom"));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var act = ccuClient.GetCompleteDevicesAsync;
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("boom");
+    }
+
+    [Fact]
+    public async Task GetCompleteDeviceAsync_BuilderThrows_PropagatesException()
+    {
+        // Arrange
+        var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
+        var homeMaticXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var homeMaticIpXmlRpcApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var completeBuilder = A.Fake<ICompleteCcuDeviceBuilder>();
+
+        A.CallTo(() => jsonRpcClient.ListAllDetailsAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDetails>().AsEnumerable()));
+        A.CallTo(() => homeMaticXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult<IEnumerable<DeviceDescription>>(
+            [
+                new DeviceDescription { Address = "ABC1234", Interface = "BidCos-RF" }
+            ]));
+        A.CallTo(() => homeMaticIpXmlRpcApi.ListDevicesAsync())
+            .Returns(Task.FromResult(Array.Empty<DeviceDescription>().AsEnumerable()));
+
+        A.CallTo(() => completeBuilder.BuildAsync(A<ICcuDevice>._))
+            .ThrowsAsync(new InvalidOperationException("boom"));
+
+        var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
+
+        // Act
+        var act = () => ccuClient.GetCompleteDeviceAsync("ABC1234");
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("boom");
+    }
+
     private static CcuClient CreateCcuClient(IHomeMaticJsonRpcClient jsonRpcClient,
         IHomeMaticXmlRpcApi homeMaticXmlRpcApi,
         IHomeMaticXmlRpcApi homeMaticIpXmlRpcApi,
         ICompleteCcuDeviceBuilder? completeCcuDeviceBuilder = null)
     {
         var homeMaticXmlRpcApiConnection = new XmlRpcApiConnection(
-            new XmlRpcEndpoint(new Uri("http://example.com"), CcuDeviceKind.HomeMatic),
+            new XmlRpcApiAddress(new Uri("http://example.com"), CcuDeviceKind.HomeMatic),
             homeMaticXmlRpcApi);
 
         var homeMaticIpXmlRpcApiConnection = new XmlRpcApiConnection(
-            new XmlRpcEndpoint(new Uri("http://example.com"), CcuDeviceKind.HomeMaticIp),
+            new XmlRpcApiAddress(new Uri("http://example.com"), CcuDeviceKind.HomeMaticIp),
             homeMaticIpXmlRpcApi);
 
         var xmlRpcApis = new Dictionary<CcuDeviceKind, XmlRpcApiConnection>

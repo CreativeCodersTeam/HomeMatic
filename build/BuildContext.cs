@@ -6,7 +6,6 @@ using CreativeCoders.CakeBuild.Tasks.Defaults;
 using CreativeCoders.CakeBuild.Tasks.Templates.Settings;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
-using CreativeCoders.Core.IO;
 using JetBrains.Annotations;
 
 namespace Build;

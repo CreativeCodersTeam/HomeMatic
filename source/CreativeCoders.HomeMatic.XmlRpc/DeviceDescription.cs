@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using CreativeCoders.HomeMatic.Core.Devices;
-using CreativeCoders.HomeMatic.Core.Parameters;
+﻿using System.Collections.Generic;
+using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Converters;
 using CreativeCoders.Net.XmlRpc.Definition;
 using CreativeCoders.Net.XmlRpc.Definition.MemberConverters;
@@ -44,7 +43,7 @@ public class DeviceDescription
     /// </summary>
     /// <value>An array of channel addresses. Empty for channel entries.</value>
     [XmlRpcStructMember("CHILDREN")]
-    public string[] Children { get; set; } = Array.Empty<string>();
+    public string[] Children { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the address of the parent device.
@@ -99,14 +98,14 @@ public class DeviceDescription
     /// An array of parameter set keys, typically containing <c>MASTER</c>, <c>VALUES</c>, and/or <c>LINK</c>.
     /// </value>
     [XmlRpcStructMember("PARAMSETS", DefaultValue = new string[0])]
-    public string[] ParamSets { get; set; } = Array.Empty<string>();
+    public string[] ParamSets { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the reception mode flags for this device. Only present for BidCoS-RF devices.
     /// </summary>
-    /// <value>A bitwise combination of <see cref="CreativeCoders.HomeMatic.Core.Parameters.RxMode"/> values.</value>
-    [XmlRpcStructMember("RX_MODE", DefaultValue = RxMode.None, Converter = typeof(FlagsMemberValueConverter<RxMode>))]
-    public RxMode RxMode { get; set; }
+    /// <value>A bitwise combination of <see cref="RxMode"/> values.</value>
+    [XmlRpcStructMember("RX_MODE", DefaultValue = RxModes.None, Converter = typeof(FlagsMemberValueConverter<RxModes>))]
+    public RxModes RxMode { get; set; }
 
     /// <summary>
     /// Gets or sets the address of the paired channel in a button group. Only present for grouped channels.
@@ -149,7 +148,8 @@ public class DeviceDescription
     /// Gets or sets the current firmware update state of the device. Only present for devices.
     /// </summary>
     /// <value>One of the <see cref="DeviceFirmwareUpdateState"/> values indicating the update progress.</value>
-    [XmlRpcStructMember("FIRMWARE_UPDATE_STATE", DefaultValue = DeviceFirmwareUpdateState.None, Converter = typeof(DeviceFirmwareUpdateStateValueConverter))]
+    [XmlRpcStructMember("FIRMWARE_UPDATE_STATE", DefaultValue = DeviceFirmwareUpdateState.None,
+        Converter = typeof(DeviceFirmwareUpdateStateValueConverter))]
     public DeviceFirmwareUpdateState FirmwareUpdateState { get; set; }
 
     /// <summary>
@@ -165,8 +165,9 @@ public class DeviceDescription
     /// <summary>
     /// Gets or sets the direction of this channel in a direct device link. Only present for channels.
     /// </summary>
-    /// <value>One of the <see cref="CreativeCoders.HomeMatic.Core.Devices.ChannelDirection"/> values.</value>
-    [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None, Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
+    /// <value>One of the <see cref="ChannelDirection"/> values.</value>
+    [XmlRpcStructMember("DIRECTION", DefaultValue = ChannelDirection.None,
+        Converter = typeof(EnumMemberValueConverter<ChannelDirection>))]
     public ChannelDirection ChannelDirection { get; set; }
 
     /// <summary>
@@ -175,14 +176,14 @@ public class DeviceDescription
     /// <value>A collection of role names (e.g. <c>SWITCH</c>) separated by spaces in the raw XML-RPC data.</value>
     [XmlRpcStructMember("LINK_SOURCE_ROLES", DefaultValue = new string[0],
         Converter = typeof(LinkRolesValueConverter))]
-    public IEnumerable<string> LinkSourceRoles { get; set; } = Array.Empty<string>();
+    public IEnumerable<string> LinkSourceRoles { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the roles this channel can assume as a receiver in a direct device link. Only present for channels.
     /// </summary>
     /// <value>A collection of role names (e.g. <c>SWITCH</c>) separated by spaces in the raw XML-RPC data.</value>
     [XmlRpcStructMember("LINK_TARGET_ROLES", DefaultValue = new string[0], Converter = typeof(LinkRolesValueConverter))]
-    public IEnumerable<string> LinkTargetRoles { get; set; } = Array.Empty<string>();
+    public IEnumerable<string> LinkTargetRoles { get; set; } = [];
 
     /// <summary>
     /// Gets a value that indicates whether this description represents a top-level device (not a channel).

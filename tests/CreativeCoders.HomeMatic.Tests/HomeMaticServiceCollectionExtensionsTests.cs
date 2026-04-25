@@ -10,7 +10,7 @@ public class HomeMaticServiceCollectionExtensionsTests
     public void GetRequiredService_CcuClientSupportAdded_GetCcuClientFactory()
     {
         // Arrange
-        var services = new ServiceCollection() as IServiceCollection;
+        IServiceCollection services = new ServiceCollection();
         services.AddHomeMatic();
 
         var sp = services.BuildServiceProvider();

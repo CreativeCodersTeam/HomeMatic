@@ -31,7 +31,7 @@ public class DefaultSharedData : ISharedData
         }
 
         return JsonSerializer.Deserialize<CliSharedData>(FileSys.File.ReadAllText(GetCliDataFileName()))
-            ?? new CliSharedData();
+               ?? new CliSharedData();
     }
 
     public void SaveCliData(CliSharedData cliSharedData)
@@ -41,6 +41,6 @@ public class DefaultSharedData : ISharedData
 
     public string GetPassword(string ccuHost)
     {
-        return _console.Prompt<string>(new TextPrompt<string>("Password: ") { IsSecret = true });
+        return _console.Prompt(new TextPrompt<string>("Password: ") { IsSecret = true });
     }
 }

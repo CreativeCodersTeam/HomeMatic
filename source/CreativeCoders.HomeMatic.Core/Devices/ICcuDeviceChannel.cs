@@ -1,5 +1,6 @@
 namespace CreativeCoders.HomeMatic.Core.Devices;
 
-public interface ICcuDeviceChannel : ICcuDeviceBase, ICcuDeviceChannelData
-{
-}
+/// <summary>
+/// Represents a single channel of a HomeMatic device.
+/// </summary>
+public interface ICcuDeviceChannel : ICcuDeviceBase, ICcuDeviceChannelData;
