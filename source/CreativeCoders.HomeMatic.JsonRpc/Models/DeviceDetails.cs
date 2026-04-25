@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 namespace CreativeCoders.HomeMatic.JsonRpc.Models;
 
 [UsedImplicitly]
+[PublicAPI]
 public class DeviceDetails
 {
     public string? Id { get; set; }

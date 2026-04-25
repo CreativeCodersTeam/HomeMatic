@@ -20,16 +20,17 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Converters;
 [UsedImplicitly]
 public class ParameterDataTypeValueConverter : IXmlRpcMemberValueConverter
 {
-    private static readonly IDictionary<string, ParameterDataType> DataTypeMapping = new Dictionary<string, ParameterDataType>
-    {
-        {"INTEGER", ParameterDataType.Integer},
-        {"BOOL", ParameterDataType.Bool},
-        {"FLOAT", ParameterDataType.Float},
-        {"ACTION", ParameterDataType.Action},
-        {"ENUM", ParameterDataType.Enum},
-        {"STRING", ParameterDataType.String}
-    };
-        
+    private static readonly Dictionary<string, ParameterDataType> DataTypeMapping =
+        new Dictionary<string, ParameterDataType>
+        {
+            { "INTEGER", ParameterDataType.Integer },
+            { "BOOL", ParameterDataType.Bool },
+            { "FLOAT", ParameterDataType.Float },
+            { "ACTION", ParameterDataType.Action },
+            { "ENUM", ParameterDataType.Enum },
+            { "STRING", ParameterDataType.String }
+        };
+
     /// <summary>
     /// Converts an <see cref="XmlRpcValue"/> containing a type name string into a <see cref="ParameterDataType"/> value.
     /// </summary>
@@ -37,14 +38,9 @@ public class ParameterDataTypeValueConverter : IXmlRpcMemberValueConverter
     /// <returns>The corresponding <see cref="ParameterDataType"/>, or <see cref="ParameterDataType.Unknown"/> if the value is not a recognized type string.</returns>
     public object ConvertFromValue(XmlRpcValue xmlRpcValue)
     {
-        if (xmlRpcValue is not StringValue text)
-        {
-            return ParameterDataType.Unknown;
-        }
-
-        return DataTypeMapping.TryGetValue(text.Value, out var dataType)
-            ? dataType
-            : ParameterDataType.Unknown;
+        return xmlRpcValue is not StringValue text
+            ? ParameterDataType.Unknown
+            : DataTypeMapping.GetValueOrDefault(text.Value, ParameterDataType.Unknown);
     }
 
     /// <summary>

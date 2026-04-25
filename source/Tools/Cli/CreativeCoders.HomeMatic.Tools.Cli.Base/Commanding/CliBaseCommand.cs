@@ -5,15 +5,9 @@ using CreativeCoders.HomeMatic.XmlRpc.Client;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commanding;
 
-public abstract class CliBaseCommand
+public abstract class CliBaseCommand(IHomeMaticXmlRpcApiBuilder apiBuilder, ISharedData sharedData)
 {
-    private readonly IHomeMaticXmlRpcApiBuilder _apiBuilder;
-
-    protected CliBaseCommand(IHomeMaticXmlRpcApiBuilder apiBuilder, ISharedData sharedData)
-    {
-        _apiBuilder = Ensure.NotNull(apiBuilder);
-        SharedData = Ensure.NotNull(sharedData);
-    }
+    private readonly IHomeMaticXmlRpcApiBuilder _apiBuilder = Ensure.NotNull(apiBuilder);
 
     protected IHomeMaticXmlRpcApi BuildApi()
     {
@@ -24,5 +18,5 @@ public abstract class CliBaseCommand
             .Build();
     }
 
-    protected ISharedData SharedData { get; set; }
+    protected ISharedData SharedData { get; } = Ensure.NotNull(sharedData);
 }

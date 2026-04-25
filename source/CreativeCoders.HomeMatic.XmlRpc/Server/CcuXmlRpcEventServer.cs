@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
@@ -22,13 +23,14 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 /// Register with the CCU using <see cref="M:CreativeCoders.HomeMatic.XmlRpc.Client.IHomeMaticXmlRpcApi.InitAsync(System.String,System.String)">Client.IHomeMaticXmlRpcApi.InitAsync</see> after starting.
 /// </remarks>
 [PublicAPI]
+[SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging")]
 public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
 {
     private readonly IXmlRpcServer _xmlRpcServer;
 
     private readonly ILogger<CcuXmlRpcEventServer> _logger;
 
-    private readonly IList<ICcuEventHandler> _eventHandlers;
+    private readonly ConcurrentList<ICcuEventHandler> _eventHandlers;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CcuXmlRpcEventServer"/> class.
@@ -99,7 +101,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     {
         _logger.LogDebug("List devices for InterfaceId = {InterfaceId}", interfaceId);
 
-        return Task.FromResult(Array.Empty<XmlRpcValue>() as IEnumerable<XmlRpcValue>);
+        return Task.FromResult<IEnumerable<XmlRpcValue>>([]);
     }
 
     /// <summary>

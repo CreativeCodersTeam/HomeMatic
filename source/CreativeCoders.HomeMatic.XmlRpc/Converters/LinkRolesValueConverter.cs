@@ -25,7 +25,7 @@ public class LinkRolesValueConverter : IXmlRpcMemberValueConverter
     {
         var text = xmlRpcValue.GetValue<string>();
 
-        return text?.Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
+        return text?.Split([" "], StringSplitOptions.RemoveEmptyEntries);
     }
 
     /// <summary>

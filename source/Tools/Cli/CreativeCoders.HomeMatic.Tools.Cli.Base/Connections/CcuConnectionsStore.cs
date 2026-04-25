@@ -119,7 +119,7 @@ public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
         return FileSys.File.WriteAllTextAsync(GetConnectionsFileName(), json);
     }
 
-    private void EnsureConfigPath()
+    private static void EnsureConfigPath()
     {
         FileSys.Directory.CreateDirectory(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),

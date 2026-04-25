@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CreativeCoders.HomeMatic.Core.Devices;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Core;
 
 /// <summary>
 /// Provides unified access to devices across multiple HomeMatic CCUs.
 /// </summary>
+[PublicAPI]
 public interface IMultiCcuClient
 {
     /// <summary>

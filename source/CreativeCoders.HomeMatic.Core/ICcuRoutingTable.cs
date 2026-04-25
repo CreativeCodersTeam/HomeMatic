@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Core;
 
@@ -9,6 +10,7 @@ namespace CreativeCoders.HomeMatic.Core;
 /// The routing table enables <see cref="IMultiCcuClient"/> implementations to avoid querying every configured
 /// CCU for each per-device call. Implementations must be safe for concurrent use.
 /// </remarks>
+[PublicAPI]
 public interface ICcuRoutingTable
 {
     /// <summary>

@@ -24,7 +24,7 @@ public class CliHomeMaticClientBuilder(
             var credential = _ccuConnectionsStore.GetCredentials(x);
 
             _multiCcuClientFactory.AddCcu(x.Name, x.Url.Host, credential.UserName, credential.Password,
-                [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp]);
+                CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp);
         });
 
         return _multiCcuClientFactory.Build();
@@ -39,7 +39,7 @@ public class CliHomeMaticClientBuilder(
             var credential = _ccuConnectionsStore.GetCredentials(x);
 
             _multiCcuClientFactory.AddCcu(x.Name, x.Url.Host, credential.UserName, credential.Password,
-                [CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp]);
+                CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp);
         });
 
         return _multiCcuClientFactory.Build();

@@ -1,10 +1,12 @@
 using CreativeCoders.HomeMatic.Core.Devices;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Exporting;
 
 /// <summary>
 /// Exports <see cref="ICompleteCcuDevice"/> data to a serialized representation such as JSON.
 /// </summary>
+[PublicAPI]
 public interface IDeviceExporter
 {
     /// <summary>

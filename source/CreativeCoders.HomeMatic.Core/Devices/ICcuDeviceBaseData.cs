@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace CreativeCoders.HomeMatic.Core.Devices;
 
 /// <summary>
 /// Defines the common identifying and structural data of a HomeMatic device or channel.
 /// </summary>
+[PublicAPI]
 public interface ICcuDeviceBaseData
 {
     /// <summary>

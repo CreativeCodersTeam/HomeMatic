@@ -26,7 +26,7 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         return completeDevice;
     }
 
-    private async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device)
+    private static async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device)
     {
         var channels = new List<ICompleteCcuDeviceChannel>();
 

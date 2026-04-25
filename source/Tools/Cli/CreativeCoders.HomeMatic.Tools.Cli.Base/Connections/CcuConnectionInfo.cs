@@ -2,15 +2,9 @@
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 
-public class CcuConnectionInfo
+public class CcuConnectionInfo(Uri url, string? name)
 {
-    public CcuConnectionInfo(Uri url, string? name)
-    {
-        Url = Ensure.NotNull(url);
-        Name = name ?? url.Host;
-    }
-    
-    public string Name { get; set; }
+    public string Name { get; set; } = name ?? url.Host;
 
-    public Uri Url { get; set; }
+    public Uri Url { get; set; } = Ensure.NotNull(url);
 }

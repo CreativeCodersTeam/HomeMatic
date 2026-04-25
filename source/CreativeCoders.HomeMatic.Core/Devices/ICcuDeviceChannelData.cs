@@ -1,10 +1,12 @@
 using CreativeCoders.HomeMatic.XmlRpc.Devices;
+using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Core.Devices;
 
 /// <summary>
 /// Defines the channel-specific data of a HomeMatic device channel.
 /// </summary>
+[PublicAPI]
 public interface ICcuDeviceChannelData : ICcuDeviceBaseData
 {
     /// <summary>
