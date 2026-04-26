@@ -89,12 +89,9 @@ public class CcuBackupService : ICcuBackupService
     {
         var request = new JsonRpcRequest
         {
+            Id = Environment.TickCount,
             Method = "Session.login",
-            Params = new Dictionary<string, string>
-            {
-                ["username"] = _credential.UserName,
-                ["password"] = _credential.Password
-            }
+            Params = ["username", _credential.UserName, "password", _credential.Password]
         };
 
         var apiUrl = new Uri(_baseUrl, "/api/homematic.cgi");
@@ -123,11 +120,9 @@ public class CcuBackupService : ICcuBackupService
         {
             var request = new JsonRpcRequest
             {
+                Id = Environment.TickCount,
                 Method = "Session.logout",
-                Params = new Dictionary<string, string>
-                {
-                    ["_session_id_"] = sessionId
-                }
+                Params = ["_session_id_", sessionId]
             };
 
             var apiUrl = new Uri(_baseUrl, "/api/homematic.cgi");
@@ -146,11 +141,14 @@ public class CcuBackupService : ICcuBackupService
 
     private record JsonRpcRequest
     {
+        [JsonPropertyName("id")]
+        public required int Id { get; init; }
+
         [JsonPropertyName("method")]
         public required string Method { get; init; }
 
         [JsonPropertyName("params")]
-        public required Dictionary<string, string> Params { get; init; }
+        public required object?[] Params { get; init; }
     }
 
     private record JsonRpcResponse
