@@ -1,7 +1,10 @@
+using System.IO.Abstractions;
 using System.Net;
 using System.Text;
 using AwesomeAssertions;
+using CreativeCoders.Core.IO;
 using CreativeCoders.HomeMatic.FirmwareBackup;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CreativeCoders.HomeMatic.Tests.FirmwareBackup;
 
@@ -179,7 +182,11 @@ public class FirmwareBackupClientFactoryIntegrationTests
     {
         var handler = new QueueingHttpMessageHandler();
         var httpClientFactory = new SingleHandlerHttpClientFactory(handler);
-        var factory = new FirmwareBackupClientFactory(httpClientFactory);
+        var fileSystem = new ServiceCollection()
+            .AddFileSystem()
+            .BuildServiceProvider()
+            .GetRequiredService<IFileSystem>();
+        var factory = new FirmwareBackupClientFactory(httpClientFactory, fileSystem);
         return (factory, handler);
     }
 }

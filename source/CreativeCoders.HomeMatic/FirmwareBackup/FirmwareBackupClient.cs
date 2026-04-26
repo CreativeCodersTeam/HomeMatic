@@ -1,6 +1,6 @@
 using CreativeCoders.Core;
-using CreativeCoders.Core.IO;
 using CreativeCoders.HomeMatic.FirmwareBackup.Internal;
+using System.IO.Abstractions;
 
 namespace CreativeCoders.HomeMatic.FirmwareBackup;
 
@@ -13,15 +13,18 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
     private readonly ICcuSessionClient _sessionClient;
     private readonly IFirmwareBackupDownloader _downloader;
     private readonly FirmwareBackupOptions _options;
+    private readonly IFileSystem _fileSystem;
 
     internal FirmwareBackupClient(
         ICcuSessionClient sessionClient,
         IFirmwareBackupDownloader downloader,
-        FirmwareBackupOptions options)
+        FirmwareBackupOptions options,
+        IFileSystem fileSystem)
     {
         _sessionClient = Ensure.NotNull(sessionClient);
         _downloader = Ensure.NotNull(downloader);
         _options = Ensure.NotNull(options);
+        _fileSystem = Ensure.NotNull(fileSystem);
     }
 
     /// <inheritdoc />
@@ -60,26 +63,26 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
 
         var resolvedPath = ResolveFilePath(targetFilePath, backup.FileName);
 
-        var directory = Path.GetDirectoryName(resolvedPath);
+        var directory = _fileSystem.Path.GetDirectoryName(resolvedPath);
         if (!string.IsNullOrWhiteSpace(directory))
         {
-            Directory.CreateDirectory(directory);
+            _fileSystem.Directory.CreateDirectory(directory);
         }
 
-        var fileStream = FileSys.File.Create(resolvedPath);
+        var fileStream = _fileSystem.File.Create(resolvedPath);
         await using var stream = fileStream.ConfigureAwait(false);
         await backup.Content.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
 
         return resolvedPath;
     }
 
-    private static string ResolveFilePath(string targetFilePath, string suggestedFileName)
+    private string ResolveFilePath(string targetFilePath, string suggestedFileName)
     {
-        if (Directory.Exists(targetFilePath) ||
-            targetFilePath.EndsWith(Path.DirectorySeparatorChar) ||
-            targetFilePath.EndsWith(Path.AltDirectorySeparatorChar))
+        if (_fileSystem.Directory.Exists(targetFilePath) ||
+            targetFilePath.EndsWith(_fileSystem.Path.DirectorySeparatorChar) ||
+            targetFilePath.EndsWith(_fileSystem.Path.AltDirectorySeparatorChar))
         {
-            return Path.Combine(targetFilePath, suggestedFileName);
+            return _fileSystem.Path.Combine(targetFilePath, suggestedFileName);
         }
 
         return targetFilePath;

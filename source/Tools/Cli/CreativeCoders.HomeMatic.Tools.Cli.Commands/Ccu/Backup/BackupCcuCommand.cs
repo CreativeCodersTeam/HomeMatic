@@ -4,6 +4,7 @@ using CreativeCoders.HomeMatic.FirmwareBackup;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using JetBrains.Annotations;
 using Spectre.Console;
+using System.IO.Abstractions;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Backup;
 
@@ -12,7 +13,8 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Backup;
 public class BackupCcuCommand(
     IAnsiConsole console,
     ICcuConnectionsStore ccuConnectionsStore,
-    IFirmwareBackupClientFactory firmwareBackupClientFactory)
+    IFirmwareBackupClientFactory firmwareBackupClientFactory,
+    IFileSystem fileSystem)
     : ICliCommand<BackupCcuOptions>
 {
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
@@ -21,6 +23,8 @@ public class BackupCcuCommand(
 
     private readonly IFirmwareBackupClientFactory _firmwareBackupClientFactory =
         Ensure.NotNull(firmwareBackupClientFactory);
+
+    private readonly IFileSystem _fileSystem = Ensure.NotNull(fileSystem);
 
     public async Task<CommandResult> ExecuteAsync(BackupCcuOptions options)
     {
@@ -53,12 +57,12 @@ public class BackupCcuCommand(
         var backupOptions = new FirmwareBackupOptions(connection.Url, credential);
         var client = _firmwareBackupClientFactory.Create(backupOptions);
 
-        var targetPath = Path.GetFullPath(options.OutputFile);
-        var targetDirectory = Path.GetDirectoryName(targetPath);
+        var targetPath = _fileSystem.Path.GetFullPath(options.OutputFile);
+        var targetDirectory = _fileSystem.Path.GetDirectoryName(targetPath);
 
         if (!string.IsNullOrEmpty(targetDirectory))
         {
-            Directory.CreateDirectory(targetDirectory);
+            _fileSystem.Directory.CreateDirectory(targetDirectory);
         }
 
         _console.MarkupLine(

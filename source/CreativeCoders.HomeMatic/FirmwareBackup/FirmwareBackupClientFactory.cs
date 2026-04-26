@@ -1,5 +1,6 @@
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.FirmwareBackup.Internal;
+using System.IO.Abstractions;
 
 namespace CreativeCoders.HomeMatic.FirmwareBackup;
 
@@ -16,14 +17,17 @@ public sealed class FirmwareBackupClientFactory : IFirmwareBackupClientFactory
     public const string HttpClientName = "CreativeCoders.HomeMatic.FirmwareBackup";
 
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IFileSystem _fileSystem;
 
     /// <summary>
     /// Initializes a new instance of <see cref="FirmwareBackupClientFactory"/>.
     /// </summary>
     /// <param name="httpClientFactory">Factory used to obtain the named HTTP client.</param>
-    public FirmwareBackupClientFactory(IHttpClientFactory httpClientFactory)
+    /// <param name="fileSystem">File system abstraction used by created clients.</param>
+    public FirmwareBackupClientFactory(IHttpClientFactory httpClientFactory, IFileSystem fileSystem)
     {
         _httpClientFactory = Ensure.NotNull(httpClientFactory);
+        _fileSystem = Ensure.NotNull(fileSystem);
     }
 
     /// <inheritdoc />
@@ -41,6 +45,6 @@ public sealed class FirmwareBackupClientFactory : IFirmwareBackupClientFactory
             options.BackupCgiPath,
             options.BackupAction);
 
-        return new FirmwareBackupClient(sessionClient, downloader, options);
+        return new FirmwareBackupClient(sessionClient, downloader, options, _fileSystem);
     }
 }
