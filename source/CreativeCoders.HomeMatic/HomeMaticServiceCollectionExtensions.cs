@@ -1,3 +1,4 @@
+using System.Net.Http;
 using CreativeCoders.HomeMatic.Backup;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Exporting;
@@ -35,7 +36,8 @@ public static class HomeMaticServiceCollectionExtensions
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
         services.TryAddTransient<ICompleteCcuDeviceBuilder, CompleteCcuDeviceBuilder>();
         services.TryAddSingleton<IDeviceExporter, DeviceExporter>();
-        services.AddHttpClient("CcuBackup");
+        services.AddHttpClient("CcuBackup")
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler { UseCookies = false });
         services.TryAddTransient<ICcuBackupServiceBuilder, CcuBackupServiceBuilder>();
 
         return services;
