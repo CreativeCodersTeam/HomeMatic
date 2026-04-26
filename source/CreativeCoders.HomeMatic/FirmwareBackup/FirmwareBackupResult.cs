@@ -34,7 +34,7 @@ public sealed class FirmwareBackupResult : IAsyncDisposable, IDisposable
         Content = Ensure.NotNull(content);
         FileName = Ensure.IsNotNullOrWhitespace(fileName);
         ContentLength = contentLength;
-        _additionalResources = additionalResources ?? [];
+        _additionalResources = Ensure.NotNull(additionalResources);
     }
 
     /// <summary>

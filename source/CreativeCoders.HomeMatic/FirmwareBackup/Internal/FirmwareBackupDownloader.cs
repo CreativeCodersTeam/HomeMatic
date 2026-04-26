@@ -23,7 +23,8 @@ internal sealed class FirmwareBackupDownloader : IFirmwareBackupDownloader
         _backupAction = Ensure.IsNotNullOrWhitespace(backupAction);
     }
 
-    public async Task<FirmwareBackupDownloadResult> DownloadAsync(string sessionId, CancellationToken cancellationToken = default)
+    public async Task<FirmwareBackupDownloadResult> DownloadAsync(string sessionId,
+        CancellationToken cancellationToken = default)
     {
         Ensure.IsNotNullOrWhitespace(sessionId);
 
@@ -66,12 +67,9 @@ internal sealed class FirmwareBackupDownloader : IFirmwareBackupDownloader
 
         var fileName = disposition?.FileNameStar ?? disposition?.FileName;
 
-        if (string.IsNullOrWhiteSpace(fileName))
-        {
-            return DefaultFileName;
-        }
-
-        return fileName!.Trim('"');
+        return string.IsNullOrWhiteSpace(fileName)
+            ? DefaultFileName
+            : fileName.Trim('"');
     }
 
     private Uri BuildRequestUri(string sessionId)

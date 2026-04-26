@@ -1,3 +1,4 @@
+using CreativeCoders.Core.IO;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,6 +19,7 @@ public static class FirmwareBackupServiceCollectionExtensions
     /// <returns>The same <see cref="IServiceCollection"/> instance to allow chaining calls.</returns>
     public static IServiceCollection AddHomeMaticFirmwareBackup(this IServiceCollection services)
     {
+        services.AddFileSystem();
         services
             .AddHttpClient(FirmwareBackupClientFactory.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler

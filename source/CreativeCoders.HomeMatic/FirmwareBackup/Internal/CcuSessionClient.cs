@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using CreativeCoders.Core;
@@ -23,7 +22,8 @@ internal sealed class CcuSessionClient : ICcuSessionClient
         _jsonRpcUrl = new Uri(baseUrl, jsonRpcPath);
     }
 
-    public async Task<string> LoginAsync(string userName, string password, CancellationToken cancellationToken = default)
+    public async Task<string> LoginAsync(string userName, string password,
+        CancellationToken cancellationToken = default)
     {
         Ensure.IsNotNullOrWhitespace(userName);
         Ensure.NotNull(password);
@@ -45,7 +45,7 @@ internal sealed class CcuSessionClient : ICcuSessionClient
                 "CCU did not return a session id. Please verify the credentials.");
         }
 
-        return sessionId!;
+        return sessionId;
     }
 
     public async Task LogoutAsync(string sessionId, CancellationToken cancellationToken = default)
@@ -76,10 +76,8 @@ internal sealed class CcuSessionClient : ICcuSessionClient
     {
         var json = JsonSerializer.Serialize(payload);
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, _jsonRpcUrl)
-        {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
-        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, _jsonRpcUrl);
+        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
         using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
@@ -103,7 +101,8 @@ internal sealed class CcuSessionClient : ICcuSessionClient
 
         if (root.TryGetProperty("error", out var errorElement) && errorElement.ValueKind != JsonValueKind.Null)
         {
-            var message = errorElement.TryGetProperty("message", out var msgEl) && msgEl.ValueKind == JsonValueKind.String
+            var message = errorElement.TryGetProperty("message", out var msgEl) &&
+                          msgEl.ValueKind == JsonValueKind.String
                 ? msgEl.GetString()
                 : errorElement.ToString();
 

@@ -30,6 +30,12 @@ public class BackupCcuCommand(
             return -1;
         }
 
+        if (string.IsNullOrWhiteSpace(options.OutputFile))
+        {
+            _console.MarkupLine("[bold italic red3]An output file path is required.[/]");
+            return -1;
+        }
+
         var connections = await _ccuConnectionsStore.GetConnectionsAsync().ConfigureAwait(false);
 
         var connection = connections
@@ -47,14 +53,13 @@ public class BackupCcuCommand(
         var backupOptions = new FirmwareBackupOptions(connection.Url, credential);
         var client = _firmwareBackupClientFactory.Create(backupOptions);
 
-        var outputDirectory = string.IsNullOrWhiteSpace(options.OutputDirectory)
-            ? Environment.CurrentDirectory
-            : options.OutputDirectory;
+        var targetPath = Path.GetFullPath(options.OutputFile);
+        var targetDirectory = Path.GetDirectoryName(targetPath);
 
-        Directory.CreateDirectory(outputDirectory);
-
-        var fileName = BuildBackupFileName(connection.Name);
-        var targetPath = Path.Combine(outputDirectory, fileName);
+        if (!string.IsNullOrEmpty(targetDirectory))
+        {
+            Directory.CreateDirectory(targetDirectory);
+        }
 
         _console.MarkupLine(
             $"Creating firmware backup of CCU [bold]{Markup.Escape(connection.Name)}[/] " +
@@ -72,19 +77,5 @@ public class BackupCcuCommand(
             _console.MarkupLine($"[bold italic red3]Backup failed: {Markup.Escape(ex.Message)}[/]");
             return -1;
         }
-    }
-
-    private static string BuildBackupFileName(string ccuName)
-    {
-        var safeName = MakeFileNameSafe(ccuName);
-        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        return $"{safeName}_{timestamp}.sbk";
-    }
-
-    private static string MakeFileNameSafe(string value)
-    {
-        var invalid = Path.GetInvalidFileNameChars();
-        var sanitized = new string(value.Select(c => invalid.Contains(c) ? '_' : c).ToArray());
-        return string.IsNullOrWhiteSpace(sanitized) ? "ccu" : sanitized;
     }
 }

@@ -1,4 +1,5 @@
 using CreativeCoders.Core;
+using CreativeCoders.Core.IO;
 using CreativeCoders.HomeMatic.FirmwareBackup.Internal;
 
 namespace CreativeCoders.HomeMatic.FirmwareBackup;
@@ -49,11 +50,13 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
     }
 
     /// <inheritdoc />
-    public async Task<string> CreateBackupToFileAsync(string targetFilePath, CancellationToken cancellationToken = default)
+    public async Task<string> CreateBackupToFileAsync(string targetFilePath,
+        CancellationToken cancellationToken = default)
     {
         Ensure.IsNotNullOrWhitespace(targetFilePath);
 
-        await using var backup = await CreateBackupAsync(cancellationToken).ConfigureAwait(false);
+        var backup = await CreateBackupAsync(cancellationToken).ConfigureAwait(false);
+        await using var backup1 = backup.ConfigureAwait(false);
 
         var resolvedPath = ResolveFilePath(targetFilePath, backup.FileName);
 
@@ -63,7 +66,8 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
             Directory.CreateDirectory(directory);
         }
 
-        await using var fileStream = File.Create(resolvedPath);
+        var fileStream = FileSys.File.Create(resolvedPath);
+        await using var stream = fileStream.ConfigureAwait(false);
         await backup.Content.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
 
         return resolvedPath;
@@ -71,12 +75,8 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
 
     private static string ResolveFilePath(string targetFilePath, string suggestedFileName)
     {
-        if (Directory.Exists(targetFilePath))
-        {
-            return Path.Combine(targetFilePath, suggestedFileName);
-        }
-
-        if (targetFilePath.EndsWith(Path.DirectorySeparatorChar) ||
+        if (Directory.Exists(targetFilePath) ||
+            targetFilePath.EndsWith(Path.DirectorySeparatorChar) ||
             targetFilePath.EndsWith(Path.AltDirectorySeparatorChar))
         {
             return Path.Combine(targetFilePath, suggestedFileName);
