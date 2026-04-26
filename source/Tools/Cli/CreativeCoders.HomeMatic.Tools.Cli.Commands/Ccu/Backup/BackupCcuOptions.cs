@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Backup;
 
-[UsedImplicitly]
+[PublicAPI]
 public class BackupCcuOptions
 {
     [OptionValue(0, IsRequired = true, HelpText = "Name of the configured CCU connection")]

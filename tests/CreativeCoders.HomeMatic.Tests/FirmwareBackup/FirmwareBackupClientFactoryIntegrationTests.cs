@@ -11,7 +11,7 @@ namespace CreativeCoders.HomeMatic.Tests.FirmwareBackup;
 public class FirmwareBackupClientFactoryIntegrationTests
 {
     private const string FakeSessionId = "session-id-xyz";
-    private static readonly byte[] BackupPayload = Encoding.UTF8.GetBytes("BACKUP-CONTENT");
+    private static readonly byte[] BackupPayload = "BACKUP-CONTENT"u8.ToArray();
 
     [Fact]
     public async Task CreateBackupAsync_HappyPath_PerformsLoginDownloadAndLogout()
@@ -42,7 +42,8 @@ public class FirmwareBackupClientFactoryIntegrationTests
         handler.Requests[0].Body.Should().Contain("\"Session.login\"").And.Contain("\"Admin\"");
         handler.Requests[1].Uri.AbsolutePath.Should().Be("/config/cp_security.cgi");
         handler.Requests[1].Method.Should().Be(HttpMethod.Get);
-        handler.Requests[1].Uri.Query.Should().Contain($"sid=%40{FakeSessionId}%40").And.Contain("action=create_backup");
+        handler.Requests[1].Uri.Query.Should().Contain($"sid=%40{FakeSessionId}%40").And
+            .Contain("action=create_backup");
     }
 
     [Fact]

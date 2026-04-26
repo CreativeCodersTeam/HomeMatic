@@ -52,12 +52,9 @@ internal sealed class QueueingHttpMessageHandler : HttpMessageHandler
 
         Requests.Add(new RecordedRequest(request.Method, request.RequestUri!, body));
 
-        if (_responders.Count == 0)
-        {
-            throw new InvalidOperationException("No more responses queued.");
-        }
-
-        return _responders.Dequeue()(request);
+        return _responders.Count == 0
+            ? throw new InvalidOperationException("No more responses queued.")
+            : _responders.Dequeue()(request);
     }
 }
 
