@@ -21,7 +21,7 @@ public class DataSerializerFactoryTests
         // Arrange
         var jsonSerializer = FakeSerializer(DataOutputFormat.Json);
         var yamlSerializer = FakeSerializer(DataOutputFormat.Yaml);
-        var sut = new DataSerializerFactory(new[] { jsonSerializer, yamlSerializer });
+        var sut = new DataSerializerFactory([jsonSerializer, yamlSerializer]);
 
         // Act
         var result = sut.Create(DataOutputFormat.Json);
@@ -36,7 +36,7 @@ public class DataSerializerFactoryTests
         // Arrange
         var jsonSerializer = FakeSerializer(DataOutputFormat.Json);
         var yamlSerializer = FakeSerializer(DataOutputFormat.Yaml);
-        var sut = new DataSerializerFactory(new[] { jsonSerializer, yamlSerializer });
+        var sut = new DataSerializerFactory([jsonSerializer, yamlSerializer]);
 
         // Act
         var result = sut.Create(DataOutputFormat.Yaml);
@@ -49,7 +49,7 @@ public class DataSerializerFactoryTests
     public void Create_WithAuto_Throws()
     {
         // Arrange
-        var sut = new DataSerializerFactory(new[] { FakeSerializer(DataOutputFormat.Json) });
+        var sut = new DataSerializerFactory([FakeSerializer(DataOutputFormat.Json)]);
 
         // Act
         var act = () => sut.Create(DataOutputFormat.Auto);
@@ -62,7 +62,7 @@ public class DataSerializerFactoryTests
     public void Create_WhenFormatNotRegistered_Throws()
     {
         // Arrange
-        var sut = new DataSerializerFactory(new[] { FakeSerializer(DataOutputFormat.Json) });
+        var sut = new DataSerializerFactory([FakeSerializer(DataOutputFormat.Json)]);
 
         // Act
         var act = () => sut.Create(DataOutputFormat.Yaml);
@@ -75,7 +75,7 @@ public class DataSerializerFactoryTests
     public void Create_WithEmptySerializers_ThrowsForAnyFormat()
     {
         // Arrange
-        var sut = new DataSerializerFactory(Array.Empty<IDataSerializer>());
+        var sut = new DataSerializerFactory([]);
 
         // Act
         var act = () => sut.Create(DataOutputFormat.Json);

@@ -2,6 +2,7 @@ using CreativeCoders.Cli.Core;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commands.Output;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commands.Serialization;
+using JetBrains.Annotations;
 using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commands;
@@ -12,11 +13,10 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Base.Commands;
 /// </summary>
 /// <typeparam name="TData">The type of data produced by <see cref="LoadDataAsync"/>.</typeparam>
 /// <typeparam name="TOptions">The type of CLI options. Must implement <see cref="IDataOutputOptions"/>.</typeparam>
+[PublicAPI]
 public abstract class DataOutputCommandBase<TData, TOptions> : ICliCommand<TOptions>
     where TOptions : class, IDataOutputOptions
 {
-    private readonly IAnsiConsole _console;
-
     private readonly IDataSerializerFactory _serializerFactory;
 
     private readonly IDataOutputWriter _outputWriter;
@@ -32,7 +32,7 @@ public abstract class DataOutputCommandBase<TData, TOptions> : ICliCommand<TOpti
         IDataSerializerFactory serializerFactory,
         IDataOutputWriter outputWriter)
     {
-        _console = Ensure.NotNull(console);
+        Console = Ensure.NotNull(console);
         _serializerFactory = Ensure.NotNull(serializerFactory);
         _outputWriter = Ensure.NotNull(outputWriter);
     }
@@ -40,7 +40,7 @@ public abstract class DataOutputCommandBase<TData, TOptions> : ICliCommand<TOpti
     /// <summary>
     /// Gets the console available to subclasses for additional output.
     /// </summary>
-    protected IAnsiConsole Console => _console;
+    protected IAnsiConsole Console { get; }
 
     /// <inheritdoc />
     public async Task<CommandResult> ExecuteAsync(TOptions options)
@@ -93,7 +93,7 @@ public abstract class DataOutputCommandBase<TData, TOptions> : ICliCommand<TOpti
     /// <returns>A task that completes when the hook is finished.</returns>
     protected virtual Task OnBeforeLoadAsync(TOptions options)
     {
-        _console.WriteLine("Loading data...");
+        Console.WriteLine("Loading data...");
 
         return Task.CompletedTask;
     }
@@ -111,7 +111,7 @@ public abstract class DataOutputCommandBase<TData, TOptions> : ICliCommand<TOpti
             ? "stdout"
             : $"file '{options.OutputFile}'";
 
-        _console.WriteLine($"Writing {resolvedFormat} output to {target}");
+        Console.WriteLine($"Writing {resolvedFormat} output to {target}");
 
         return Task.CompletedTask;
     }

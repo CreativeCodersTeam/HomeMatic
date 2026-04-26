@@ -67,8 +67,7 @@ public class DataOutputWriter : IDataOutputWriter
         return extension.ToLowerInvariant() switch
         {
             ".json" => DataOutputFormat.Json,
-            ".yaml" => DataOutputFormat.Yaml,
-            ".yml" => DataOutputFormat.Yaml,
+            ".yaml" or ".yml" => DataOutputFormat.Yaml,
             _ => null
         };
     }

@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using CreativeCoders.Cli.Core;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commands;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commands.Output;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Commands.Serialization;
