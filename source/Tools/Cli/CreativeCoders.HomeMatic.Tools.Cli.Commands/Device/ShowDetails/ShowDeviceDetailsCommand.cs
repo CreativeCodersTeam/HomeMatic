@@ -10,6 +10,7 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.ShowDetails;
 
 [UsedImplicitly]
+[CliCommand([DeviceCommandGroup.Name, "details"], Description = "Show details for a device")]
 public class ShowDeviceDetailsCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
     : ICliCommand<ShowDeviceDetailsOptions>
 {

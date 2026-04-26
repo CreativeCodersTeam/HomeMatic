@@ -1,3 +1,4 @@
+using CreativeCoders.HomeMatic.Backup;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.JsonRpc;
@@ -34,6 +35,7 @@ public static class HomeMaticServiceCollectionExtensions
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
         services.TryAddTransient<ICompleteCcuDeviceBuilder, CompleteCcuDeviceBuilder>();
         services.TryAddSingleton<IDeviceExporter, DeviceExporter>();
+        services.TryAddTransient<ICcuBackupServiceBuilder, CcuBackupServiceBuilder>();
 
         return services;
     }
