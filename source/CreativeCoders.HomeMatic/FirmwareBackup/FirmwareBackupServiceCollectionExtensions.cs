@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CreativeCoders.Core.IO;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +18,17 @@ public static class FirmwareBackupServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to register the services on.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance to allow chaining calls.</returns>
+    [SuppressMessage("csharpsquid", "S4830:Server certificate validation should not be disabled",
+        Justification =
+            "Only used for explicitly opting in to accepting any server certificate, e.g. for self-signed certificates on a CCU.")]
     public static IServiceCollection AddHomeMaticFirmwareBackup(this IServiceCollection services)
     {
         services.AddFileSystem();
+
+        services.AddHttpClient(FirmwareBackupClientFactory.HttpClientName);
+
         services
-            .AddHttpClient(FirmwareBackupClientFactory.HttpClientName)
+            .AddHttpClient(FirmwareBackupClientFactory.HttpClientNameAcceptAnyCertificate)
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true

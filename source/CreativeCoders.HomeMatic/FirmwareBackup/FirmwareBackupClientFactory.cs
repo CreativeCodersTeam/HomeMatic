@@ -12,9 +12,17 @@ namespace CreativeCoders.HomeMatic.FirmwareBackup;
 public sealed class FirmwareBackupClientFactory : IFirmwareBackupClientFactory
 {
     /// <summary>
-    /// Name of the named <see cref="HttpClient"/> registered for firmware backup operations.
+    /// Name of the named <see cref="HttpClient"/> registered for firmware backup operations
+    /// using the platform's standard server certificate validation.
     /// </summary>
     public const string HttpClientName = "CreativeCoders.HomeMatic.FirmwareBackup";
+
+    /// <summary>
+    /// Name of the named <see cref="HttpClient"/> registered for firmware backup operations
+    /// that accepts any (including self-signed) server certificate.
+    /// </summary>
+    public const string HttpClientNameAcceptAnyCertificate =
+        HttpClientName + ".AcceptAnyCertificate";
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFileSystem _fileSystem;
@@ -35,7 +43,11 @@ public sealed class FirmwareBackupClientFactory : IFirmwareBackupClientFactory
     {
         Ensure.NotNull(options);
 
-        var httpClient = _httpClientFactory.CreateClient(HttpClientName);
+        var clientName = options.AcceptAnyServerCertificate
+            ? HttpClientNameAcceptAnyCertificate
+            : HttpClientName;
+
+        var httpClient = _httpClientFactory.CreateClient(clientName);
         httpClient.Timeout = options.Timeout;
 
         var sessionClient = new CcuSessionClient(httpClient, options.BaseUrl, options.JsonRpcPath);
