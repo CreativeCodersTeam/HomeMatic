@@ -35,6 +35,7 @@ public static class HomeMaticServiceCollectionExtensions
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
         services.TryAddTransient<ICompleteCcuDeviceBuilder, CompleteCcuDeviceBuilder>();
         services.TryAddSingleton<IDeviceExporter, DeviceExporter>();
+        services.AddHttpClient("CcuBackup");
         services.TryAddTransient<ICcuBackupServiceBuilder, CcuBackupServiceBuilder>();
 
         return services;
