@@ -42,5 +42,7 @@ internal static class Program
         services.AddHomeMaticXmlRpc();
 
         services.AddHomeMaticJsonRpc();
+
+        services.AddFileSystem();
     }
 }

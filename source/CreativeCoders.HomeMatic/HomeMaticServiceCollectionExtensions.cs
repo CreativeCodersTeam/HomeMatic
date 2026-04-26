@@ -1,5 +1,6 @@
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Exporting;
+using CreativeCoders.HomeMatic.FirmwareBackup;
 using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.XmlRpc;
 using JetBrains.Annotations;
@@ -29,6 +30,7 @@ public static class HomeMaticServiceCollectionExtensions
     {
         services.AddHomeMaticXmlRpc();
         services.AddHomeMaticJsonRpc();
+        services.AddHomeMaticFirmwareBackup();
 
         services.TryAddTransient<ICcuClientFactory, CcuClientFactory>();
         services.TryAddTransient<IMultiCcuClientFactory, MultiCcuClientFactory>();
