@@ -11,7 +11,7 @@ namespace CreativeCoders.HomeMatic.FirmwareBackup;
 /// Always dispose the result to release the connection.
 /// </remarks>
 [PublicAPI]
-public sealed class FirmwareBackupResult : IAsyncDisposable, IDisposable
+public sealed class FirmwareBackupResult : IAsyncDisposable
 {
     private readonly IAsyncDisposable[] _additionalResources;
 
@@ -61,11 +61,5 @@ public sealed class FirmwareBackupResult : IAsyncDisposable, IDisposable
         {
             await resource.DisposeAsync().ConfigureAwait(false);
         }
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
 }

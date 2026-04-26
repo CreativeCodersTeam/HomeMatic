@@ -22,21 +22,6 @@ public class ExportDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcu
         {
             WriteIndented = true
         });
-        return new
-        {
-            Device = device.DeviceData,
-            Channels = device.Channels.Select(x =>
-            {
-                var channel = new
-                {
-                    Info = x.ChannelData,
-                    ParamSets = x.ParamSetValues
-                };
-
-                return channel;
-            }),
-            ParamSets = device.ParamSetValues
-        };
     }
 
     protected override Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
