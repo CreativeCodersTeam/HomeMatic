@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 using CreativeCoders.Net.XmlRpc.Definition;
 using JetBrains.Annotations;
 
@@ -170,4 +172,100 @@ public interface IHomeMaticXmlRpcApi
     /// <returns>The version string of the interface process.</returns>
     [XmlRpcMethod("getVersion")]
     Task<string> GetVersionAsync();
+
+    /// <summary>
+    /// Retrieves all communication links assigned to a logical device or channel.
+    /// </summary>
+    /// <param name="address">
+    /// The channel or device address. Pass an empty string to retrieve all links of the entire
+    /// interface process.
+    /// </param>
+    /// <param name="flags">
+    /// A bitwise combination of <see cref="GetLinksFlags"/> values cast to <see cref="int"/>. See
+    /// <see cref="HomeMaticXmlRpcApiLinkExtensions.GetLinksAsync(IHomeMaticXmlRpcApi, string, GetLinksFlags)"/>
+    /// for a strongly-typed overload.
+    /// </param>
+    /// <returns>A collection of <see cref="Link"/> structures describing each link.</returns>
+    /// <remarks>See section 4.2.10 of the HomeMatic XML-RPC specification.</remarks>
+    [XmlRpcMethod("getLinks")]
+    Task<IEnumerable<Link>> GetLinksAsync(string address, int flags);
+
+    /// <summary>
+    /// Creates a communication link between two logical devices or channels.
+    /// </summary>
+    /// <param name="sender">The address of the sender of the link.</param>
+    /// <param name="receiver">The address of the receiver of the link.</param>
+    /// <param name="name">An optional name for the link. Pass an empty string when not used.</param>
+    /// <param name="description">An optional description for the link. Pass an empty string when not used.</param>
+    /// <remarks>See section 4.2.11 of the HomeMatic XML-RPC specification.</remarks>
+    [XmlRpcMethod("addLink")]
+    Task AddLinkAsync(string sender, string receiver, string name, string description);
+
+    /// <summary>
+    /// Removes the communication link between two logical devices or channels.
+    /// </summary>
+    /// <param name="sender">The address of the sender of the link.</param>
+    /// <param name="receiver">The address of the receiver of the link.</param>
+    /// <remarks>See section 4.2.12 of the HomeMatic XML-RPC specification.</remarks>
+    [XmlRpcMethod("removeLink")]
+    Task RemoveLinkAsync(string sender, string receiver);
+
+    /// <summary>
+    /// Updates the descriptive texts of an existing communication link.
+    /// </summary>
+    /// <param name="sender">The address of the sender of the link.</param>
+    /// <param name="receiver">The address of the receiver of the link.</param>
+    /// <param name="name">The new name of the link.</param>
+    /// <param name="description">The new description of the link.</param>
+    /// <remarks>
+    /// See section 4.3.1 of the HomeMatic XML-RPC specification. This method is supported by
+    /// BidCoS-RF and BidCoS-Wired interface processes.
+    /// </remarks>
+    [XmlRpcMethod("setLinkInfo")]
+    Task SetLinkInfoAsync(string sender, string receiver, string name, string description);
+
+    /// <summary>
+    /// Retrieves the raw <c>[name, description]</c> tuple of an existing communication link as
+    /// returned by the XML-RPC interface.
+    /// </summary>
+    /// <param name="senderAddress">The address of the sender of the link.</param>
+    /// <param name="receiverAddress">The address of the receiver of the link.</param>
+    /// <returns>A two-element string sequence: the link name followed by the link description.</returns>
+    /// <remarks>
+    /// See section 4.3.2 of the HomeMatic XML-RPC specification. Prefer the strongly-typed
+    /// extension method
+    /// <see cref="HomeMaticXmlRpcApiLinkExtensions.GetLinkInfoAsync(IHomeMaticXmlRpcApi, string, string)"/>
+    /// which returns a <see cref="LinkInfo"/> instance.
+    /// </remarks>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    [XmlRpcMethod("getLinkInfo")]
+    Task<IEnumerable<string>> GetLinkInfoRawAsync(string senderAddress, string receiverAddress);
+
+    /// <summary>
+    /// Activates a link parameter set so that the logical device behaves as if it had been
+    /// triggered directly by the assigned communication partner.
+    /// </summary>
+    /// <param name="address">The address of the logical device whose link parameter set should be activated.</param>
+    /// <param name="peerAddress">The address of the communication partner whose link parameter set is activated.</param>
+    /// <param name="longPress">
+    /// <see langword="true"/> to activate the parameter set for a long key press; otherwise <see langword="false"/>.
+    /// </param>
+    /// <remarks>
+    /// See section 4.3.3 of the HomeMatic XML-RPC specification. This method is supported by
+    /// BidCoS-RF interface processes only.
+    /// </remarks>
+    [XmlRpcMethod("activateLinkParamset")]
+    Task ActivateLinkParamsetAsync(string address, string peerAddress, bool longPress);
+
+    /// <summary>
+    /// Retrieves all communication partners assigned to a logical device.
+    /// </summary>
+    /// <param name="address">The address of the logical device.</param>
+    /// <returns>
+    /// A collection of peer addresses. Each entry can be used as the <c>paramSetKey</c> argument
+    /// of <see cref="GetParamSetAsync"/> and <see cref="PutParamsetAsync"/>.
+    /// </returns>
+    /// <remarks>See section 4.3.20 of the HomeMatic XML-RPC specification.</remarks>
+    [XmlRpcMethod("getLinkPeers")]
+    Task<IEnumerable<string>> GetLinkPeersAsync(string address);
 }
