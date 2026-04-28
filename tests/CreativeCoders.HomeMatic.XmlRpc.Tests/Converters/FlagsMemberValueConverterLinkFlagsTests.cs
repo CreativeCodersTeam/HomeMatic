@@ -39,6 +39,19 @@ public class FlagsMemberValueConverterLinkFlagsTests
     }
 
     [Fact]
+    public void ConvertFromValue_NullValue_ThrowsNullReferenceException()
+    {
+        // Arrange
+        var sut = new FlagsMemberValueConverter<LinkFlags>();
+
+        // Act
+        Action act = () => sut.ConvertFromValue(null!);
+
+        // Assert
+        act.Should().Throw<NullReferenceException>();
+    }
+
+    [Fact]
     public void ConvertFromObject_AnyValue_ThrowsNotImplementedException()
     {
         // Arrange

@@ -83,6 +83,40 @@ public class HomeMaticXmlRpcApiLinkExtensionsTests
     }
 
     [Fact]
+    public async Task GetLinksAsync_UnderlyingApiThrows_PropagatesException()
+    {
+        // Arrange
+        var api = A.Fake<IHomeMaticXmlRpcApi>();
+        var failure = new InvalidOperationException("boom");
+        A.CallTo(() => api.GetLinksAsync(A<string>._, A<int>._)).ThrowsAsync(failure);
+
+        // Act
+        Func<Task> act = () => api.GetLinksAsync("ABC1234567");
+
+        // Assert
+        (await act.Should().ThrowAsync<InvalidOperationException>())
+            .Which.Should().BeSameAs(failure);
+    }
+
+    [Fact]
+    public async Task GetLinkInfoAsync_EmptyAddresses_ForwardsToUnderlyingApi()
+    {
+        // Arrange
+        var api = A.Fake<IHomeMaticXmlRpcApi>();
+        A.CallTo(() => api.GetLinkInfoRawAsync(string.Empty, string.Empty))
+            .Returns(Task.FromResult<IEnumerable<string>>(["N", "D"]));
+
+        // Act
+        var info = await api.GetLinkInfoAsync(string.Empty, string.Empty);
+
+        // Assert
+        info.Name.Should().Be("N");
+        info.Description.Should().Be("D");
+        A.CallTo(() => api.GetLinkInfoRawAsync(string.Empty, string.Empty))
+            .MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
     public async Task GetLinkInfoAsync_TwoElementResponse_MapsToNameAndDescription()
     {
         // Arrange

@@ -66,6 +66,40 @@ public class HomeMaticXmlRpcApiBuilderTests
     }
 
     [Fact]
+    public void ForUrl_Uri_ReturnsSameBuilderInstance()
+    {
+        // Arrange
+        var proxyBuilder = A.Fake<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
+        var sut = new HomeMaticXmlRpcApiBuilder(proxyBuilder);
+
+        // Act
+        var returned = sut.ForUrl(new Uri("http://localhost:2001/"));
+
+        // Assert
+        returned.Should().BeSameAs(sut);
+    }
+
+    [Fact]
+    public void Build_AfterForUrlCalledTwice_UsesLastUrl()
+    {
+        // Arrange
+        var proxyBuilder = A.Fake<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
+        var fakeApi = A.Fake<IHomeMaticXmlRpcApi>();
+        var firstUrl = new Uri("http://first.local/");
+        var secondUrl = new Uri("http://second.local/");
+        A.CallTo(() => proxyBuilder.ForUrl(A<Uri>._)).Returns(proxyBuilder);
+        A.CallTo(() => proxyBuilder.Build()).Returns(fakeApi);
+        var sut = new HomeMaticXmlRpcApiBuilder(proxyBuilder);
+
+        // Act
+        sut.ForUrl(firstUrl).ForUrl(secondUrl).Build();
+
+        // Assert
+        A.CallTo(() => proxyBuilder.ForUrl(secondUrl)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => proxyBuilder.ForUrl(firstUrl)).MustNotHaveHappened();
+    }
+
+    [Fact]
     public void ForUrl_XmlRpcApiAddress_DelegatesToUriOverloadWithDerivedUrl()
     {
         // Arrange
