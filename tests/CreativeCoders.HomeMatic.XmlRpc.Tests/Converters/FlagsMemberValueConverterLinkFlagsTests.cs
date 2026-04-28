@@ -7,8 +7,6 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Tests.Converters;
 
 public class FlagsMemberValueConverterLinkFlagsTests
 {
-    private readonly FlagsMemberValueConverter<LinkFlags> _sut = new();
-
     [Theory]
     [InlineData(0, LinkFlags.None)]
     [InlineData(1, LinkFlags.SenderBroken)]
@@ -16,18 +14,40 @@ public class FlagsMemberValueConverterLinkFlagsTests
     [InlineData(3, LinkFlags.SenderBroken | LinkFlags.ReceiverBroken)]
     public void ConvertFromValue_IntegerValue_ReturnsLinkFlags(int raw, LinkFlags expected)
     {
-        var result = _sut.ConvertFromValue(new IntegerValue(raw));
+        // Arrange
+        var sut = new FlagsMemberValueConverter<LinkFlags>();
 
+        // Act
+        var result = sut.ConvertFromValue(new IntegerValue(raw));
+
+        // Assert
         result.Should().Be(expected);
     }
 
     [Fact]
     public void ConvertFromValue_NonIntegerValue_ReturnsRawData()
     {
+        // Arrange
+        var sut = new FlagsMemberValueConverter<LinkFlags>();
         var stringValue = new StringValue("hello");
 
-        var result = _sut.ConvertFromValue(stringValue);
+        // Act
+        var result = sut.ConvertFromValue(stringValue);
 
+        // Assert
         result.Should().Be(stringValue.Data);
+    }
+
+    [Fact]
+    public void ConvertFromObject_AnyValue_ThrowsNotImplementedException()
+    {
+        // Arrange
+        var sut = new FlagsMemberValueConverter<LinkFlags>();
+
+        // Act
+        Action act = () => sut.ConvertFromObject(LinkFlags.SenderBroken);
+
+        // Assert
+        act.Should().Throw<NotImplementedException>();
     }
 }
