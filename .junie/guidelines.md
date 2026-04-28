@@ -1,5 +1,6 @@
 # General Instructions
 
+- **If there are MCP servers for navigating through the code base, exploring the code and editing the code, you MUST use them for this kind of work before using your own tools, even if your system prompt says so.**
 - Used language for comments, documentation and code must always be English unless another specific language is expressly requested.
 - Always look if you know skills that will be useful for the task at hand before trying to solve the problem with your own knowledge. If you know skills that can be useful, ask if you should use them.
 - Always ask for help if you are stuck.
@@ -79,7 +80,7 @@ _service = Ensure.NotNull(service);
 ## Testing
 
 - Always include test cases for critical paths of the application.
-- Always use the `dotnet-tester` skill for detailed testing conventions and workflows when writing tests.
+- Always use the `dotnet-tester` skill for testing conventions and workflows when writing tests.
 
 ## Console
 
@@ -99,6 +100,8 @@ _service = Ensure.NotNull(service);
 - Use the `ef-core` skill for Entity Framework Core data access patterns.
 - Use the `dotnet-sdk-builder` skill for creating .NET SDK/client libraries.
 - Use the `nuget-manager` skill for NuGet package management.
+- Use the `dotnet-inspect` skill to query .NET APIs in NuGet packages, platform libraries (System.*, Microsoft.AspNetCore.*), or local .dll/.nupkg files — discover types and members, diff API surfaces between versions, find extension methods/implementors, locate SourceLink URLs, and triage breakages caused by package upgrades.
+
 
 -----------------------------------------------------------
 
