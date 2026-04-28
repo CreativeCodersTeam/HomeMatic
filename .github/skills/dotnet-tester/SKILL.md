@@ -113,6 +113,7 @@ At the end, provide a summary:
 ## Important Notes
 
 - Do **not write tests for trivial getters/setters** without logic
+- Do **not write tests to check if properties are initialized correctly after construction**
 - Do **not mock value types** or simple DTOs – create real instances
 - Test **behavior**, not implementation details
 - Use **descriptive test names** in the format `MethodName_Scenario_ExpectedBehavior`
