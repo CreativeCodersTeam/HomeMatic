@@ -62,7 +62,7 @@ public class Link
     /// <see cref="GetLinksFlags.SenderParamSet"/> flag was passed to <c>getLinks</c>; otherwise
     /// an empty dictionary.
     /// </value>
-    [XmlRpcStructMember("SENDER_PARAMSET")]
+    [XmlRpcStructMember("SENDER_PARAMSET", Converter = typeof(ParamSetDictionaryValueConverter))]
     public Dictionary<string, object> SenderParamSet { get; set; } = new();
 
     /// <summary>
@@ -73,6 +73,6 @@ public class Link
     /// <see cref="GetLinksFlags.ReceiverParamSet"/> flag was passed to <c>getLinks</c>; otherwise
     /// an empty dictionary.
     /// </value>
-    [XmlRpcStructMember("RECEIVER_PARAMSET")]
+    [XmlRpcStructMember("RECEIVER_PARAMSET", Converter = typeof(ParamSetDictionaryValueConverter))]
     public Dictionary<string, object> ReceiverParamSet { get; set; } = new();
 }
