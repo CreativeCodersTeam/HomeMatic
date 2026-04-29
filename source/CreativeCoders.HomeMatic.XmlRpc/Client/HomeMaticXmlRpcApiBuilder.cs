@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using CreativeCoders.Core;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using JetBrains.Annotations;
@@ -50,6 +51,7 @@ public class HomeMaticXmlRpcApiBuilder : IHomeMaticXmlRpcApiBuilder
         }
 
         return _proxyBuilder
+            .UseEncoding(Encoding.Latin1)
             .ForUrl(_url)
             .Build();
     }
