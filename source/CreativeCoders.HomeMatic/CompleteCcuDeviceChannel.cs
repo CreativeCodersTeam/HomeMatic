@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Core.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 
 namespace CreativeCoders.HomeMatic;
 
@@ -9,8 +10,11 @@ namespace CreativeCoders.HomeMatic;
 public class CompleteCcuDeviceChannel : ICompleteCcuDeviceChannel
 {
     /// <inheritdoc />
-    public required ICcuDeviceChannelData ChannelData { get; init; }
+    public required ICcuDeviceChannel ChannelData { get; init; }
 
     /// <inheritdoc />
     public required IEnumerable<ParamSetValuesWithDescriptions> ParamSetValues { get; init; }
+
+    /// <inheritdoc />
+    public IEnumerable<Link> Links { get; init; } = [];
 }

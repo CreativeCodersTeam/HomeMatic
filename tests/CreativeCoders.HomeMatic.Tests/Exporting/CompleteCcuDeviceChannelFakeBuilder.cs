@@ -1,6 +1,7 @@
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.XmlRpc;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 using FakeItEasy;
 
 namespace CreativeCoders.HomeMatic.Tests.Exporting;
@@ -12,7 +13,14 @@ internal sealed class CompleteCcuDeviceChannelFakeBuilder
     private int _index = 1;
     private string[] _paramSets = ["VALUES"];
     private readonly List<ParamSetValuesWithDescriptions> _paramSetValues = [];
+    private readonly List<Link> _links = [];
     private string _ccuHost = "ccu2.local";
+
+    public CompleteCcuDeviceChannelFakeBuilder WithLink(Link link)
+    {
+        _links.Add(link);
+        return this;
+    }
 
     public CompleteCcuDeviceChannelFakeBuilder WithAddress(string address)
     {
@@ -61,7 +69,7 @@ internal sealed class CompleteCcuDeviceChannelFakeBuilder
     public ICompleteCcuDeviceChannel Build()
     {
         var channel = A.Fake<ICompleteCcuDeviceChannel>();
-        var channelData = A.Fake<ICcuDeviceChannelData>();
+        var channelData = A.Fake<ICcuDeviceChannel>();
 
         var uri = new CcuDeviceUri
         {
@@ -77,6 +85,7 @@ internal sealed class CompleteCcuDeviceChannelFakeBuilder
 
         A.CallTo(() => channel.ChannelData).Returns(channelData);
         A.CallTo(() => channel.ParamSetValues).Returns(_paramSetValues);
+        A.CallTo(() => channel.Links).Returns(_links);
 
         return channel;
     }

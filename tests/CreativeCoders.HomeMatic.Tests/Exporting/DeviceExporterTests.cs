@@ -1,6 +1,7 @@
 using System.Text.Json;
 using AwesomeAssertions;
 using CreativeCoders.HomeMatic.Exporting;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 
 namespace CreativeCoders.HomeMatic.Tests.Exporting;
 
@@ -702,5 +703,158 @@ public class DeviceExporterTests
         var paramSet = deserialized!.Single().ParamSetValues.Single();
         paramSet.ParamSetKey.Should().Be("MASTER");
         paramSet.Values.Select(v => v.Key).Should().BeEquivalentTo("BOOST_TIME");
+    }
+
+    // ---- Links ------------------------------------------------------------
+
+    [Fact]
+    public void BuildExportData_WithoutIncludeLinks_LinksAreNull()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithAddress("XYZ:1")
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "ABC:2", Name = "n", Description = "d" }))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        result.Channels.Single().Links.Should().BeNull();
+    }
+
+    [Fact]
+    public void BuildExportData_WithIncludeLinksButNoLinks_ReturnsEmptyList()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithAddress("XYZ:1"))
+            .Build();
+        var options = new DeviceExportOptions { IncludeLinks = true };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.Channels.Single().Links.Should().NotBeNull();
+        result.Channels.Single().Links.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void BuildExportData_WithIncludeLinksAndLinks_MapsAllLinkFields()
+    {
+        // Arrange
+        var link = new Link
+        {
+            Sender = "XYZ:1",
+            Receiver = "ABC:2",
+            Name = "MyLink",
+            Description = "MyDescription"
+        };
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithAddress("XYZ:1").WithLink(link))
+            .Build();
+        var options = new DeviceExportOptions { IncludeLinks = true };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        var exportedLink = result.Channels.Single().Links.Should().ContainSingle().Subject;
+        exportedLink.Sender.Should().Be("XYZ:1");
+        exportedLink.Receiver.Should().Be("ABC:2");
+        exportedLink.Name.Should().Be("MyLink");
+        exportedLink.Description.Should().Be("MyDescription");
+    }
+
+    [Fact]
+    public void BuildExportData_WithIncludeLinksAndMultipleLinks_PreservesOrder()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithAddress("XYZ:1")
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "A:1", Name = "1", Description = "" })
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "B:1", Name = "2", Description = "" })
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "C:1", Name = "3", Description = "" }))
+            .Build();
+        var options = new DeviceExportOptions { IncludeLinks = true };
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device, options);
+
+        // Assert
+        result.Channels.Single().Links!.Select(l => l.Receiver)
+            .Should().ContainInOrder("A:1", "B:1", "C:1");
+    }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithIncludeLinks_EmitsLinksArrayInJson()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithAddress("XYZ:1")
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "ABC:2", Name = "n", Description = "d" }))
+            .Build();
+        var options = new DeviceExportOptions { IncludeLinks = true, WriteIndented = false };
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device, options);
+
+        // Assert
+        using var document = JsonDocument.Parse(json);
+        var channel = document.RootElement.GetProperty("channels")[0];
+        channel.TryGetProperty("links", out var links).Should().BeTrue();
+        links.GetArrayLength().Should().Be(1);
+        var first = links[0];
+        first.GetProperty("sender").GetString().Should().Be("XYZ:1");
+        first.GetProperty("receiver").GetString().Should().Be("ABC:2");
+        first.GetProperty("name").GetString().Should().Be("n");
+        first.GetProperty("description").GetString().Should().Be("d");
+    }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithoutIncludeLinks_OmitsLinksFromJson()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c
+                .WithAddress("XYZ:1")
+                .WithLink(new Link { Sender = "XYZ:1", Receiver = "ABC:2", Name = "n", Description = "d" }))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device);
+
+        // Assert
+        using var document = JsonDocument.Parse(json);
+        var channel = document.RootElement.GetProperty("channels")[0];
+        channel.TryGetProperty("links", out _).Should().BeFalse();
+    }
+
+    [Fact]
+    public void DeviceExportOptions_ToBuildOptions_PropagatesIncludeLinksAndFlags()
+    {
+        // Arrange
+        var options = new DeviceExportOptions
+        {
+            IncludeLinks = true,
+            LinksFlags = GetLinksFlags.SenderParamSet | GetLinksFlags.ReceiverParamSet
+        };
+
+        // Act
+        var buildOptions = options.ToBuildOptions();
+
+        // Assert
+        buildOptions.IncludeLinks.Should().BeTrue();
+        buildOptions.LinksFlags.Should().Be(GetLinksFlags.SenderParamSet | GetLinksFlags.ReceiverParamSet);
     }
 }

@@ -1,4 +1,6 @@
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 using FakeItEasy;
 using AwesomeAssertions;
 
@@ -179,6 +181,84 @@ public class CompleteCcuDeviceBuilderTests
         // Assert
         completeDevice.Channels.Should().ContainSingle()
             .Which.ParamSetValues.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task BuildAsync_WithoutOptions_DoesNotFetchLinks()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+        var channel = A.Fake<ICcuDeviceChannel>();
+
+        A.CallTo(() => device.Channels).Returns([channel]);
+        A.CallTo(() => device.ParamSets).Returns([]);
+        A.CallTo(() => channel.ParamSets).Returns([]);
+
+        var builder = new CompleteCcuDeviceBuilder();
+
+        // Act
+        var completeDevice = await builder.BuildAsync(device);
+
+        // Assert
+        A.CallTo(channel)
+            .Where(call => call.Method.Name == nameof(ICcuDeviceChannel.GetLinksAsync))
+            .MustNotHaveHappened();
+        completeDevice.Channels.Single().Links.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task BuildAsync_WithIncludeLinks_FetchesLinksWithRequestedFlags()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+        var channel = A.Fake<ICcuDeviceChannel>();
+
+        A.CallTo(() => device.Channels).Returns([channel]);
+        A.CallTo(() => device.ParamSets).Returns([]);
+        A.CallTo(() => channel.ParamSets).Returns([]);
+
+        var expectedLink = new Link { Sender = "X:1", Receiver = "Y:1", Name = "n", Description = "d" };
+        const GetLinksFlags expectedFlags = GetLinksFlags.SenderParamSet;
+        A.CallTo(() => channel.GetLinksAsync(expectedFlags))
+            .Returns(Task.FromResult<IEnumerable<Link>>([expectedLink]));
+
+        var builder = new CompleteCcuDeviceBuilder();
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            IncludeLinks = true,
+            LinksFlags = expectedFlags
+        };
+
+        // Act
+        var completeDevice = await builder.BuildAsync(device, options);
+
+        // Assert
+        A.CallTo(() => channel.GetLinksAsync(expectedFlags)).MustHaveHappenedOnceExactly();
+        completeDevice.Channels.Single().Links.Should().ContainSingle()
+            .Which.Should().BeEquivalentTo(expectedLink);
+    }
+
+    [Fact]
+    public async Task BuildAsync_WithIncludeLinksFalse_DoesNotFetchLinks()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+        var channel = A.Fake<ICcuDeviceChannel>();
+
+        A.CallTo(() => device.Channels).Returns([channel]);
+        A.CallTo(() => device.ParamSets).Returns([]);
+        A.CallTo(() => channel.ParamSets).Returns([]);
+
+        var builder = new CompleteCcuDeviceBuilder();
+        var options = new CompleteCcuDeviceBuildOptions { IncludeLinks = false };
+
+        // Act
+        await builder.BuildAsync(device, options);
+
+        // Assert
+        A.CallTo(channel)
+            .Where(call => call.Method.Name == nameof(ICcuDeviceChannel.GetLinksAsync))
+            .MustNotHaveHappened();
     }
 
     private static void SetupParamSet(ICcuDeviceBase device, string paramSetKey, string name, object value)
