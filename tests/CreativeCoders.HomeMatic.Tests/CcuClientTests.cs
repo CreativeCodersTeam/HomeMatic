@@ -489,7 +489,7 @@ public class CcuClientTests
         var ccuClient = CreateCcuClient(jsonRpcClient, homeMaticXmlRpcApi, homeMaticIpXmlRpcApi, completeBuilder);
 
         // Act
-        var act = ccuClient.GetCompleteDevicesAsync;
+        var act = () => ccuClient.GetCompleteDevicesAsync();
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("boom");

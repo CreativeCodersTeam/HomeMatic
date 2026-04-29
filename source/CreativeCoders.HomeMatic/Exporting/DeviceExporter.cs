@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CreativeCoders.HomeMatic.Core.Devices;
+using CreativeCoders.HomeMatic.XmlRpc.Links;
 
 namespace CreativeCoders.HomeMatic.Exporting;
 
@@ -55,8 +56,22 @@ public class DeviceExporter : IDeviceExporter
             DeviceType = channel.ChannelData.DeviceType,
             Index = channel.ChannelData.Index,
             ParamSets = channel.ChannelData.ParamSets,
-            ParamSetValues = BuildParamSetExportData(channel.ParamSetValues, options)
+            ParamSetValues = BuildParamSetExportData(channel.ParamSetValues, options),
+            Links = options?.IncludeLinks == true ? BuildLinkExportData(channel.Links) : null
         };
+    }
+
+    private static IEnumerable<LinkExportData> BuildLinkExportData(IEnumerable<Link> links)
+    {
+        return links
+            .Select(link => new LinkExportData
+            {
+                Sender = link.Sender,
+                Receiver = link.Receiver,
+                Name = link.Name,
+                Description = link.Description
+            })
+            .ToList();
     }
 
     private static ParamSetExportData[] BuildParamSetExportData(

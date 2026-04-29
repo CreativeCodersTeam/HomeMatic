@@ -34,4 +34,13 @@ public class ChannelExportData
     /// </summary>
     /// <value>The enumerable of <see cref="ParamSetExportData"/> entries.</value>
     public required IEnumerable<ParamSetExportData> ParamSetValues { get; init; }
+
+    /// <summary>
+    /// Gets the communication links of the channel that passed the export filter.
+    /// </summary>
+    /// <value>
+    /// The enumerable of <see cref="LinkExportData"/> entries, or <see langword="null"/> when link
+    /// export is disabled. <see langword="null"/> values are omitted from the JSON output.
+    /// </value>
+    public IEnumerable<LinkExportData>? Links { get; init; }
 }

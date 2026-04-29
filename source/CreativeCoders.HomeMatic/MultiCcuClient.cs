@@ -42,9 +42,10 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync()
+    public async Task<IEnumerable<ICompleteCcuDevice>> GetCompleteDevicesAsync(
+        CompleteCcuDeviceBuildOptions? buildOptions = null)
     {
-        var results = await GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync()).ConfigureAwait(false);
+        var results = await GetDataFromClientsAsync(x => x.GetCompleteDevicesAsync(buildOptions)).ConfigureAwait(false);
 
         RegisterRoutes(results.SelectMany(pair =>
             pair.Items.Select(item => (item.DeviceData.Uri.Address, pair.Client))));
@@ -53,12 +54,13 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
     }
 
     /// <inheritdoc />
-    public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address)
+    public Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address,
+        CompleteCcuDeviceBuildOptions? buildOptions = null)
     {
         Ensure.IsNotNullOrWhitespace(address);
 
         return InvokeWithRoutingAsync(address,
-            (client, deviceAddress) => client.GetCompleteDeviceAsync(deviceAddress));
+            (client, deviceAddress) => client.GetCompleteDeviceAsync(deviceAddress, buildOptions));
     }
 
     // Generic helper that routes a per-device call through the routing table. Can be reused by future

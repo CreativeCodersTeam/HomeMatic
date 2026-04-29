@@ -12,6 +12,7 @@ public interface ICompleteCcuDeviceBuilder
     /// Asynchronously builds a complete device representation for the specified device.
     /// </summary>
     /// <param name="device">The base device to augment with parameter descriptions.</param>
+    /// <param name="options">Optional build options controlling whether links are fetched.</param>
     /// <returns>A task that yields the completed <see cref="ICompleteCcuDevice"/>.</returns>
-    Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device);
+    Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device, CompleteCcuDeviceBuildOptions? options = null);
 }

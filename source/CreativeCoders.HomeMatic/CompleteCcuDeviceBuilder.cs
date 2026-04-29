@@ -12,9 +12,9 @@ namespace CreativeCoders.HomeMatic;
 public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
 {
     /// <inheritdoc />
-    public async Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device)
+    public async Task<ICompleteCcuDevice> BuildAsync(ICcuDevice device, CompleteCcuDeviceBuildOptions? options = null)
     {
-        var channels = await GetChannelsAsync(device).ConfigureAwait(false);
+        var channels = await GetChannelsAsync(device, options).ConfigureAwait(false);
 
         var completeDevice = new CompleteCcuDevice
         {
@@ -26,16 +26,22 @@ public class CompleteCcuDeviceBuilder : ICompleteCcuDeviceBuilder
         return completeDevice;
     }
 
-    private static async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device)
+    private static async Task<IEnumerable<ICompleteCcuDeviceChannel>> GetChannelsAsync(ICcuDevice device,
+        CompleteCcuDeviceBuildOptions? options)
     {
         var channels = new List<ICompleteCcuDeviceChannel>();
 
         foreach (var ccuDeviceChannel in device.Channels)
         {
+            var links = options?.IncludeLinks == true
+                ? (await ccuDeviceChannel.GetLinksAsync(options.LinksFlags).ConfigureAwait(false)).ToArray()
+                : [];
+
             var completeChannel = new CompleteCcuDeviceChannel
             {
                 ChannelData = ccuDeviceChannel,
-                ParamSetValues = await GetParamSetValuesAsync(ccuDeviceChannel).ConfigureAwait(false)
+                ParamSetValues = await GetParamSetValuesAsync(ccuDeviceChannel).ConfigureAwait(false),
+                Links = links
             };
 
             channels.Add(completeChannel);

@@ -1,8 +1,7 @@
 ﻿using CreativeCoders.Cli.Core;
 using CreativeCoders.Core;
-using CreativeCoders.Core.Collections;
 using CreativeCoders.HomeMatic.Core;
-using CreativeCoders.HomeMatic.Core.Devices;
+using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
@@ -10,64 +9,112 @@ using Spectre.Console;
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.ShowDetails;
 
 [UsedImplicitly]
-public class ShowDeviceDetailsCommand(IAnsiConsole console, IMultiCcuClient multiCcuClient)
+[CliCommand([DeviceCommandGroup.Name, "details"], Description = "Show details for a device")]
+public class ShowDeviceDetailsCommand(
+    IAnsiConsole console,
+    IMultiCcuClient multiCcuClient,
+    IDeviceExporter deviceExporter)
     : ICliCommand<ShowDeviceDetailsOptions>
 {
     private readonly IMultiCcuClient _multiCcuClient = Ensure.NotNull(multiCcuClient);
 
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
+    private readonly IDeviceExporter _deviceExporter = Ensure.NotNull(deviceExporter);
+
     public async Task<CommandResult> ExecuteAsync(ShowDeviceDetailsOptions options)
     {
-        var device = await _multiCcuClient.GetCompleteDeviceAsync(options.Address).ConfigureAwait(false);
+        var exportOptions = new DeviceExportOptions
+        {
+            IncludeLinks = true
+        };
+
+        var device = await _multiCcuClient
+            .GetCompleteDeviceAsync(options.Address, exportOptions.ToBuildOptions())
+            .ConfigureAwait(false);
+
+        var exportData = _deviceExporter.BuildExportData(device, exportOptions);
 
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
 
-        PrintDevice(device);
+        PrintDevice(exportData);
 
         return CommandResult.Success;
     }
 
-    private void PrintDevice(ICompleteCcuDevice device)
+    private void PrintDevice(DeviceExportData device)
     {
-        _console.MarkupLine($"Name:    [bold teal]{device.DeviceData.Name}[/]");
-        _console.MarkupLine($"Address: [bold]{device.DeviceData.Uri.Address}[/]");
-        _console.MarkupLine($"Ccu:     [bold yellow]{device.DeviceData.Uri.HostDisplayName}[/]");
-        _console.MarkupLine($"Type:    {device.DeviceData.DeviceType}");
+        _console.MarkupLine($"Name:             [bold teal]{Markup.Escape(device.Name)}[/]");
+        _console.MarkupLine($"Address:          [bold]{Markup.Escape(device.Address)}[/]");
+        _console.MarkupLine($"Ccu:              [bold yellow]{Markup.Escape(device.Ccu)}[/]");
+        _console.MarkupLine($"Type:             {Markup.Escape(device.DeviceType)}");
+        _console.MarkupLine($"Firmware:         {Markup.Escape(device.FirmwareVersion)}");
+        _console.MarkupLine($"ParamSet keys:    {Markup.Escape(string.Join(", ", device.ParamSetKeys))}");
 
         _console.WriteLine();
+        _console.WriteLine("Device ParamSets:");
+        PrintParamSets(device.ParamSetValues, "  ");
 
-        _console.WriteLine("  Device ParamSets:");
-
+        _console.WriteLine();
         _console.WriteLine("Channels:");
 
-        device.Channels.ForEach(PrintChannel);
-
-        PrintParamSets(device.ParamSetValues, "  ");
-    }
-
-    private void PrintChannel(ICompleteCcuDeviceChannel channel)
-    {
-        _console.WriteLine($"  - Index:   {channel.ChannelData.Index}");
-        _console.WriteLine($"    Address: {channel.ChannelData.Uri.Address}");
-        _console.WriteLine($"    Type:    {channel.ChannelData.DeviceType}");
-        _console.WriteLine("    Channel ParamSets:");
-
-        PrintParamSets(channel.ParamSetValues, "    ");
-    }
-
-    private void PrintParamSets(IEnumerable<ParamSetValuesWithDescriptions> paramSetValuesWithDescriptions,
-        string indent)
-    {
-        foreach (var paramSet in paramSetValuesWithDescriptions)
+        foreach (var channel in device.Channels)
         {
-            var values = paramSet.ParamSetValues;
+            PrintChannel(channel);
+        }
+    }
 
+    private void PrintChannel(ChannelExportData channel)
+    {
+        _console.WriteLine($"  - Index:         {channel.Index}");
+        _console.WriteLine($"    Address:       {channel.Address}");
+        _console.WriteLine($"    Type:          {channel.DeviceType}");
+        _console.WriteLine($"    ParamSet keys: {string.Join(", ", channel.ParamSets)}");
+
+        _console.WriteLine("    Channel ParamSets:");
+        PrintParamSets(channel.ParamSetValues, "      ");
+
+        if (channel.Links is not null)
+        {
+            PrintLinks(channel.Links, "    ");
+        }
+    }
+
+    private void PrintParamSets(IEnumerable<ParamSetExportData> paramSets, string indent)
+    {
+        foreach (var paramSet in paramSets)
+        {
             _console.WriteLine($"{indent}- ParamSet: {paramSet.ParamSetKey}");
 
-            _console.WriteLines(values.Select(x => $"{indent}  - {x.ParamSetValue.Name} : {x.ParamSetValue.Value}")
-                .ToArray());
+            foreach (var value in paramSet.Values)
+            {
+                var label = value.Name is not null && !string.Equals(value.Name, value.Key, StringComparison.Ordinal)
+                    ? $"{value.Key} ({value.Name})"
+                    : value.Key;
+
+                _console.WriteLine($"{indent}  - {label} : {value.Value}");
+            }
+        }
+    }
+
+    private void PrintLinks(IEnumerable<LinkExportData> links, string indent)
+    {
+        var linkList = links.ToList();
+
+        if (linkList.Count == 0)
+        {
+            return;
+        }
+
+        _console.WriteLine($"{indent}Links:");
+
+        foreach (var link in linkList)
+        {
+            _console.WriteLine($"{indent}  - Sender:      {link.Sender}");
+            _console.WriteLine($"{indent}    Receiver:    {link.Receiver}");
+            _console.WriteLine($"{indent}    Name:        {link.Name}");
+            _console.WriteLine($"{indent}    Description: {link.Description}");
         }
     }
 }

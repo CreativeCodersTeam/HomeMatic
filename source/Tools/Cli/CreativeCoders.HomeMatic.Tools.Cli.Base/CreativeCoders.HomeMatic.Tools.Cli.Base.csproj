@@ -12,6 +12,7 @@
         <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions"/>
         <PackageReference Include="Devlooped.CredentialManager"/>
         <PackageReference Include="Spectre.Console"/>
+        <PackageReference Include="YamlDotNet"/>
     </ItemGroup>
 
     <ItemGroup>

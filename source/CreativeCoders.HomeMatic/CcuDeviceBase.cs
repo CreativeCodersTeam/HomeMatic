@@ -10,6 +10,12 @@ namespace CreativeCoders.HomeMatic;
 /// <param name="api">The XML-RPC API used to query parameter-set values and descriptions from the CCU.</param>
 public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
 {
+    /// <summary>
+    /// Gets the XML-RPC API used to talk to the CCU on behalf of this device or channel.
+    /// </summary>
+    /// <value>The <see cref="IHomeMaticXmlRpcApi"/> instance supplied via the constructor.</value>
+    protected IHomeMaticXmlRpcApi Api { get; } = api;
+
     /// <inheritdoc />
     public required CcuDeviceUri Uri { get; init; }
 
@@ -34,7 +40,7 @@ public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
     /// <inheritdoc />
     public async Task<IEnumerable<ParamSetValue>> GetParamSetValuesAsync(string paramSetKey)
     {
-        var paramSets = await api.GetParamSetAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
+        var paramSets = await Api.GetParamSetAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
 
         return paramSets.Select(x => new ParamSetValue
         {
@@ -47,7 +53,7 @@ public abstract class CcuDeviceBase(IHomeMaticXmlRpcApi api) : ICcuDeviceBase
     public async Task<CcuParameterDescriptions> GetParamSetDescriptionsAsync(string paramSetKey)
     {
         var paramSetDescriptions =
-            await api.GetParameterDescriptionAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
+            await Api.GetParameterDescriptionAsync(Uri.Address, paramSetKey).ConfigureAwait(false);
 
         return new CcuParameterDescriptions
         {
