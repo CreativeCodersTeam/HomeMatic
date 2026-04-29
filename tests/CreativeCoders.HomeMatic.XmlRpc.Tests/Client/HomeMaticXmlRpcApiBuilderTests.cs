@@ -1,3 +1,4 @@
+using System.Text;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.Net.XmlRpc.Proxy;
 using FakeItEasy;
@@ -25,7 +26,7 @@ public class HomeMaticXmlRpcApiBuilderTests
         var sut = new HomeMaticXmlRpcApiBuilder(proxyBuilder);
 
         // Act
-        Action act = () => sut.ForUrl((Uri) null!);
+        Action act = () => sut.ForUrl((Uri)null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -38,6 +39,7 @@ public class HomeMaticXmlRpcApiBuilderTests
         var proxyBuilder = A.Fake<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
         var fakeApi = A.Fake<IHomeMaticXmlRpcApi>();
         var url = new Uri("http://localhost:2001/");
+        A.CallTo(() => proxyBuilder.UseEncoding(A<Encoding>._)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.ForUrl(url)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.Build()).Returns(fakeApi);
         var sut = new HomeMaticXmlRpcApiBuilder(proxyBuilder);
@@ -87,6 +89,7 @@ public class HomeMaticXmlRpcApiBuilderTests
         var fakeApi = A.Fake<IHomeMaticXmlRpcApi>();
         var firstUrl = new Uri("http://first.local/");
         var secondUrl = new Uri("http://second.local/");
+        A.CallTo(() => proxyBuilder.UseEncoding(A<Encoding>._)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.ForUrl(A<Uri>._)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.Build()).Returns(fakeApi);
         var sut = new HomeMaticXmlRpcApiBuilder(proxyBuilder);
@@ -105,6 +108,7 @@ public class HomeMaticXmlRpcApiBuilderTests
         // Arrange
         var proxyBuilder = A.Fake<IXmlRpcProxyBuilder<IHomeMaticXmlRpcApi>>();
         var fakeApi = A.Fake<IHomeMaticXmlRpcApi>();
+        A.CallTo(() => proxyBuilder.UseEncoding(A<Encoding>._)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.ForUrl(A<Uri>._)).Returns(proxyBuilder);
         A.CallTo(() => proxyBuilder.Build()).Returns(fakeApi);
         var apiAddress = new XmlRpcApiAddress(new Uri("http://192.168.1.100/"), CcuDeviceKind.HomeMatic);
