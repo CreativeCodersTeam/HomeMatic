@@ -1,0 +1,25 @@
+deviceType: HmIP-BDT
+description: Brand-Pluggable Dimming Actuator
+whitelist:
+  paramSets:
+    MASTER:
+      - DIM_STEP
+      - RAMP_TIME
+      - ON_MIN_LEVEL
+      - OFF_LEVEL
+      - ON_TIME
+      - OPERATION_MODE
+      - DIM_MIN_LEVEL
+      - DIM_MAX_LEVEL
+      - IDENTIFY_DURATION
+      - IDENTIFY_LED_COLOR
+      - POWERUP_ACTION
+      - POWERUP_LEVEL
+      - SHORT_DIM_LEVEL
+      - LONG_DIM_LEVEL
+      - SHORT_RAMP_TIME
+      - LONG_RAMP_TIME
+      - SHORT_ON_TIME
+      - LONG_ON_TIME
+      - DIMMING_CURVE
+      - CHANNEL_OPERATION_MODE

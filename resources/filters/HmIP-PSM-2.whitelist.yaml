@@ -1,0 +1,18 @@
+deviceType: HmIP-PSM-2
+description: Plug-In Switch Actuator with Power Metering, Version 2
+whitelist:
+  paramSets:
+    MASTER:
+      - ON_TIME
+      - SHORT_ON_TIME
+      - LONG_ON_TIME
+      - POWERUP_ACTION
+      - POWERUP_STATE
+      - OPERATION_MODE
+      - CHANNEL_OPERATION_MODE
+      - AVERAGING
+      - POWER_DISPLAY
+      - PEAK_CURRENT_PROTECTION_ACTIVE
+      - PEAK_CURRENT_PROTECTION_THRESHOLD
+      - SHORT_ACTION_TYPE
+      - LONG_ACTION_TYPE

@@ -1,0 +1,10 @@
+deviceType: HmIP-WRC2
+description: Wireless Remote Control 2-button
+blacklist:
+  paramSets:
+    VALUES:
+      - PRESS_SHORT
+      - PRESS_LONG
+      - PRESS_LONG_RELEASE
+      - PRESS_LONG_START
+      - PRESS_CONT

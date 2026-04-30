@@ -1,0 +1,19 @@
+deviceType: HmIP-PSM-2
+description: Plug-In Switch Actuator with Power Metering, Version 2
+blacklist:
+  paramSets:
+    VALUES:
+      - STATE
+      - PROCESS
+      - WORKING
+      - SWITCH_POINT_OCCURED
+      - ENERGY_COUNTER
+      - ENERGY_COUNTER_OVERFLOW
+      - CURRENT
+      - VOLTAGE
+      - POWER
+      - FREQUENCY
+      - GAS_ENERGY_COUNTER
+      - GAS_POWER
+      - IEC_ENERGY_COUNTER
+      - IEC_POWER

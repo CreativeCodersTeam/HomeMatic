@@ -1,0 +1,10 @@
+deviceType: HmIP-WRC6
+description: Wireless Remote Control 6-button
+blacklist:
+  paramSets:
+    VALUES:
+      - PRESS_SHORT
+      - PRESS_LONG
+      - PRESS_LONG_RELEASE
+      - PRESS_LONG_START
+      - PRESS_CONT

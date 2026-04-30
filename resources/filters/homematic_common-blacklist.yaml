@@ -1,0 +1,19 @@
+description: Maintenance and runtime parameters that should never be in a backup
+blacklist:
+  paramSets:
+    VALUES:
+      - RSSI_DEVICE
+      - RSSI_PEER
+      - LOW_BAT
+      - OPERATING_VOLTAGE
+      - OPERATING_VOLTAGE_STATUS
+      - DUTY_CYCLE
+      - CARRIER_SENSE_LEVEL
+      - CONFIG_PENDING
+      - UPDATE_PENDING
+      - UNREACH
+      - STICKY_UNREACH
+      - DEVICE_IN_BOOTLOADER
+      - ERROR_CODE
+      - OVERHEATED
+      - OVERHEAT_ALARM

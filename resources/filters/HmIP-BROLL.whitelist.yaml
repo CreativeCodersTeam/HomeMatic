@@ -1,0 +1,20 @@
+deviceType: HmIP-BROLL
+description: Brand-Pluggable Shutter Actuator
+whitelist:
+  paramSets:
+    MASTER:
+      - CHANNEL_OPERATION_MODE
+      - REFERENCE_RUN_COUNTER
+      - REFERENCE_RUN_TIME_TOP_BOTTOM
+      - REFERENCE_RUN_TIME_BOTTOM_TOP
+      - CHANGE_OVER_DELAY
+      - END_TOGGLE_DIR_DELAY
+      - DRIVING_MODE
+      - SELF_CALIBRATION
+      - POWERUP_ACTION
+      - POWERUP_LEVEL
+      - POWERUP_LEVEL_2
+      - SHORT_OPENING_LEVEL
+      - SHORT_CLOSING_LEVEL
+      - LONG_OPENING_LEVEL
+      - LONG_CLOSING_LEVEL

@@ -1,0 +1,10 @@
+description: Common parameters worth backing up across all HomeMatic IP devices
+whitelist:
+  paramSets:
+    MASTER:
+      - CYCLIC_INFO_MSG
+      - CYCLIC_INFO_MSG_DIS
+      - CYCLIC_INFO_MSG_DIS_UNCHANGED
+      - CYCLIC_INFO_MSG_OVERDUE_THRESHOLD
+      - DEVICE_OPERATION_MODE
+      - GLOBAL_BUTTON_LOCK

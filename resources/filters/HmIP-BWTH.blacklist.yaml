@@ -1,0 +1,22 @@
+deviceType: HmIP-BWTH
+description: Brand-Pluggable Wall Thermostat with Humidity Sensor
+blacklist:
+  paramSets:
+    VALUES:
+      - ACTUAL_TEMPERATURE
+      - ACTUAL_TEMPERATURE_STATUS
+      - HUMIDITY
+      - HUMIDITY_STATUS
+      - SET_POINT_TEMPERATURE
+      - SET_POINT_MODE
+      - BOOST_MODE
+      - PARTY_MODE
+      - PARTY_TIME_START
+      - PARTY_TIME_END
+      - PARTY_SET_POINT_TEMPERATURE
+      - CONTROL_MODE
+      - WINDOW_STATE
+      - LEVEL
+      - VALVE_STATE
+      - SWITCH_POINT_OCCURED
+      - DEW_POINT_ALARM

@@ -1,0 +1,8 @@
+deviceType: HmIP-BRC2
+description: Brand-Pluggable Wireless Remote Control 2-button
+whitelist:
+  paramSets:
+    MASTER:
+      - LONG_PRESS_TIME
+      - DOUBLE_PRESS_TIME
+      - CHANNEL_OPERATION_MODE

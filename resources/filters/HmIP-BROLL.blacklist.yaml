@@ -1,0 +1,14 @@
+deviceType: HmIP-BROLL
+description: Brand-Pluggable Shutter Actuator
+blacklist:
+  paramSets:
+    VALUES:
+      - LEVEL
+      - LEVEL_2
+      - LEVEL_REAL
+      - ACTIVITY_STATE
+      - PROCESS
+      - STATE
+      - SECTION
+      - SELF_CALIBRATION_RESULT
+      - SWITCH_POINT_OCCURED

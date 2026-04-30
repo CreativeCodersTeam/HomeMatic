@@ -1,0 +1,13 @@
+deviceType: HmIP-BDT
+description: Brand-Pluggable Dimming Actuator
+blacklist:
+  paramSets:
+    VALUES:
+      - LEVEL
+      - LEVEL_REAL
+      - STATE
+      - WORKING
+      - DIRECTION
+      - PROCESS
+      - ACTUAL_TEMPERATURE
+      - SWITCH_POINT_OCCURED

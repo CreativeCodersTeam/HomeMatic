@@ -1,0 +1,8 @@
+deviceType: HmIP-WRC6
+description: Wireless Remote Control 6-button
+whitelist:
+  paramSets:
+    MASTER:
+      - LONG_PRESS_TIME
+      - DOUBLE_PRESS_TIME
+      - CHANNEL_OPERATION_MODE
