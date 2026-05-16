@@ -4,8 +4,8 @@ description: Refactors existing code to improve structure, readability, and main
 ---
 
 # Refactoring Skill
-
-Unless explicitly asked to refactor code directly, generate a refactoring plan first and only apply it if the user approves.
+- Use language-specific skills when ever possible.
+- Unless explicitly asked to refactor code directly, generate a refactoring plan first and only apply it if the user approves.
 
 ## Workflow
 
