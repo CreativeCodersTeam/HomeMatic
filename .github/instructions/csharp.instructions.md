@@ -57,7 +57,7 @@ _service = Ensure.NotNull(service);
 ## Documentation
 
 - Document all public members with XML documentation.
-- Use the `csharp-docs` skill to ensure XML documentation follows best practices.
+- Use the `dotnet-xmldocs` skill to ensure XML documentation follows best practices.
 - If you change code, always update the relevant XML documentation.
 
 ## Testing
@@ -86,4 +86,4 @@ _service = Ensure.NotNull(service);
 - You MUST use the `dotnet-tester` skill for writing and editing tests.
 - You MUST use the `nuget-manager` skill for NuGet package management.
 - You MUST use the `dotnet-inspect` skill to query .NET APIs in NuGet packages, platform libraries (System.*, Microsoft.AspNetCore.*), or local .dll/.nupkg files — discover types and members, diff API surfaces between versions, find extension methods/implementors, locate SourceLink URLs, and triage breakages caused by package upgrades.
-- You MUST use the `csharp-docs` skill to ensure XML documentation follows best practices.
+- You MUST use the `dotnet-xmldocs` skill to ensure XML documentation follows best practices.

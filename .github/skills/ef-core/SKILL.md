@@ -1,9 +1,17 @@
 ---
 name: ef-core
-description: Entity Framework Core best practices for .NET projects. Use when designing DbContext, creating entities or relationships, writing LINQ queries, managing migrations, implementing repository patterns, or troubleshooting N+1 queries and performance issues with EF Core.
+description: Applies Entity Framework Core best practices for .NET projects. Use when designing DbContext, creating entities or relationships, writing LINQ queries, managing migrations, implementing repository patterns, or troubleshooting N+1 queries and performance issues with EF Core.
 ---
 
 # Entity Framework Core Best Practices
+
+## When to Use
+
+- Designing or restructuring a `DbContext`, entities, or relationships
+- Writing LINQ queries against EF Core, or troubleshooting N+1 / performance issues
+- Creating, naming, or reviewing EF Core migrations
+- Implementing concurrency control, repository patterns, or change tracking strategies
+- Setting up EF Core tests with SQLite in-memory or Testcontainers
 
 ## Data Context Design
 
@@ -60,7 +68,7 @@ See [concurrency-control.md](./references/concurrency-control.md) for `[Timestam
 
 ## Security
 
-- Avoid SQL injection by using parameterized queries
+- Use parameterized queries to prevent SQL injection
 - Implement appropriate data access permissions
 - Be careful with raw SQL queries
 - Consider data encryption for sensitive information
@@ -89,3 +97,11 @@ See [concurrency-control.md](./references/concurrency-control.md) for `[Timestam
 - Test migrations in isolated environments
 - Consider snapshot testing for model changes
 - Use the `dotnet-tester` skill for generating unit and integration tests after schema changes
+
+## Related Skills
+
+- **[dotnet-fundamentals](../dotnet-fundamentals/SKILL.md)** — DI lifetimes for `DbContext`, Options pattern for connection strings, modern C# idioms used in entity types
+- **[dotnet-tester](../dotnet-tester/SKILL.md)** — Generates DbContext-backed unit and integration tests (SQLite in-memory, Testcontainers)
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — Wires EF Core into ASP.NET Core via DI (scoped DbContext lifetimes)
+- **[dotnet-reviewer](../dotnet-reviewer/SKILL.md)** — Reviews EF Core data-access code for performance and security issues
+- **[nuget-manager](../nuget-manager/SKILL.md)** — Adds EF Core providers, Testcontainers, and SQLite packages

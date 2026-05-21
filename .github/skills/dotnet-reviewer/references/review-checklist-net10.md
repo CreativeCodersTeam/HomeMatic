@@ -25,11 +25,6 @@ Apply when `detect-dotnet-version.sh` reports `target_frameworks` containing `ne
 - `<LangVersion>` should not be pinned below the SDK's default unless a comment explains why.
 - `ImplicitUsings` enabled — flag stale top-of-file using directives that are already implicit.
 
-## Things That Are Still Wrong
+## Non-version-specific checks
 
-These are not new in .NET 10 but are still common:
-
-- `.Result` / `.Wait()` on `Task` — sync-over-async deadlock risk.
-- `async void` outside event handlers.
-- `IEnumerable<T>` enumerated multiple times when the source is a generator.
-- `string` concatenation in loops where `StringBuilder` or `string.Create` fits.
+For language- and runtime-neutral pitfalls (`.Result`/`.Wait()`, `async void`, allocation hot spots, etc.) see `review-checklist-performance.md` and `review-checklist-code-quality.md`. This file covers only what is specific to .NET 10.

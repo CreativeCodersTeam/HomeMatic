@@ -22,6 +22,6 @@ Use the following skills based on the task at hand:
 | Testing | [dotnet-tester](../../skills/csharp/dotnet-tester/SKILL.md) | Write and execute unit tests using xUnit, FakeItEasy, and AwesomeAssertions |
 | Data Access | [ef-core](../../skills/csharp/ef-core/SKILL.md) | Entity Framework Core best practices, DbContext design, migrations, and queries |
 | Package Management | [nuget-manager](../../skills/csharp/nuget-manager/SKILL.md) | Add, remove, and update NuGet packages via dotnet CLI |
-| Documentation | [csharp-docs](../../skills/csharp/csharp-docs/SKILL.md) | C# XML documentation comments following Microsoft standards |
+| Documentation | [dotnet-xmldocs](../../skills/csharp/dotnet-xmldocs/SKILL.md) | C# XML documentation comments following Microsoft standards |
 | Code Review | [code-review](../../skills/general/code-review/SKILL.md) | Structured code reviews covering quality, security, and performance |
 | Refactoring | [refactoring](../../skills/general/refactoring/SKILL.md) | Improve code structure and maintainability without changing behavior |

@@ -42,12 +42,35 @@ Prevent wasted effort from misunderstood requirements or unclear scope.
 - Check for documentation that needs updating
 - Use explore sub-agents for large codebase investigations
 
-#### 1.5 Check for Project-Specific Resources
+#### 1.5 Detect Stack & Discover Skills
 
-- Look for project-specific skills (in `.claude/skills/`, `.github/skills/`, or `.agents/skills/`)
-- Check for project-specific agents (in `.claude/agents/`, `.github/agents/`, or `.agents/`)
-- Review instruction files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md)
-- Follow any project conventions and coding standards found
+This step builds the **capability-slot map** used by all later phases. Never hardcode skill
+names — classify by each skill's `description`.
+
+1. **Detect the tech stack** per affected file/module (repos may be multi-stack). Detect by
+   *signals*, not a fixed list — this keeps detection working for stacks not yet imagined:
+   - **Manifest / build files** declaring language, dependencies, or build config
+     (e.g. a `*.csproj`, `pom.xml`/`build.gradle`, `package.json`, `pyproject.toml`,
+     `go.mod`, `Cargo.toml`, `composer.json`, `Gemfile`). These are the strongest signal.
+   - **Source file extensions** of the affected files (e.g. `.cs`, `.java`, `.ts`, `.go`).
+   - **Lockfiles, toolchain configs, and CI files** that name a runtime or framework.
+   - **Framework markers** inside manifests/configs (a dependency name often identifies the
+     framework, not just the language).
+
+   The list above is illustrative, not exhaustive. The rule is: infer language + framework
+   from whatever build/manifest/config/source signals are present, then map that stack to
+   capability slots — regardless of whether this skill ever mentioned that stack.
+2. **List the available skills** using your runtime's own skill-listing mechanism. Do NOT
+   assume a fixed directory — the location varies across platforms (Claude Code, Copilot,
+   Codex) and across repos.
+3. **Classify each skill by its `description`** and fill the capability slots:
+   `language-implementation`, `language-testing`, `language-docs`, `language-review`,
+   `build-deps`. Match on purpose + technology mentioned in the description, never on name.
+4. For multi-stack repos, maintain a slot map **per stack** and select the right one per task.
+5. Review instruction files (CLAUDE.md, AGENTS.md, .github/copilot-instructions.md) and
+   follow any project conventions and coding standards found.
+
+Record empty slots explicitly — they mean "use the generic fallback" for that work.
 
 ### Output
 
@@ -56,7 +79,7 @@ Present the user with:
 - The identified acceptance criteria
 - Any clarifying questions (if applicable)
 - The affected areas of the codebase
-- Any project-specific resources that will be used
+- The detected tech stack(s) and the filled capability-slot map (note any empty slots)
 
 Wait for user confirmation before proceeding to Phase 2.
 
@@ -86,6 +109,10 @@ Each task MUST address these three aspects:
 2. **Tests:** What tests must be written or updated?
 3. **Documentation:** What documentation needs updating? (can be "none" if truly not applicable)
 
+Each task MUST also record its **capability slots** (from Phase 1.5), e.g.
+`language-implementation`, `language-testing`, `language-docs`, `build-deps`. If a needed
+slot is empty, mark it as "generic fallback" so the gap is visible in the plan.
+
 #### 2.3 Dependencies
 
 - Identify which tasks depend on others
@@ -104,7 +131,7 @@ Each task MUST address these three aspects:
 ### Output
 
 Present the user with:
-- The complete task list with descriptions
+- The complete task list with descriptions and per-task capability-slot assignments
 - A dependency graph (which tasks block which)
 - The planned execution order
 - Which tasks will be parallelized
@@ -135,12 +162,15 @@ For each task (or parallel group of independent tasks):
    - Which files to modify
    - What tests to write
    - What conventions to follow
-   - Reference to project-specific skills/agents if relevant
+   - The capability-slot skill(s) assigned to this task — pass them explicitly, since
+     sub-agents are stateless and cannot discover your slot map on their own
 4. **Review sub-agent output** before moving to next task
 5. **Update task status** to `done`
 
 #### 3.2 Code Quality
 
+- **Use the `language-implementation` slot skill** if filled; only write code from generic
+  knowledge when the slot is empty
 - Follow existing code style and conventions
 - Do not introduce new dependencies unless explicitly required
 - Keep changes minimal and focused on the requirement
@@ -148,13 +178,16 @@ For each task (or parallel group of independent tasks):
 
 #### 3.3 Testing
 
+- **Use the `language-testing` slot skill** if filled (it knows the stack's test framework
+  and conventions); only fall back to generic testing when the slot is empty
 - Write tests that cover the new/changed behavior
 - Ensure existing tests still pass
-- Use the project's existing test framework and patterns
 - Cover edge cases identified in Phase 1
 
 #### 3.4 Documentation
 
+- **Use the `language-docs` slot skill** if filled (e.g. the stack's doc-comment conventions);
+  only fall back to generic documentation when the slot is empty
 - Update inline code documentation where needed
 - Update README or other docs if the change affects usage
 - Keep documentation changes in sync with code changes
@@ -162,7 +195,8 @@ For each task (or parallel group of independent tasks):
 #### 3.5 Verification
 
 After all tasks are complete:
-- Run the full test suite using a `task` sub-agent
+- Run the full test suite using a `task` sub-agent (use the `build-deps` slot skill for the
+  correct build/test commands if filled)
 - Run any existing linters or type checkers
 - Fix any failures before proceeding
 
@@ -184,7 +218,9 @@ Ensure implementation quality through an automated code review before the user c
 
 #### 4.1 Launch Code Review
 
-Launch a `code-review` sub-agent with these instructions:
+Launch a code-review sub-agent with these instructions:
+- If the `language-review` slot is filled, use that skill (stack-specific pitfalls); if a
+  generic review skill also exists, combine both. Use generic-only when no slot is filled.
 - Review ALL changes made during this implementation session
 - Compare changes against the original requirement and acceptance criteria
 - Focus on substantive issues only (not style or formatting)
@@ -271,6 +307,20 @@ End with a clear reminder:
 ### Handling Project-Specific Conventions
 
 - Always check for instruction files at the start (CLAUDE.md, AGENTS.md, etc.)
-- Look for project-specific skills that might provide specialized guidance
+- Run skill discovery (Phase 1.5) and use the resulting capability slots — never hardcode
+  skill names, so the workflow keeps working as skills are added or renamed
 - Follow the project's existing patterns for code style, testing, and documentation
 - When in doubt, ask the user about project conventions
+
+### Capability Slots — Quick Reference
+
+| Slot | Purpose | Phase |
+|------|---------|-------|
+| `language-implementation` | writing code for the detected stack | 3.2 |
+| `language-testing` | the stack's test framework / conventions | 3.3 |
+| `language-docs` | the stack's documentation conventions | 3.4 |
+| `language-review` | stack-specific code review | 4 |
+| `build-deps` | build, package & dependency management | 3.5 |
+
+**Rule:** A filled slot MUST be used (and passed to sub-agents); an empty slot means generic
+fallback. Classify skills into slots by their `description`, never by name.

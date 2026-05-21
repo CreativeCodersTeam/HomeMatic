@@ -8,9 +8,11 @@
 - Always look if you know skills that will be useful for the task at hand before trying to solve the problem with your own knowledge. If you know skills that can be useful, ask if you should use them.
 - Always ask for help if you are stuck.
 - If a skill was explicitly requested in the prompt, use it without asking. If you can't find the skill, always ask if you should proceed without it.
+- Use subagents as much as possible to avoid context pollution.
+- ALWAYS verify that your changes are complete and work correctly. Use verification steps best suited for your changes.
 
 # Git Commit Instructions
-- You MUST not git commit files unless explicitly asked to do so.
+- You MUST not git commit files unless explicitly asked to do so by the user.
 - Stage files by name, not `git add -A` or `git add .` — those can sweep in secrets or large binaries.
 - Don't commit files that look like secrets (.env, credentials.json, *.pem). If
   the user explicitly asks, warn first.
@@ -82,7 +84,7 @@ _service = Ensure.NotNull(service);
 ## Documentation
 
 - Document all public members with XML documentation.
-- Use the `csharp-docs` skill to ensure XML documentation follows best practices.
+- Use the `dotnet-xmldocs` skill to ensure XML documentation follows best practices.
 - If you change code, always update the relevant XML documentation.
 
 ## Testing
@@ -111,7 +113,7 @@ _service = Ensure.NotNull(service);
 - You MUST use the `dotnet-tester` skill for writing and editing tests.
 - You MUST use the `nuget-manager` skill for NuGet package management.
 - You MUST use the `dotnet-inspect` skill to query .NET APIs in NuGet packages, platform libraries (System.*, Microsoft.AspNetCore.*), or local .dll/.nupkg files — discover types and members, diff API surfaces between versions, find extension methods/implementors, locate SourceLink URLs, and triage breakages caused by package upgrades.
-- You MUST use the `csharp-docs` skill to ensure XML documentation follows best practices.
+- You MUST use the `dotnet-xmldocs` skill to ensure XML documentation follows best practices.
 
 -----------------------------------------------------------
 

@@ -26,12 +26,7 @@
 
 ## EF Core
 
-- N+1 queries — flag `foreach (entity) { ctx.Related.Where(...) }` patterns.
-- Missing `.AsNoTracking()` on read-only queries.
-- `Include` chains pulling unused columns — projection (`Select`) preferred for read paths.
-- Filters applied client-side after `.ToList()` — push to SQL.
-- `ChangeTracker` not cleared on long-lived contexts.
-- Missing indexes on filtered/joined columns (call out in review when obvious from query shape).
+See the `ef-core` skill (Performance section) for the full list of EF Core performance pitfalls. Reviewer-specific hook: flag any new query against a `DbContext` that is missing `.AsNoTracking()` on a read-only path, that calls `.ToList()` before a filter, or that uses `foreach` to iterate parent entities while issuing per-row child queries (N+1).
 
 ## Hot-Path Heuristics
 
