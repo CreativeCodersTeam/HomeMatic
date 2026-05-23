@@ -3,7 +3,18 @@ name: dotnet-tester
 description: Writes, executes, and completes unit tests for C#/.NET code using xUnit, FakeItEasy, and AwesomeAssertions. Uses a second agent to identify missing test cases. Use when asked to create .NET tests or improve test coverage.
 ---
 
+# .NET Tester
+
 Write comprehensive unit tests for the specified code. Follow a multi-step process with automatic identification of missing test cases.
+
+## When to Use
+
+- User asks to create unit tests, add tests, or improve test coverage for C#/.NET code
+- New C#/.NET production code lacks tests and needs them
+- An existing test suite is missing edge cases or error-path coverage
+- Working in a C# project that uses xUnit, FakeItEasy, AwesomeAssertions/FluentAssertions, NUnit, MSTest, or Moq
+
+Do **not** use this skill for non-.NET test code, or for integration tests that primarily exercise external systems without unit-level concerns.
 
 ## Conventions
 
@@ -12,7 +23,7 @@ Write comprehensive unit tests for the specified code. Follow a multi-step proce
 - **Assertions**: AwesomeAssertions (a fork of FluentAssertions with identical API — use `Should()` as usual)
 - **Structure**: Each test method has Arrange/Act/Assert blocks, marked with comments
 - **Language**: English for code, comments, and test names
-- **Style**: Adopt the existing test style from nearby test files in the project
+- **Style**: The stack above is the default. If the project already uses a different stack (NUnit, MSTest, Moq, FluentAssertions, …), match the existing convention instead of switching.
 
 ## Phase 1: Write Tests
 
@@ -119,3 +130,11 @@ At the end, provide a summary:
 - Use **descriptive test names** in the format `MethodName_Scenario_ExpectedBehavior`
 - For `[Theory]` tests: Use `[InlineData]` for simple types, `[MemberData]` for complex objects
 - Use `A.CallTo(...).MustHaveHappened()` sparingly – only when the call is the expected behavior
+
+## Related Skills
+
+- **[dotnet-fundamentals](../dotnet-fundamentals/SKILL.md)** — Test DI-registered services using `IServiceCollection` overrides
+- **[ef-core](../ef-core/SKILL.md)** — DbContext-backed unit and integration tests (SQLite in-memory, Testcontainers)
+- **[dotnet-reviewer](../dotnet-reviewer/SKILL.md)** — Test-quality checks during code review
+- **[dotnet-sdk-builder](../dotnet-sdk-builder/SKILL.md)** — Invoked by it in Step 9 to generate tests for new SDK libraries
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — Unit and integration tests for ASP.NET Core endpoints

@@ -1,6 +1,5 @@
 ---
 name: dotnet-inspect
-version: 0.7.5
 description: Query .NET APIs across NuGet packages, platform libraries, and local files. Search for types, list API surfaces, compare and diff versions, find extension methods and implementors. Use whenever you need to answer questions about .NET library contents.
 ---
 
@@ -227,3 +226,10 @@ Use `dnx` (like `npx`). Always use `-y` and `--` to prevent interactive prompts:
 ```bash
 dnx dotnet-inspect -y -- <command>
 ```
+
+## Related Skills
+
+- **[dotnet-reviewer](../dotnet-reviewer/SKILL.md)** — Uses dotnet-inspect to investigate API surface and version diffs during reviews
+- **[dotnet-sdk-builder](../dotnet-sdk-builder/SKILL.md)** — Queries types and members of existing libraries when generating SDK wrappers
+- **[nuget-manager](../nuget-manager/SKILL.md)** — Inspects packages before upgrading or replacing them
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — Discovers ASP.NET Core APIs across versions when migrating or adopting new features
