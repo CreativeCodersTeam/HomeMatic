@@ -1,11 +1,18 @@
 ---
 name: dotnet-sdk-builder
-description: Generates complete .NET SDK libraries with DI support, interfaces, typed HTTP clients, Options pattern, and typed exceptions. Use when asked to create a .NET SDK, build a .NET client library, wrap a REST API in C#, or generate a typed HTTP client. Invokes csharp-docs for XML documentation and tester for tests.
+description: Generates complete .NET SDK libraries with DI support, interfaces, typed HTTP clients, Options pattern, and typed exceptions. Use when asked to create a .NET SDK, build a .NET client library, wrap a REST API in C#, or generate a typed HTTP client. Invokes dotnet-xmldocs for XML documentation and dotnet-tester for tests.
 ---
 
 # .NET SDK Library Builder
 
 Generate complete, production-ready .NET SDK libraries from existing C# classes or API documentation. The output follows Microsoft's library design guidelines with full DI support, testability via interfaces, and idiomatic C# patterns.
+
+## When to Use
+
+- Building a new .NET SDK or client library from existing C# classes, OpenAPI/Swagger specs, or REST API docs
+- Wrapping a REST API in a typed C# client with DI registration (`AddXxx(...)`)
+- Generating typed HTTP clients with `IHttpClientFactory`, Options pattern, and typed exceptions
+- Producing libraries that follow Microsoft's library design guidelines (interface-first, no static state)
 
 ## Workflow Overview
 
@@ -92,26 +99,15 @@ Generate all components. See [di-patterns.md](references/di-patterns.md) and [ht
 | `XxxException` (+ subtypes) | Typed exceptions with diagnostic properties |
 | Model classes | Request/response DTOs |
 
-**NuGet packages to add:**
-
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="*" />
-<PackageReference Include="Microsoft.Extensions.Options" Version="*" />
-<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="*" />
-<!-- If resilience requested: -->
-<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="*" />
-```
-
-Always use the latest stable, compatible with target framework version.
-Always use skill 'nuget-manager' for managing NuGet packages and package versions. 
+**Required NuGet packages:** `Microsoft.Extensions.Http`, `Microsoft.Extensions.Options`, `Microsoft.Extensions.DependencyInjection.Abstractions` — plus `Microsoft.Extensions.Http.Resilience` if Step 5 selected resilience. Use the `dotnet-nuget-manager` skill to add them; do not edit `.csproj` directly.
 
 ### Step 8: Document the Code
 
-After generating all source files, invoke the `csharp-docs` skill to add XML documentation comments to all public types and members.
+After generating all source files, invoke the `dotnet-xmldocs` skill to add XML documentation comments to all public types and members.
 
 ### Step 9: Write Tests
 
-After documentation is complete, invoke the `tester` skill to generate unit and integration tests for the library.
+After documentation is complete, invoke the `dotnet-tester` skill to generate unit and integration tests for the library.
 
 ## Key Design Principles
 
@@ -127,3 +123,12 @@ After documentation is complete, invoke the `tester` skill to generate unit and 
 - **[di-patterns.md](references/di-patterns.md)** — DI registration, Options pattern, extension method patterns
 - **[http-client-patterns.md](references/http-client-patterns.md)** — IHttpClientFactory, typed clients, resilience, typed exceptions
 - **[project-setup.md](references/project-setup.md)** — New project structure, folder layout, `.csproj` conventions
+
+## Related Skills
+
+- **[dotnet-fundamentals](../dotnet-fundamentals/SKILL.md)** — Provides the DI, Options, and configuration patterns this skill emits in generated SDKs
+- **[dotnet-xmldocs](../dotnet-xmldocs/SKILL.md)** — Invoked in Step 8 to document generated SDKs with XML comments
+- **[dotnet-tester](../dotnet-tester/SKILL.md)** — Invoked in Step 9 to generate unit and integration tests
+- **[dotnet-nuget-manager](../dotnet-nuget-manager/SKILL.md)** — Invoked in Step 7 to add SDK runtime dependencies
+- **[dotnet-inspect](../dotnet-inspect/SKILL.md)** — Queries existing libraries when generating SDK wrappers
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — Generates typed HTTP clients for consuming ASP.NET Core APIs

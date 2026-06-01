@@ -42,18 +42,13 @@
 
 ## Comments and Docs
 
-- Public API has XML docs, especially for libraries.
+- Public API has XML docs, especially for libraries. See the `dotnet-xmldocs` skill for the tag conventions (`<summary>`, `<param>`, `<returns>`, `<exception>`, etc.).
 - Comments explain *why*, not *what*. Flag comments that restate the code.
 - TODOs without a ticket reference are a smell; flag.
 
 ## Tests (cross-cutting)
 
-- New public behavior has at least one test.
-- Tests assert behavior, not implementation (no over-mocking).
-- Names describe the scenario: `Method_Condition_Expected`.
-- Arrange/Act/Assert layout is visible.
-- No conditional logic in test bodies (`if`/`for` inside tests).
-- Edge cases: null, empty collection, boundary values.
+See the `dotnet-tester` skill for AAA layout, `Method_Condition_Expected` naming, mocking conventions, and edge-case coverage. Reviewer-specific hook: flag any new public behavior that ships without at least one test, and any test body containing conditional logic (`if`/`for`).
 
 ## Logging
 

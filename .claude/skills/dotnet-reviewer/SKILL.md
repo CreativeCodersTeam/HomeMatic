@@ -1,21 +1,15 @@
 ---
 name: dotnet-reviewer
-description: Performs structured code reviews on .NET 10+ projects. Activates ONLY on explicit name — use the phrases "dotnet-reviewer", "dotnet code review", or "dotnet review". Reviews either uncommitted working-tree changes or committed changes on the current feature branch (vs. main). Produces a Markdown report under docs/reviews/ with severity-tagged findings ([Critical|Major|Minor|Suggestion|Nitpick][Security|Performance|Architecture|Code-Quality|Tests|.NET-Idioms]) and fix suggestions. Must NOT activate on generic "review my code" requests; other-language reviewers must not be hijacked.
+description: Performs structured code reviews on .NET 10+ projects. Reviews either uncommitted working-tree changes or committed changes on the current feature branch (vs. main). Produces a Markdown report under docs/reviews/ with severity-tagged findings ([Critical|Major|Minor|Suggestion|Nitpick][Security|Performance|Architecture|Code-Quality|Tests|.NET-Idioms]) and fix suggestions. Must NOT activate on generic "review my code" requests; other-language reviewers must not be hijacked.
 ---
 
 # dotnet-reviewer
 
-Structured code review for .NET 10+ projects. The skill is invoked by explicit name only and produces a Markdown report.
+Structured code review for .NET 10+ projects.
 
 ## When to Use This Skill
 
-Use ONLY when the user invokes one of:
-- `dotnet-reviewer`
-- `dotnet code review`
-- `dotnet review`
-
-Do NOT activate on generic phrases like "review my code", "can you check this PR", "look at my changes". Those go to other reviewers (or to no skill at all).
-
+A Code review for a .NET 10+ project is needed.
 The user may add language preferences (e.g., "in German") — apply that to the report only. The skill itself remains in English.
 
 ## Prerequisites
@@ -132,3 +126,13 @@ Output to chat: the file path and a one-line summary (e.g., `"Wrote review with 
 - Runs destructive operations as "fixes" (no `git reset`, no deletions).
 - Includes secrets in logs or the report.
 - Reviews .NET versions below 10 — aborts with a clear message.
+
+## Related Skills
+
+- **[dotnet-fundamentals](../dotnet-fundamentals/SKILL.md)** — Review findings reference DI lifetime, Options, and configuration best practices
+- **[dotnet-xmldocs](../dotnet-xmldocs/SKILL.md)** — Code-quality checklist references XML documentation conventions
+- **[dotnet-tester](../dotnet-tester/SKILL.md)** — Test-quality findings reference this skill's expectations
+- **[dotnet-ef-core](../dotnet-ef-core/SKILL.md)** — EF Core findings reference these data-access best practices
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — ASP.NET Core findings reference this skill's conventions
+- **[dotnet-nuget-manager](../dotnet-nuget-manager/SKILL.md)** — Surfaced outdated/vulnerable packages are addressed via this skill
+- **[dotnet-inspect](../dotnet-inspect/SKILL.md)** — Used to investigate API surface and version diffs during review
