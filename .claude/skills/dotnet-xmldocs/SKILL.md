@@ -1,9 +1,16 @@
 ---
-name: csharp-docs
+name: dotnet-xmldocs
 description: Adds and reviews C# XML documentation comments following Microsoft's documentation standards. Use when writing or reviewing C# code that includes public APIs, complex logic, or when documentation is missing or insufficient. Covers <summary>, <param>, <returns>, <exception>, <remarks>, and all standard XML doc tags.
 ---
 
 # C# Documentation Best Practices
+
+## When to Use
+
+- Writing or reviewing XML documentation comments (`///`) on C# types and members
+- Adding documentation to public APIs of a new or existing C# library
+- Reviewing missing, insufficient, or non-Microsoft-style XML docs in C# code
+- Generating documentation that feeds OpenAPI/Swagger output or NuGet symbols
 
 ## General Guidelines
 
@@ -26,3 +33,9 @@ description: Adds and reviews C# XML documentation comments following Microsoft'
 ## Member-Specific Rules
 
 See [member-documentation-rules.md](./references/member-documentation-rules.md) for detailed wording conventions for methods (`<param>`, `<returns>`), constructors, properties (`<value>`, Gets/Sets patterns), and exceptions (`<exception cref>`).
+
+## Related Skills
+
+- **[dotnet-aspnet](../dotnet-aspnet/SKILL.md)** — XML docs feed OpenAPI/Swagger output
+- **[dotnet-sdk-builder](../dotnet-sdk-builder/SKILL.md)** — Invokes this skill in Step 8 to document generated SDKs
+- **[dotnet-reviewer](../dotnet-reviewer/SKILL.md)** — Code-quality checklist references these conventions for public-API docs
