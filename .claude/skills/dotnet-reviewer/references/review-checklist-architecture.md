@@ -22,10 +22,7 @@
 
 ## Dependency Injection
 
-- Lifetimes: avoid `Singleton` capturing `Scoped` (e.g., `DbContext` in a `Singleton` cache).
-- Factory delegates over `IServiceProvider` parameters in constructors.
-- No `BuildServiceProvider()` in `Configure`/`ConfigureServices` — that creates a second container.
-- Validation of options on startup (`ValidateOnStart`).
+See the `dotnet-aspnet` skill (Dependency Injection + Configuration sections) for lifetime rules and the Options pattern. Reviewer-specific hook: flag DI changes that capture a `Scoped` service inside a `Singleton`, call `BuildServiceProvider()` during composition, or register `IOptions<T>` without `ValidateOnStart()`.
 
 ## Pattern Consistency
 
