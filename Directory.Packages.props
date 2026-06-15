@@ -3,15 +3,15 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Cli.Core" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Cli.Hosting" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Configuration" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Core" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Net.JsonRpc" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.Net.XmlRpc" Version="6.7.3" />
-    <PackageVersion Include="CreativeCoders.SysConsole.Cli.Actions" Version="6.7.3" />
-    <PackageVersion Include="coverlet.collector" Version="8.0.1" />
+    <PackageVersion Include="CreativeCoders.CakeBuild" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Cli.Core" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Cli.Hosting" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Configuration" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Core" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Net.JsonRpc" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.Net.XmlRpc" Version="6.8.0" />
+    <PackageVersion Include="CreativeCoders.SysConsole.Cli.Actions" Version="6.8.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="Devlooped.CredentialManager" Version="2.7.0" />
     <PackageVersion Include="FakeItEasy" Version="9.0.1" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
@@ -19,11 +19,11 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.8" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
-    <PackageVersion Include="Spectre.Console" Version="0.55.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.57.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="XunitXml.TestLogger" Version="8.0.0" />
-    <PackageVersion Include="YamlDotNet" Version="16.3.0" />
+    <PackageVersion Include="YamlDotNet" Version="18.0.0" />
   </ItemGroup>
 </Project>
