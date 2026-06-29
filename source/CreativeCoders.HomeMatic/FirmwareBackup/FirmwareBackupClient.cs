@@ -12,17 +12,20 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
 {
     private readonly ICcuSessionClient _sessionClient;
     private readonly IFirmwareBackupDownloader _downloader;
+    private readonly ICcuBackupVerifier _verifier;
     private readonly FirmwareBackupOptions _options;
     private readonly IFileSystem _fileSystem;
 
     internal FirmwareBackupClient(
         ICcuSessionClient sessionClient,
         IFirmwareBackupDownloader downloader,
+        ICcuBackupVerifier verifier,
         FirmwareBackupOptions options,
         IFileSystem fileSystem)
     {
         _sessionClient = Ensure.NotNull(sessionClient);
         _downloader = Ensure.NotNull(downloader);
+        _verifier = Ensure.NotNull(verifier);
         _options = Ensure.NotNull(options);
         _fileSystem = Ensure.NotNull(fileSystem);
     }
@@ -38,11 +41,32 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
         {
             var download = await _downloader.DownloadAsync(sessionId, cancellationToken).ConfigureAwait(false);
 
+            var capacity = download.ContentLength is > 0 and <= int.MaxValue
+                ? (int)download.ContentLength.Value
+                : 0;
+            var content = new MemoryStream(capacity);
+
+            try
+            {
+                await using (var httpResources = download.HttpResources.ConfigureAwait(false))
+                {
+                    await download.Content.CopyToAsync(content, cancellationToken).ConfigureAwait(false);
+                }
+
+                content.Position = 0;
+                await _verifier.VerifyAsync(content, cancellationToken).ConfigureAwait(false);
+                content.Position = 0;
+            }
+            catch
+            {
+                await content.DisposeAsync().ConfigureAwait(false);
+                throw;
+            }
+
             return new FirmwareBackupResult(
-                download.Content,
+                content,
                 download.FileName,
                 download.ContentLength,
-                download.HttpResources,
                 new LogoutDisposable(_sessionClient, sessionId));
         }
         catch
