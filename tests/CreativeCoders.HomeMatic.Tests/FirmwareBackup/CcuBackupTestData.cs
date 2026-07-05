@@ -9,22 +9,81 @@ namespace CreativeCoders.HomeMatic.Tests.FirmwareBackup;
 internal static class CcuBackupTestData
 {
     /// <summary>
-    /// Creates a valid HomeMatic CCU backup: a tar archive containing a non-empty <c>signature</c>
-    /// entry and a gzip-compressed <c>user_data.tar.gz</c> entry.
+    /// Creates a valid HomeMatic CCU backup: a tar archive containing well-formed <c>signature</c>,
+    /// <c>usr_local.tar.gz</c>, <c>firmware_version</c> and <c>key_index</c> entries, mirroring a
+    /// real CCU3 <c>.sbk</c> file.
     /// </summary>
     /// <returns>The raw bytes of a valid backup archive.</returns>
     public static byte[] CreateValidBackup()
     {
-        return CreateTar(
-            ("signature", "signature-bytes"u8.ToArray()),
-            ("user_data.tar.gz", Gzip("user-data-payload"u8.ToArray())));
+        return CreateTar(CreateValidEntries());
     }
 
     /// <summary>
-    /// Gzip-compresses the given bytes.
+    /// Creates the entry set of a valid HomeMatic CCU backup.
+    /// </summary>
+    /// <returns>The named entries of a valid backup archive.</returns>
+    public static (string Name, byte[] Content)[] CreateValidEntries()
+    {
+        return
+        [
+            ("signature", CreateValidSignature()),
+            ("usr_local.tar.gz", CreateValidUserData()),
+            ("firmware_version", "VERSION=3.83.6\n"u8.ToArray()),
+            ("key_index", "0\n"u8.ToArray())
+        ];
+    }
+
+    /// <summary>
+    /// Creates a backup that is valid except that the entry with the given name is missing.
+    /// </summary>
+    /// <param name="entryName">The name of the entry to omit.</param>
+    /// <returns>The raw bytes of the backup archive.</returns>
+    public static byte[] CreateBackupWithout(string entryName)
+    {
+        return CreateTar(CreateValidEntries().Where(entry => entry.Name != entryName).ToArray());
+    }
+
+    /// <summary>
+    /// Creates a backup that is valid except that the entry with the given name has the given content.
+    /// </summary>
+    /// <param name="entryName">The name of the entry to replace.</param>
+    /// <param name="content">The content to use for the entry.</param>
+    /// <returns>The raw bytes of the backup archive.</returns>
+    public static byte[] CreateBackupWith(string entryName, byte[] content)
+    {
+        return CreateTar(
+            CreateValidEntries()
+                .Select(entry => entry.Name == entryName ? (entry.Name, content) : entry)
+                .ToArray());
+    }
+
+    /// <summary>
+    /// Creates a well-formed backup signature: 32 hexadecimal characters followed by a newline.
+    /// </summary>
+    /// <returns>The raw bytes of the signature entry.</returns>
+    public static byte[] CreateValidSignature()
+    {
+        return "d37893be27a7d3642fe6ff8b9ea78bc5\n"u8.ToArray();
+    }
+
+    /// <summary>
+    /// Creates a valid <c>usr_local.tar.gz</c> payload: a gzip-compressed tar archive whose
+    /// entries live under <c>usr/local/</c>.
+    /// </summary>
+    /// <returns>The raw bytes of the user data entry.</returns>
+    public static byte[] CreateValidUserData()
+    {
+        return Gzip(CreateTar(
+            ("usr/local/etc/config/homematic.regadom", "rega-config"u8.ToArray()),
+            ("usr/local/etc/config/ids", "ids"u8.ToArray())));
+    }
+
+    /// <summary>
+    /// Compresses the given data using gzip.
     /// </summary>
     /// <param name="data">The data to compress.</param>
-    /// <returns>The gzip-compressed bytes (starting with the gzip magic header).</returns>
+    /// <returns>The gzip-compressed data.</returns>
     public static byte[] Gzip(byte[] data)
     {
         using var output = new MemoryStream();
@@ -38,9 +97,9 @@ internal static class CcuBackupTestData
     }
 
     /// <summary>
-    /// Builds a tar archive from the given entries.
+    /// Creates a tar archive containing the given entries.
     /// </summary>
-    /// <param name="entries">The (entry name, content) pairs to write into the archive.</param>
+    /// <param name="entries">The named entries to write into the archive.</param>
     /// <returns>The raw bytes of the tar archive.</returns>
     public static byte[] CreateTar(params (string Name, byte[] Content)[] entries)
     {

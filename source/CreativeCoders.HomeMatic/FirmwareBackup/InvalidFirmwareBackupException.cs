@@ -9,7 +9,8 @@ namespace CreativeCoders.HomeMatic.FirmwareBackup;
 /// Derives from <see cref="FirmwareBackupException"/> so existing handlers that catch firmware
 /// backup failures also catch an invalid backup. A backup is considered invalid when it cannot be
 /// read as the expected HomeMatic CCU backup archive (for example, missing or empty
-/// <c>signature</c> / <c>user_data.tar.gz</c> entries, or a corrupt gzip payload).
+/// <c>signature</c>, <c>usr_local.tar.gz</c>, <c>firmware_version</c> or <c>key_index</c> entries,
+/// or entries whose content is malformed).
 /// </remarks>
 [PublicAPI]
 public class InvalidFirmwareBackupException : FirmwareBackupException
