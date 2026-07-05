@@ -55,6 +55,12 @@ public class FirmwareBackupOptions
     public bool AcceptAnyServerCertificate { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the downloaded backup is verified after the download.
+    /// Default: <see langword="true"/>.
+    /// </summary>
+    public bool VerifyBackup { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the request timeout used for both the JSON-RPC and the CGI download call.
     /// Default: 5 minutes (creating a backup on the CCU can take a while).
     /// </summary>

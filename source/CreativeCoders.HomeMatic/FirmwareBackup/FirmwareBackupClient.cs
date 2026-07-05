@@ -53,8 +53,12 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
                     await download.Content.CopyToAsync(content, cancellationToken).ConfigureAwait(false);
                 }
 
-                content.Position = 0;
-                await _verifier.VerifyAsync(content, cancellationToken).ConfigureAwait(false);
+                if (_options.VerifyBackup)
+                {
+                    content.Position = 0;
+                    await _verifier.VerifyAsync(content, cancellationToken).ConfigureAwait(false);
+                }
+
                 content.Position = 0;
             }
             catch

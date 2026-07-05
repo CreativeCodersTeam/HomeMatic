@@ -23,6 +23,7 @@ public class FirmwareBackupOptionsTests
         options.BackupCgiPath.Should().Be("/config/cp_security.cgi");
         options.BackupAction.Should().Be("create_backup");
         options.AcceptAnyServerCertificate.Should().BeTrue();
+        options.VerifyBackup.Should().BeTrue();
         options.Timeout.Should().Be(TimeSpan.FromMinutes(5));
     }
 

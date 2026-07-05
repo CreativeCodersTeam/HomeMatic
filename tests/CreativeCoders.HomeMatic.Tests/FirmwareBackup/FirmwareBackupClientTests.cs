@@ -129,7 +129,48 @@ public class FirmwareBackupClientTests
         A.CallTo(() => sut.HttpResources.DisposeAsync()).MustHaveHappened();
     }
 
-    private static SutContext CreateSut()
+    [Fact]
+    public async Task CreateBackupAsync_VerifyBackupDisabled_DoesNotCallVerifier()
+    {
+        // Arrange
+        var sut = CreateSut(verifyBackup: false);
+
+        // Act
+        await using var result = await sut.Client.CreateBackupAsync();
+
+        // Assert
+        A.CallTo(() => sut.Verifier.VerifyAsync(A<Stream>._, A<CancellationToken>._)).MustNotHaveHappened();
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_VerifyBackupDisabled_ReturnsReadableContent()
+    {
+        // Arrange
+        var sut = CreateSut(verifyBackup: false);
+
+        // Act
+        await using var result = await sut.Client.CreateBackupAsync();
+        using var buffer = new MemoryStream();
+        await result.Content.CopyToAsync(buffer);
+
+        // Assert
+        buffer.ToArray().Should().BeEquivalentTo(DownloadedContent);
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_VerifyBackupDisabled_DisposesHttpResources()
+    {
+        // Arrange
+        var sut = CreateSut(verifyBackup: false);
+
+        // Act
+        await using var result = await sut.Client.CreateBackupAsync();
+
+        // Assert
+        A.CallTo(() => sut.HttpResources.DisposeAsync()).MustHaveHappenedOnceExactly();
+    }
+
+    private static SutContext CreateSut(bool verifyBackup = true)
     {
         var sessionClient = A.Fake<ICcuSessionClient>();
         var downloader = A.Fake<IFirmwareBackupDownloader>();
@@ -149,7 +190,10 @@ public class FirmwareBackupClientTests
 
         var options = new FirmwareBackupOptions(
             new Uri("https://ccu.example.local"),
-            new NetworkCredential("Admin", "secret"));
+            new NetworkCredential("Admin", "secret"))
+        {
+            VerifyBackup = verifyBackup
+        };
 
         var client = new FirmwareBackupClient(sessionClient, downloader, verifier, options, fileSystem);
 
