@@ -54,7 +54,10 @@ public class BackupCcuCommand(
 
         var credential = _ccuConnectionsStore.GetCredentials(connection);
 
-        var backupOptions = new FirmwareBackupOptions(connection.Url, credential);
+        var backupOptions = new FirmwareBackupOptions(connection.Url, credential)
+        {
+            VerifyBackup = !options.SkipVerify
+        };
         var client = _firmwareBackupClientFactory.Create(backupOptions);
 
         var targetPath = _fileSystem.Path.GetFullPath(options.OutputFile);
@@ -68,6 +71,11 @@ public class BackupCcuCommand(
         _console.MarkupLine(
             $"Creating firmware backup of CCU [bold]{Markup.Escape(connection.Name)}[/] " +
             $"([italic]{Markup.Escape(connection.Url.ToString())}[/])...");
+
+        if (options.SkipVerify)
+        {
+            _console.MarkupLine("[yellow]Backup verification is skipped.[/]");
+        }
 
         try
         {

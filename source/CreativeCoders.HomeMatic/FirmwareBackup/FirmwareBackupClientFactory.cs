@@ -57,6 +57,8 @@ public sealed class FirmwareBackupClientFactory : IFirmwareBackupClientFactory
             options.BackupCgiPath,
             options.BackupAction);
 
-        return new FirmwareBackupClient(sessionClient, downloader, options, _fileSystem);
+        var verifier = new CcuBackupVerifier();
+
+        return new FirmwareBackupClient(sessionClient, downloader, verifier, options, _fileSystem);
     }
 }

@@ -12,4 +12,7 @@ public class BackupCcuOptions
     [OptionParameter('o', "output", IsRequired = true,
         HelpText = "Path of the backup file to create")]
     public string OutputFile { get; set; } = string.Empty;
+
+    [OptionParameter("skip-verify", HelpText = "Skip verification of the downloaded backup")]
+    public bool SkipVerify { get; set; }
 }

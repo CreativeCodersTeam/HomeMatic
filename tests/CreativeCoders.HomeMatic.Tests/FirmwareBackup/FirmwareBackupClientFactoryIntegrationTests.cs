@@ -11,7 +11,7 @@ namespace CreativeCoders.HomeMatic.Tests.FirmwareBackup;
 public class FirmwareBackupClientFactoryIntegrationTests
 {
     private const string FakeSessionId = "session-id-xyz";
-    private static readonly byte[] BackupPayload = "BACKUP-CONTENT"u8.ToArray();
+    private static readonly byte[] BackupPayload = CcuBackupTestData.CreateValidBackup();
 
     [Fact]
     public async Task CreateBackupAsync_HappyPath_PerformsLoginDownloadAndLogout()
@@ -177,6 +177,48 @@ public class FirmwareBackupClientFactoryIntegrationTests
                 File.Delete(tempFile);
             }
         }
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_InvalidBackup_ThrowsInvalidFirmwareBackupException()
+    {
+        // Arrange
+        var (factory, handler) = CreateFactory();
+        handler.EnqueueJsonResponse($"{{\"result\":\"{FakeSessionId}\",\"error\":null}}");
+        handler.EnqueueBinaryResponse("not-a-valid-ccu-backup"u8.ToArray(), "ccu_backup.sbk");
+        handler.EnqueueJsonResponse("{\"result\":true,\"error\":null}");
+
+        var client = factory.Create(new FirmwareBackupOptions(
+            new Uri("https://ccu.example.local"),
+            new NetworkCredential("Admin", "x")));
+
+        // Act
+        var act = async () => await client.CreateBackupAsync();
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidFirmwareBackupException>();
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_InvalidBackup_LogoutStillCalled()
+    {
+        // Arrange
+        var (factory, handler) = CreateFactory();
+        handler.EnqueueJsonResponse($"{{\"result\":\"{FakeSessionId}\",\"error\":null}}");
+        handler.EnqueueBinaryResponse("not-a-valid-ccu-backup"u8.ToArray(), "ccu_backup.sbk");
+        handler.EnqueueJsonResponse("{\"result\":true,\"error\":null}");
+
+        var client = factory.Create(new FirmwareBackupOptions(
+            new Uri("https://ccu.example.local"),
+            new NetworkCredential("Admin", "x")));
+
+        // Act
+        var act = async () => await client.CreateBackupAsync();
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidFirmwareBackupException>();
+        handler.Requests.Should().HaveCount(3);
+        handler.Requests[2].Body.Should().Contain("\"Session.logout\"");
     }
 
     private static (IFirmwareBackupClientFactory Factory, QueueingHttpMessageHandler Handler) CreateFactory()
