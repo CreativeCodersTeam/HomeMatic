@@ -59,7 +59,8 @@ internal sealed class CompleteCcuDeviceFakeBuilder
         return this;
     }
 
-    public CompleteCcuDeviceFakeBuilder WithParamSet(string paramSetKey, Action<ParamSetValuesBuilder>? configure = null)
+    public CompleteCcuDeviceFakeBuilder WithParamSet(string paramSetKey, Action<ParamSetValuesBuilder>? configure = null,
+        string? readError = null)
     {
         var builder = new ParamSetValuesBuilder();
         configure?.Invoke(builder);
@@ -67,7 +68,8 @@ internal sealed class CompleteCcuDeviceFakeBuilder
         _paramSetValues.Add(new ParamSetValuesWithDescriptions
         {
             ParamSetKey = paramSetKey,
-            ParamSetValues = builder.Build().ToList()
+            ParamSetValues = builder.Build().ToList(),
+            ReadError = readError
         });
 
         return this;

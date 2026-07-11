@@ -26,7 +26,10 @@ public class ShowDeviceDetailsCommand(
     {
         var exportOptions = new DeviceExportOptions
         {
-            IncludeLinks = true
+            IncludeLinks = true,
+            ParamSetWhitelist = string.IsNullOrWhiteSpace(options.ParamSets)
+                ? null
+                : options.ParamSets.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         };
 
         var device = await _multiCcuClient
@@ -37,6 +40,15 @@ public class ShowDeviceDetailsCommand(
 
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
+
+        if (exportOptions.ParamSetWhitelist is { Count: > 0 }
+            && !exportData.ParamSetValues.Any()
+            && exportData.Channels.All(x => !x.ParamSetValues.Any())
+            && (exportData.ParamSetKeys.Length > 0 || exportData.Channels.Any(x => x.ParamSets.Any())))
+        {
+            _console.MarkupLine("[yellow]No ParamSets matched the --param-sets filter.[/]");
+            _console.WriteLine();
+        }
 
         PrintDevice(exportData);
 
@@ -86,6 +98,14 @@ public class ShowDeviceDetailsCommand(
         foreach (var paramSet in paramSets)
         {
             _console.WriteLine($"{indent}- ParamSet: {paramSet.ParamSetKey}");
+
+            if (paramSet.Error is not null)
+            {
+                _console.MarkupLine(
+                    $"{indent}  [yellow]Values could not be read: {Markup.Escape(paramSet.Error)}[/]");
+
+                continue;
+            }
 
             foreach (var value in paramSet.Values)
             {

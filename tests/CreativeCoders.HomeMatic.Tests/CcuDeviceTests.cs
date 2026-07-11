@@ -29,7 +29,7 @@ public class CcuDeviceTests
     }
 
     [Fact]
-    public async Task GetChannelAsync_WithUnknownAddress_ThrowsKeyNotFoundException()
+    public async Task GetChannelAsync_WithUnknownAddress_ThrowsDeviceNotFoundException()
     {
         // Arrange
         var api = A.Fake<IHomeMaticXmlRpcApi>();
@@ -39,12 +39,12 @@ public class CcuDeviceTests
         var act = () => device.GetChannelAsync("DEV:UNKNOWN");
 
         // Assert
-        await act.Should().ThrowAsync<KeyNotFoundException>()
+        await act.Should().ThrowAsync<DeviceNotFoundException>()
             .WithMessage("Channel with address 'DEV:UNKNOWN' not found.");
     }
 
     [Fact]
-    public async Task GetChannelAsync_WithNoChannels_ThrowsKeyNotFoundException()
+    public async Task GetChannelAsync_WithNoChannels_ThrowsDeviceNotFoundException()
     {
         // Arrange
         var api = A.Fake<IHomeMaticXmlRpcApi>();
@@ -54,7 +54,7 @@ public class CcuDeviceTests
         var act = () => device.GetChannelAsync("DEV:1");
 
         // Assert
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
     }
 
     private static CcuDevice CreateDevice(IHomeMaticXmlRpcApi api, IEnumerable<ICcuDeviceChannel> channels)

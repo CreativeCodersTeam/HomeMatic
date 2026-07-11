@@ -47,12 +47,7 @@ public class DeviceExportOptions
     /// <returns><c>true</c> if the key is allowed or no whitelist is configured; otherwise <c>false</c>.</returns>
     public bool IsParamSetAllowed(string paramSetKey)
     {
-        if (ParamSetWhitelist is null || ParamSetWhitelist.Count == 0)
-        {
-            return true;
-        }
-
-        return ParamSetWhitelist.Contains(paramSetKey, StringComparer.OrdinalIgnoreCase);
+        return WhitelistFilter.IsAllowed(ParamSetWhitelist, paramSetKey);
     }
 
     /// <summary>
@@ -62,24 +57,21 @@ public class DeviceExportOptions
     /// <returns><c>true</c> if the name is allowed or no whitelist is configured; otherwise <c>false</c>.</returns>
     public bool IsParamValueNameAllowed(string paramValueName)
     {
-        if (ParamValueNameWhitelist is null || ParamValueNameWhitelist.Count == 0)
-        {
-            return true;
-        }
-
-        return ParamValueNameWhitelist.Contains(paramValueName, StringComparer.OrdinalIgnoreCase);
+        return WhitelistFilter.IsAllowed(ParamValueNameWhitelist, paramValueName);
     }
 
     /// <summary>
     /// Builds a <see cref="CompleteCcuDeviceBuildOptions"/> matching this export configuration.
     /// </summary>
-    /// <returns>A <see cref="CompleteCcuDeviceBuildOptions"/> that includes links iff <see cref="IncludeLinks"/> is set.</returns>
+    /// <returns>A <see cref="CompleteCcuDeviceBuildOptions"/> that includes links iff <see cref="IncludeLinks"/> is set
+    /// and forwards the <see cref="ParamSetWhitelist"/> so filtered ParamSets are not fetched at all.</returns>
     public CompleteCcuDeviceBuildOptions ToBuildOptions()
     {
         return new CompleteCcuDeviceBuildOptions
         {
             IncludeLinks = IncludeLinks,
-            LinksFlags = LinksFlags
+            LinksFlags = LinksFlags,
+            ParamSetWhitelist = ParamSetWhitelist
         };
     }
 }

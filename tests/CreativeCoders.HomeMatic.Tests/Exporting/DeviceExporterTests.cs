@@ -857,4 +857,114 @@ public class DeviceExporterTests
         buildOptions.IncludeLinks.Should().BeTrue();
         buildOptions.LinksFlags.Should().Be(GetLinksFlags.SenderParamSet | GetLinksFlags.ReceiverParamSet);
     }
+
+    [Fact]
+    public void DeviceExportOptions_ToBuildOptions_PropagatesParamSetWhitelist()
+    {
+        // Arrange
+        var options = new DeviceExportOptions
+        {
+            ParamSetWhitelist = ["MASTER", "VALUES"]
+        };
+
+        // Act
+        var buildOptions = options.ToBuildOptions();
+
+        // Assert
+        buildOptions.ParamSetWhitelist.Should().BeSameAs(options.ParamSetWhitelist);
+    }
+
+    [Fact]
+    public void BuildExportData_WithNullDescription_SetsNameToNull()
+    {
+        // Arrange – value without any description → Name is null, value still exported
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("MASTER", p => p.AddWithoutDescription("ALARM_MODE_TYPE", 0))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var value = result.ParamSetValues.Single().Values.Single();
+        value.Key.Should().Be("ALARM_MODE_TYPE");
+        value.Name.Should().BeNull();
+        value.Value.Should().Be(0);
+    }
+
+    [Fact]
+    public void BuildExportData_WithReadError_MapsErrorToParamSetExportData()
+    {
+        // Arrange
+        const string readError = "XML-RPC fault -321 (device not reachable (e.g. sleeping battery-powered device))";
+
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("SERVICE", readError: readError)
+            .WithParamSet("VALUES", p => p.Add("STATE", true, descriptionId: "STATE"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var serviceParamSet = result.ParamSetValues.Single(x => x.ParamSetKey == "SERVICE");
+        serviceParamSet.Error.Should().Be(readError);
+        serviceParamSet.Values.Should().BeEmpty();
+
+        result.ParamSetValues.Single(x => x.ParamSetKey == "VALUES").Error.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithReadError_EmitsErrorPropertyInJson()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("SERVICE", readError: "XML-RPC fault -321")
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device);
+
+        // Assert
+        json.Should().Contain("\"error\"").And.Contain("XML-RPC fault -321");
+    }
+
+    [Fact]
+    public void BuildExportData_WithChannelReadError_MapsErrorToChannelParamSetExportData()
+    {
+        // Arrange
+        const string readError = "XML-RPC fault -321";
+
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithChannel(c => c.WithParamSet("SERVICE", readError: readError))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var result = sut.BuildExportData(device);
+
+        // Assert
+        var channelParamSet = result.Channels.Single().ParamSetValues.Single();
+        channelParamSet.Error.Should().Be(readError);
+        channelParamSet.Values.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ExportDeviceAsync_WithoutReadError_OmitsErrorPropertyFromJson()
+    {
+        // Arrange
+        var device = new CompleteCcuDeviceFakeBuilder()
+            .WithParamSet("VALUES", p => p.Add("STATE", true, descriptionId: "STATE"))
+            .Build();
+        var sut = new DeviceExporter();
+
+        // Act
+        var json = await sut.ExportDeviceAsync(device);
+
+        // Assert
+        json.Should().NotContain("\"error\"");
+    }
 }

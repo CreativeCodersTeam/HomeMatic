@@ -1,6 +1,7 @@
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.XmlRpc;
+using CreativeCoders.HomeMatic.XmlRpc.Exceptions;
 using FakeItEasy;
 using AwesomeAssertions;
 
@@ -21,9 +22,52 @@ public class MultiCcuClientTests
 
         var act = () => multi.GetDeviceAsync("UNKNOWN");
 
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
         A.CallTo(() => clientA.GetDeviceAsync("UNKNOWN")).MustHaveHappenedOnceExactly();
         A.CallTo(() => clientB.GetDeviceAsync("UNKNOWN")).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task GetDeviceAsync_StaleRouteAndDeviceOnNoClient_ThrowsDeviceNotFoundException()
+    {
+        var clientA = CreateClientWithDevices(DeviceA);
+        var clientB = CreateClientWithDevices(DeviceB);
+
+        var multi = new MultiCcuClient([clientA, clientB], new CcuRoutingTable());
+
+        await multi.GetDeviceAsync(DeviceA);
+
+        // Device vanished from clientA; the cached route is now stale and no other client has it.
+        A.CallTo(() => clientA.GetDeviceAsync(DeviceA)).ThrowsAsync(new DeviceNotFoundException("unknown"));
+
+        var act = () => multi.GetDeviceAsync(DeviceA);
+
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
+    }
+
+    [Fact]
+    public async Task GetDeviceAsync_UnknownChannelAddress_ExceptionContainsOriginalAddress()
+    {
+        var clientA = CreateClientWithDevices(DeviceA);
+
+        var multi = new MultiCcuClient([clientA], new CcuRoutingTable());
+
+        var act = () => multi.GetDeviceAsync("UNKNOWN:1");
+
+        (await act.Should().ThrowAsync<DeviceNotFoundException>())
+            .Which.Address.Should().Be("UNKNOWN:1");
+    }
+
+    [Fact]
+    public async Task GetDeviceAsync_UnknownDevice_ExceptionIsCatchableAsHomeMaticException()
+    {
+        var clientA = CreateClientWithDevices();
+
+        var multi = new MultiCcuClient([clientA], new CcuRoutingTable());
+
+        var act = () => multi.GetDeviceAsync("UNKNOWN");
+
+        await act.Should().ThrowAsync<HomeMaticException>();
     }
 
     [Fact]
@@ -73,7 +117,7 @@ public class MultiCcuClientTests
             CcuHost = "ccu-b", Kind = CcuDeviceKind.HomeMatic, Address = $"{DeviceB}:1"
         });
         A.CallTo(() => clientB.GetDeviceAsync($"{DeviceB}:1")).Returns(Task.FromResult(channelDevice));
-        A.CallTo(() => clientA.GetDeviceAsync($"{DeviceB}:1")).ThrowsAsync(new KeyNotFoundException());
+        A.CallTo(() => clientA.GetDeviceAsync($"{DeviceB}:1")).ThrowsAsync(new DeviceNotFoundException("unknown"));
 
         var multi = new MultiCcuClient([clientA, clientB], new CcuRoutingTable());
 
@@ -96,7 +140,7 @@ public class MultiCcuClientTests
         var routingTable = new CcuRoutingTable();
         // Pre-seed stale mapping: DeviceA owned by clientA even though it actually lives on clientB as well.
         // Make clientA fail to simulate a stale entry.
-        A.CallTo(() => clientA.GetDeviceAsync(DeviceA)).ThrowsAsync(new KeyNotFoundException());
+        A.CallTo(() => clientA.GetDeviceAsync(DeviceA)).ThrowsAsync(new DeviceNotFoundException("unknown"));
         routingTable.Register(DeviceA, clientA);
 
         var multi = new MultiCcuClient([clientA, clientB], routingTable);
@@ -149,7 +193,7 @@ public class MultiCcuClientTests
 
         var act = () => multi.GetCompleteDeviceAsync("UNKNOWN");
 
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
         A.CallTo(() => clientA.GetCompleteDeviceAsync("UNKNOWN")).MustHaveHappenedOnceExactly();
         A.CallTo(() => clientB.GetCompleteDeviceAsync("UNKNOWN")).MustHaveHappenedOnceExactly();
     }
@@ -164,7 +208,7 @@ public class MultiCcuClientTests
         A.CallTo(() => clientB.GetCompleteDeviceAsync($"{DeviceB}:1"))
             .Returns(Task.FromResult(channelDevice));
         A.CallTo(() => clientA.GetCompleteDeviceAsync($"{DeviceB}:1"))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DeviceNotFoundException("unknown"));
 
         var multi = new MultiCcuClient([clientA, clientB], new CcuRoutingTable());
 
@@ -186,7 +230,7 @@ public class MultiCcuClientTests
 
         var routingTable = new CcuRoutingTable();
         // Pre-seed stale mapping to clientA, and make clientA throw to simulate stale entry.
-        A.CallTo(() => clientA.GetCompleteDeviceAsync(DeviceA)).ThrowsAsync(new KeyNotFoundException());
+        A.CallTo(() => clientA.GetCompleteDeviceAsync(DeviceA)).ThrowsAsync(new DeviceNotFoundException("unknown"));
         routingTable.Register(DeviceA, clientA);
 
         var multi = new MultiCcuClient([clientA, clientB], routingTable);
@@ -271,13 +315,13 @@ public class MultiCcuClientTests
     }
 
     [Fact]
-    public async Task GetCompleteDeviceAsync_NoClients_ThrowsKeyNotFoundException()
+    public async Task GetCompleteDeviceAsync_NoClients_ThrowsDeviceNotFoundException()
     {
         var multi = new MultiCcuClient([], new CcuRoutingTable());
 
         var act = () => multi.GetCompleteDeviceAsync(DeviceA);
 
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
     }
 
     [Fact]
@@ -303,7 +347,7 @@ public class MultiCcuClientTests
     [Fact]
     public async Task GetCompleteDeviceAsync_ProbingClientThrowsNonKeyNotFound_Propagates()
     {
-        // Only KeyNotFoundException should trigger the probe fallback; other exceptions must bubble up.
+        // Only DeviceNotFoundException should trigger the probe fallback; other exceptions must bubble up.
         var clientA = A.Fake<ICcuClient>();
         var clientB = CreateClientWithCompleteDevices(DeviceA);
         A.CallTo(() => clientA.GetCompleteDeviceAsync(DeviceA)).ThrowsAsync(new InvalidOperationException("net"));
@@ -332,9 +376,9 @@ public class MultiCcuClientTests
 
         A.CallTo(() => client.GetDevicesAsync()).Returns(Task.FromResult(devices.AsEnumerable()));
 
-        // Default: unknown addresses throw KeyNotFoundException.
+        // Default: unknown addresses throw DeviceNotFoundException.
         A.CallTo(() => client.GetDeviceAsync(A<string>.That.Matches(x => !addresses.Contains(x))))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DeviceNotFoundException("unknown"));
 
         return client;
     }
@@ -362,7 +406,7 @@ public class MultiCcuClientTests
         A.CallTo(() => client.GetCompleteDevicesAsync()).Returns(Task.FromResult(devices.AsEnumerable()));
 
         A.CallTo(() => client.GetCompleteDeviceAsync(A<string>.That.Matches(x => !addresses.Contains(x))))
-            .ThrowsAsync(new KeyNotFoundException());
+            .ThrowsAsync(new DeviceNotFoundException("unknown"));
 
         return client;
     }

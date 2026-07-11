@@ -22,6 +22,7 @@ public interface ICcuClient
     /// </summary>
     /// <param name="address">The device address.</param>
     /// <returns>A task that yields the matching <see cref="ICcuDevice"/>.</returns>
+    /// <exception cref="DeviceNotFoundException">Thrown when the CCU does not know a device with the given address.</exception>
     Task<ICcuDevice> GetDeviceAsync(string address);
 
     /// <summary>
@@ -38,6 +39,7 @@ public interface ICcuClient
     /// <param name="address">The device address.</param>
     /// <param name="buildOptions">Optional build options controlling whether links are fetched.</param>
     /// <returns>A task that yields the matching <see cref="ICompleteCcuDevice"/>.</returns>
+    /// <exception cref="DeviceNotFoundException">Thrown when the CCU does not know a device with the given address.</exception>
     Task<ICompleteCcuDevice> GetCompleteDeviceAsync(string address,
         CompleteCcuDeviceBuildOptions? buildOptions = null);
 

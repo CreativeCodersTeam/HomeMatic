@@ -13,13 +13,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CreativeCoders.Cli.Hosting"/>
-        <PackageReference Include="CreativeCoders.Configuration"/>
+        <PackageReference Include="CreativeCoders.Cli.Hosting" />
+        <PackageReference Include="CreativeCoders.Configuration" />
+        <PackageReference Include="CreativeCoders.Net.XmlRpc" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj"/>
-        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Commands\CreativeCoders.HomeMatic.Tools.Cli.Commands.csproj"/>
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Base\CreativeCoders.HomeMatic.Tools.Cli.Base.csproj" />
+        <ProjectReference Include="..\CreativeCoders.HomeMatic.Tools.Cli.Commands\CreativeCoders.HomeMatic.Tools.Cli.Commands.csproj" />
     </ItemGroup>
 
 </Project>

@@ -88,9 +88,10 @@ public class DeviceExporter : IDeviceExporter
                     .Select(v => new ParamValueExportData
                     {
                         Key = v.ParamSetValue.Name,
-                        Name = v.Description.Id == v.ParamSetValue.Name ? null : v.Description.Id,
+                        Name = v.Description?.Id == v.ParamSetValue.Name ? null : v.Description?.Id,
                         Value = v.ParamSetValue.Value
-                    }).ToList()
+                    }).ToList(),
+                Error = ps.ReadError
             })
             .ToArray();
     }

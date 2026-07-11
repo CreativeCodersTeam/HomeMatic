@@ -14,6 +14,7 @@ public class ParamSetValueWithDescription
     /// <summary>
     /// Gets the description that belongs to the parameter.
     /// </summary>
-    /// <value>The <see cref="CcuParameterDescription"/> instance.</value>
-    public required CcuParameterDescription Description { get; init; }
+    /// <value>The <see cref="CcuParameterDescription"/> instance, or <see langword="null"/> if the CCU
+    /// did not provide a description for the parameter.</value>
+    public required CcuParameterDescription? Description { get; init; }
 }

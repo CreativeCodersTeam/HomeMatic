@@ -1,3 +1,4 @@
+using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.HomeMatic.XmlRpc.Devices;
@@ -40,13 +41,13 @@ public class CcuDevice(IHomeMaticXmlRpcApi api) : CcuDeviceBase(api), ICcuDevice
     /// </summary>
     /// <param name="channelAddress">The full address of the channel (for example <c>"ABC0001234:1"</c>).</param>
     /// <returns>A task that yields the matching <see cref="ICcuDeviceChannel"/>.</returns>
-    /// <exception cref="KeyNotFoundException">Thrown when no channel with the specified address exists on this device.</exception>
+    /// <exception cref="DeviceNotFoundException">Thrown when no channel with the specified address exists on this device.</exception>
     public Task<ICcuDeviceChannel> GetChannelAsync(string channelAddress)
     {
         var channel = Channels.FirstOrDefault(x => x.Uri.Address == channelAddress);
         return channel != null
             ? Task.FromResult(channel)
-            : throw new KeyNotFoundException(
+            : throw new DeviceNotFoundException(channelAddress,
                 $"Channel with address '{channelAddress}' not found.");
     }
 }

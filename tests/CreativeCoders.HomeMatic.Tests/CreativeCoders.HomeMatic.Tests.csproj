@@ -9,11 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CreativeCoders.Net.XmlRpc" />
         <PackageReference Include="FakeItEasy" />
         <PackageReference Include="AwesomeAssertions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -26,12 +27,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj"/>
-        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj"/>
+        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic.XmlRpc\CreativeCoders.HomeMatic.XmlRpc.csproj" />
+        <ProjectReference Include="..\..\source\CreativeCoders.HomeMatic\CreativeCoders.HomeMatic.csproj" />
     </ItemGroup>
 
 </Project>

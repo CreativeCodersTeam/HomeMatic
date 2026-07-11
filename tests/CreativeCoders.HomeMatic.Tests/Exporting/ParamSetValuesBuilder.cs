@@ -31,6 +31,17 @@ internal sealed class ParamSetValuesBuilder
         return this;
     }
 
+    public ParamSetValuesBuilder AddWithoutDescription(string name, object value)
+    {
+        _values.Add(new ParamSetValueWithDescription
+        {
+            ParamSetValue = new ParamSetValue { Name = name, Value = value },
+            Description = null
+        });
+
+        return this;
+    }
+
     public IEnumerable<ParamSetValueWithDescription> Build()
     {
         return _values;
