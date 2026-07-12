@@ -3,7 +3,6 @@ using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.Exporting;
-using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
