@@ -38,7 +38,7 @@ public class DeviceExporter : IDeviceExporter
             Name = device.DeviceData.Name,
             Address = device.DeviceData.Uri.Address,
             DeviceType = device.DeviceData.DeviceType,
-            ParamSetKeys = device.DeviceData.ParamSets,
+            ParamSetKeys = FilterParamSetKeys(device.DeviceData.ParamSets, options),
             FirmwareVersion = device.DeviceData.Firmware,
             Ccu = device.DeviceData.Uri.HostDisplayName,
             ParamSetValues = BuildParamSetExportData(device.ParamSetValues, options),
@@ -55,10 +55,17 @@ public class DeviceExporter : IDeviceExporter
             Address = channel.ChannelData.Uri.Address,
             DeviceType = channel.ChannelData.DeviceType,
             Index = channel.ChannelData.Index,
-            ParamSets = channel.ChannelData.ParamSets,
+            ParamSets = FilterParamSetKeys(channel.ChannelData.ParamSets, options),
             ParamSetValues = BuildParamSetExportData(channel.ParamSetValues, options),
             Links = options?.IncludeLinks == true ? BuildLinkExportData(channel.Links) : null
         };
+    }
+
+    private static string[] FilterParamSetKeys(string[] paramSetKeys, DeviceExportOptions? options)
+    {
+        return options is null
+            ? paramSetKeys
+            : paramSetKeys.Where(options.IsParamSetAllowed).ToArray();
     }
 
     private static IEnumerable<LinkExportData> BuildLinkExportData(IEnumerable<Link> links)
@@ -88,9 +95,10 @@ public class DeviceExporter : IDeviceExporter
                     .Select(v => new ParamValueExportData
                     {
                         Key = v.ParamSetValue.Name,
-                        Name = v.Description.Id == v.ParamSetValue.Name ? null : v.Description.Id,
+                        Name = v.Description?.Id == v.ParamSetValue.Name ? null : v.Description?.Id,
                         Value = v.ParamSetValue.Value
-                    }).ToList()
+                    }).ToList(),
+                Error = ps.ReadError
             })
             .ToArray();
     }

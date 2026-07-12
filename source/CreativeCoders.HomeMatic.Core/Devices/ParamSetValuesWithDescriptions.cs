@@ -18,4 +18,10 @@ public class ParamSetValuesWithDescriptions
     /// </summary>
     /// <value>The enumerable of <see cref="ParamSetValueWithDescription"/> entries.</value>
     public required IEnumerable<ParamSetValueWithDescription> ParamSetValues { get; init; }
+
+    /// <summary>
+    /// Gets the error message if reading the parameter-set values from the CCU failed.
+    /// </summary>
+    /// <value>The error message, or <see langword="null"/> if the values were read successfully.</value>
+    public string? ReadError { get; init; }
 }

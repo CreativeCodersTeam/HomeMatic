@@ -7,7 +7,10 @@ using CreativeCoders.HomeMatic.JsonRpc;
 using CreativeCoders.HomeMatic.Tools.Cli.Base;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Connection.Add;
 using CreativeCoders.HomeMatic.XmlRpc;
+using CreativeCoders.HomeMatic.XmlRpc.Exceptions;
+using CreativeCoders.Net.XmlRpc.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Hmc;
 
@@ -15,22 +18,31 @@ internal static class Program
 {
     internal static async Task<int> Main(string[] args)
     {
-        var result = await CliHostBuilder.Create()
-            .ConfigureServices(ConfigureServices)
-            .PrintFooterText([string.Empty])
-            .UseValidation()
-            .UseConfiguration(x => x.TryAddJsonFile(
-                FileSys.Path.Combine(
-                    Env.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    HomeMaticToolApp.ConfigFolderName,
-                    HomeMaticToolApp.ConfigFileName)))
-            .EnableHelp(HelpCommandKind.CommandOrArgument, HelpCommandKind.EmptyArgs)
-            .ScanAssemblies(typeof(AddConnectionCommand).Assembly)
-            .Build()
-            .RunAsync(args)
-            .ConfigureAwait(false);
+        try
+        {
+            var result = await CliHostBuilder.Create()
+                .ConfigureServices(ConfigureServices)
+                .PrintFooterText([string.Empty])
+                .UseValidation()
+                .UseConfiguration(x => x.TryAddJsonFile(
+                    FileSys.Path.Combine(
+                        Env.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        HomeMaticToolApp.ConfigFolderName,
+                        HomeMaticToolApp.ConfigFileName)))
+                .EnableHelp(HelpCommandKind.CommandOrArgument, HelpCommandKind.EmptyArgs)
+                .ScanAssemblies(typeof(AddConnectionCommand).Assembly)
+                .Build()
+                .RunAsync(args)
+                .ConfigureAwait(false);
 
-        return result.ExitCode;
+            return result.ExitCode;
+        }
+        catch (Exception ex) when (ex is FaultException or HomeMaticException or HttpRequestException)
+        {
+            AnsiConsole.MarkupLine($"[red]Error: {Markup.Escape(ex.Message)}[/]");
+
+            return 1;
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)

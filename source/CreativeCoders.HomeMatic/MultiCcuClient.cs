@@ -76,7 +76,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
             {
                 return await func(cachedClient, address).ConfigureAwait(false);
             }
-            catch (KeyNotFoundException)
+            catch (DeviceNotFoundException)
             {
                 // Cached mapping is stale; drop it and fall back to probing the remaining clients.
                 _routingTable.Invalidate(deviceAddress);
@@ -93,13 +93,13 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
 
                 return result;
             }
-            catch (KeyNotFoundException)
+            catch (DeviceNotFoundException)
             {
                 // Device not found on this client; try the next one.
             }
         }
 
-        throw new KeyNotFoundException($"Device with address '{address}' not found.");
+        throw new DeviceNotFoundException(address);
     }
 
     private void RegisterRoutes(IEnumerable<(string Address, ICcuClient Client)> entries)

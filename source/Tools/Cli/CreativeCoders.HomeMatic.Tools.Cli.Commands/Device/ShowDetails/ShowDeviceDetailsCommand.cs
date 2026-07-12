@@ -1,8 +1,8 @@
 ﻿using CreativeCoders.Cli.Core;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.Exporting;
-using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -26,7 +26,11 @@ public class ShowDeviceDetailsCommand(
     {
         var exportOptions = new DeviceExportOptions
         {
-            IncludeLinks = true
+            IncludeLinks = true,
+            SkipServiceParamSet = options.SkipServiceParamSet,
+            ParamSetWhitelist = string.IsNullOrWhiteSpace(options.ParamSets)
+                ? null
+                : options.ParamSets.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         };
 
         var device = await _multiCcuClient
@@ -37,6 +41,37 @@ public class ShowDeviceDetailsCommand(
 
         _console.WriteLine($"Show device details for '{options.Address}'");
         _console.WriteLine();
+
+        var serviceIsOverridden = exportOptions.SkipServiceParamSet
+                                  && exportOptions.ParamSetWhitelist is not null
+                                  && exportOptions.ParamSetWhitelist.Contains(ParamSetKey.Service,
+                                      StringComparer.OrdinalIgnoreCase);
+
+        if (serviceIsOverridden)
+        {
+            _console.MarkupLine("[yellow]--skip-service-params overrides SERVICE in --param-sets.[/]");
+            _console.WriteLine();
+        }
+
+        // The export data no longer proves that the device offers ParamSets at all, because its key lists are
+        // filtered as well. The unfiltered snapshot does.
+        var deviceOffersParamSets = device.DeviceData.ParamSets.Length > 0
+                                    || device.Channels.Any(x => x.ChannelData.ParamSets.Length > 0);
+
+        // Does any whitelist entry still stand a chance after the skip removed SERVICE? If none does, the filter
+        // did not fail to match - the skip emptied it, and the warning above already says so. Only a surviving
+        // entry that matched nothing justifies blaming the --param-sets filter.
+        var whitelistHasSurvivingEntry =
+            exportOptions.ParamSetWhitelist?.Any(exportOptions.IsParamSetAllowed) == true;
+
+        if (whitelistHasSurvivingEntry
+            && !exportData.ParamSetValues.Any()
+            && exportData.Channels.All(x => !x.ParamSetValues.Any())
+            && deviceOffersParamSets)
+        {
+            _console.MarkupLine("[yellow]No ParamSets matched the --param-sets filter.[/]");
+            _console.WriteLine();
+        }
 
         PrintDevice(exportData);
 
@@ -86,6 +121,14 @@ public class ShowDeviceDetailsCommand(
         foreach (var paramSet in paramSets)
         {
             _console.WriteLine($"{indent}- ParamSet: {paramSet.ParamSetKey}");
+
+            if (paramSet.Error is not null)
+            {
+                _console.MarkupLine(
+                    $"{indent}  [yellow]Values could not be read: {Markup.Escape(paramSet.Error)}[/]");
+
+                continue;
+            }
 
             foreach (var value in paramSet.Values)
             {

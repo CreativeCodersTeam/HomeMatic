@@ -69,7 +69,7 @@ public class CcuClient(
     {
         return (await GetDevicesAsync().ConfigureAwait(false))
                .FirstOrDefault(device => device.Uri.Address.Equals(address, StringComparison.OrdinalIgnoreCase))
-               ?? throw new KeyNotFoundException($"Device with address '{address}' not found.");
+               ?? throw new DeviceNotFoundException(address);
     }
 
     /// <inheritdoc />

@@ -92,4 +92,92 @@ public class DeviceExportOptionsTests
         // Assert
         options.ParamValueNameWhitelist.Should().BeNull();
     }
+
+    [Fact]
+    public void SkipServiceParamSet_DefaultValue_IsFalse()
+    {
+        // Arrange & Act
+        var options = new DeviceExportOptions();
+
+        // Assert
+        options.SkipServiceParamSet.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("SERVICE", false)]
+    [InlineData("service", false)]
+    [InlineData("MASTER", true)]
+    [InlineData("VALUES", true)]
+    public void IsParamSetAllowed_SkipServiceParamSetWithoutWhitelist_ReturnsExpected(string paramSetKey,
+        bool expected)
+    {
+        // Arrange
+        var options = new DeviceExportOptions { SkipServiceParamSet = true };
+
+        // Act
+        var result = options.IsParamSetAllowed(paramSetKey);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("SERVICE", false)]
+    [InlineData("MASTER", true)]
+    [InlineData("VALUES", false)]
+    public void IsParamSetAllowed_SkipServiceParamSetAndWhitelistContainsService_SkipWins(string paramSetKey,
+        bool expected)
+    {
+        // Arrange
+        var options = new DeviceExportOptions
+        {
+            SkipServiceParamSet = true,
+            ParamSetWhitelist = ["SERVICE", "MASTER"]
+        };
+
+        // Act
+        var result = options.IsParamSetAllowed(paramSetKey);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Fact]
+    public void IsParamSetAllowed_SkipServiceParamSetIsFalse_ServiceIsAllowed()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { SkipServiceParamSet = false };
+
+        // Act
+        var result = options.IsParamSetAllowed("SERVICE");
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ToBuildOptions_SkipServiceParamSetIsSet_IsForwardedToBuildOptions()
+    {
+        // Arrange
+        var options = new DeviceExportOptions { SkipServiceParamSet = true };
+
+        // Act
+        var buildOptions = options.ToBuildOptions();
+
+        // Assert
+        buildOptions.SkipServiceParamSet.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ToBuildOptions_SkipServiceParamSetIsNotSet_IsNotForwardedToBuildOptions()
+    {
+        // Arrange
+        var options = new DeviceExportOptions();
+
+        // Act
+        var buildOptions = options.ToBuildOptions();
+
+        // Assert
+        buildOptions.SkipServiceParamSet.Should().BeFalse();
+    }
 }

@@ -257,7 +257,7 @@ public class CcuClientTests
     }
 
     [Fact]
-    public async Task GetDeviceAsync_UnknownAddress_ThrowsKeyNotFoundException()
+    public async Task GetDeviceAsync_UnknownAddress_ThrowsDeviceNotFoundException()
     {
         // Arrange
         var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
@@ -277,7 +277,7 @@ public class CcuClientTests
         var act = () => ccuClient.GetDeviceAsync("UNKNOWN");
 
         // Assert
-        await act.Should().ThrowAsync<KeyNotFoundException>()
+        await act.Should().ThrowAsync<DeviceNotFoundException>()
             .WithMessage("Device with address 'UNKNOWN' not found.");
     }
 
@@ -441,7 +441,7 @@ public class CcuClientTests
     }
 
     [Fact]
-    public async Task GetCompleteDeviceAsync_UnknownAddress_ThrowsKeyNotFoundException()
+    public async Task GetCompleteDeviceAsync_UnknownAddress_ThrowsDeviceNotFoundException()
     {
         // Arrange
         var jsonRpcClient = A.Fake<IHomeMaticJsonRpcClient>();
@@ -461,7 +461,7 @@ public class CcuClientTests
         var act = () => ccuClient.GetCompleteDeviceAsync("UNKNOWN");
 
         // Assert
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<DeviceNotFoundException>();
     }
 
     [Fact]

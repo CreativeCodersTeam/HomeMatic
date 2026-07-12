@@ -16,17 +16,22 @@ public class ExportDevicesCommand(IAnsiConsole console, IMultiCcuClient multiCcu
 {
     private readonly IDeviceExporter _deviceExporter = Ensure.NotNull(deviceExporter);
 
+    private DeviceExportOptions _exportOptions = new() { WriteIndented = true };
+
     protected override object TransformData(ICompleteCcuDevice device)
     {
-        return _deviceExporter.BuildExportData(device, new DeviceExportOptions
-        {
-            WriteIndented = true
-        });
+        return _deviceExporter.BuildExportData(device, _exportOptions);
     }
 
     protected override Task<ICompleteCcuDevice> LoadDataAsync(IMultiCcuClient ccuClient, ExportDevicesOptions options)
     {
-        return ccuClient.GetCompleteDeviceAsync(options.Address);
+        _exportOptions = new DeviceExportOptions
+        {
+            WriteIndented = true,
+            SkipServiceParamSet = options.SkipServiceParamSet
+        };
+
+        return ccuClient.GetCompleteDeviceAsync(options.Address, _exportOptions.ToBuildOptions());
     }
 
     protected override string GetOutputFileName(ExportDevicesOptions options)
