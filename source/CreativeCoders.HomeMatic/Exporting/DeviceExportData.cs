@@ -24,9 +24,15 @@ public class DeviceExportData
     public required string DeviceType { get; init; }
 
     /// <summary>
-    /// Gets the parameter-set keys available for this device.
+    /// Gets the exported parameter-set keys of this device.
     /// </summary>
     /// <value>The array of parameter-set keys.</value>
+    /// <remarks>
+    /// The keys are filtered by the export options: a ParamSet excluded by
+    /// <see cref="DeviceExportOptions.ParamSetWhitelist"/> or by
+    /// <see cref="DeviceExportOptions.SkipServiceParamSet"/> is absent here as well. Without export options the
+    /// device reports all of its parameter-set keys.
+    /// </remarks>
     public required string[] ParamSetKeys { get; init; }
 
     /// <summary>

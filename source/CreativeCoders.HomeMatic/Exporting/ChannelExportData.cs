@@ -24,9 +24,15 @@ public class ChannelExportData
     public required int Index { get; init; }
 
     /// <summary>
-    /// Gets the parameter-set keys available for this channel.
+    /// Gets the exported parameter-set keys of this channel.
     /// </summary>
     /// <value>The array of parameter-set keys.</value>
+    /// <remarks>
+    /// The keys are filtered by the export options: a ParamSet excluded by
+    /// <see cref="DeviceExportOptions.ParamSetWhitelist"/> or by
+    /// <see cref="DeviceExportOptions.SkipServiceParamSet"/> is absent here as well. Without export options the
+    /// channel reports all of its parameter-set keys.
+    /// </remarks>
     public required string[] ParamSets { get; init; }
 
     /// <summary>

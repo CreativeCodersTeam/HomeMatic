@@ -206,7 +206,7 @@ public class ShowDeviceDetailsCommandTests
     public async Task ExecuteAsync_WhitelistSetButDeviceHasNoParamSetsAtAll_DoesNotPrintFilterWarning()
     {
         // Arrange - the device offers no ParamSets anywhere, so the filter did not remove anything.
-        var sut = CreateSut(BuildExportData(paramSetKeys: []));
+        var sut = CreateSut(BuildExportData(paramSetKeys: []), snapshotParamSets: []);
         var options = new ShowDeviceDetailsOptions
         {
             Address = DeviceAddress,
@@ -218,6 +218,217 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert
         sut.Output.ToString().Should().NotContain("No ParamSets matched");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithSkipServiceParamsOption_ForwardsFlagToBuildAndExport()
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData());
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert - the flag must reach the fetch (build options) and the export options.
+        sut.CapturedBuildOptions.Should().NotBeNull();
+        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedExportOptions.Should().NotBeNull();
+        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithoutSkipServiceParamsOption_FlagIsFalse()
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData());
+        var options = new ShowDeviceDetailsOptions { Address = DeviceAddress };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert
+        sut.CapturedBuildOptions.Should().NotBeNull();
+        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedExportOptions.Should().NotBeNull();
+        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("SERVICE")]
+    [InlineData("service")]
+    [InlineData("MASTER,SERVICE")]
+    public async Task ExecuteAsync_SkipServiceParamsAndServiceInWhitelist_PrintsOverrideWarning(string paramSets)
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData(new ParamSetExportData
+        {
+            ParamSetKey = "MASTER",
+            Values = []
+        }));
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = paramSets,
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert
+        sut.Output.ToString().Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SkipServiceParamsWithoutServiceInWhitelist_DoesNotPrintOverrideWarning()
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData(new ParamSetExportData
+        {
+            ParamSetKey = "MASTER",
+            Values = []
+        }));
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "MASTER",
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert - no contradiction, so no warning.
+        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ServiceInWhitelistWithoutSkipServiceParams_DoesNotPrintOverrideWarning()
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData(new ParamSetExportData
+        {
+            ParamSetKey = "SERVICE",
+            Values = []
+        }));
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "SERVICE"
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert
+        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SkipServiceParamsWithoutWhitelist_DoesNotPrintOverrideWarning()
+    {
+        // Arrange
+        var sut = CreateSut(BuildExportData(new ParamSetExportData
+        {
+            ParamSetKey = "MASTER",
+            Values = []
+        }));
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert - nothing to override without a --param-sets whitelist.
+        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SkipServiceParamsAndOnlyServiceInWhitelist_SuppressesFilterWarning()
+    {
+        // Arrange - the whitelist matches only SERVICE, which the skip then removes, so nothing is left to show.
+        var sut = CreateSut(BuildExportData());
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "SERVICE",
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert - blaming the --param-sets filter would be wrong; the override warning already explains it.
+        var output = sut.Output.ToString();
+        output.Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
+        output.Should().NotContain("No ParamSets matched");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SkipServiceParamsAndSurvivingWhitelistEntryMatchesNothing_PrintsBothWarnings()
+    {
+        // Arrange - SERVICE is overridden by the skip, but MASTER survives the skip and matches nothing.
+        var sut = CreateSut(BuildExportData());
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "MASTER,SERVICE",
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert - the override note must not swallow the legitimate filter warning for MASTER.
+        var output = sut.Output.ToString();
+        output.Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
+        output.Should().Contain("No ParamSets matched the --param-sets filter.");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhitelistMatchesNothingWithoutSkip_StillPrintsFilterWarning()
+    {
+        // Arrange - no contradiction, so the filter warning must not be suppressed.
+        var sut = CreateSut(BuildExportData());
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "SERVICE",
+            SkipServiceParamSet = false
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert
+        sut.Output.ToString().Should().Contain("No ParamSets matched the --param-sets filter.");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_OnlyChannelsOfferParamSets_PrintsFilterWarning()
+    {
+        // Arrange - the device itself has no ParamSets, but a channel does, so the filter did remove something.
+        var sut = CreateSut(BuildExportData(paramSetKeys: []), snapshotParamSets: [],
+            snapshotChannelParamSets: ["VALUES"]);
+        var options = new ShowDeviceDetailsOptions
+        {
+            Address = DeviceAddress,
+            ParamSets = "MASTRE"
+        };
+
+        // Act
+        await sut.Command.ExecuteAsync(options);
+
+        // Assert
+        sut.Output.ToString().Should().Contain("No ParamSets matched the --param-sets filter.");
     }
 
     private static DeviceExportData BuildExportData(params ParamSetExportData[] paramSets)
@@ -241,7 +452,8 @@ public class ShowDeviceDetailsCommandTests
         };
     }
 
-    private static SutContext CreateSut(DeviceExportData exportData)
+    private static SutContext CreateSut(DeviceExportData exportData, string[]? snapshotParamSets = null,
+        string[]? snapshotChannelParamSets = null)
     {
         var output = new StringWriter();
         var console = AnsiConsole.Create(new AnsiConsoleSettings
@@ -253,13 +465,14 @@ public class ShowDeviceDetailsCommandTests
         });
 
         var context = new SutContext(output);
+        var snapshot = CreateSnapshot(snapshotParamSets ?? ["MASTER", "SERVICE"], snapshotChannelParamSets ?? []);
 
         var multiCcuClient = A.Fake<IMultiCcuClient>();
         A.CallTo(() => multiCcuClient.GetCompleteDeviceAsync(DeviceAddress, A<CompleteCcuDeviceBuildOptions>._))
             .ReturnsLazily((string _, CompleteCcuDeviceBuildOptions buildOptions) =>
             {
                 context.CapturedBuildOptions = buildOptions;
-                return Task.FromResult(A.Fake<ICompleteCcuDevice>());
+                return Task.FromResult(snapshot);
             });
 
         var deviceExporter = A.Fake<IDeviceExporter>();
@@ -273,6 +486,35 @@ public class ShowDeviceDetailsCommandTests
         context.Command = new ShowDeviceDetailsCommand(console, multiCcuClient, deviceExporter);
 
         return context;
+    }
+
+    /// <summary>
+    /// Builds the unfiltered device snapshot. The command reads its ParamSet keys from here to decide whether the
+    /// device offers any ParamSets at all — the export data cannot answer that, because its key lists are filtered.
+    /// </summary>
+    private static ICompleteCcuDevice CreateSnapshot(string[] paramSets, string[] channelParamSets)
+    {
+        var deviceData = A.Fake<ICcuDeviceData>();
+        A.CallTo(() => deviceData.ParamSets).Returns(paramSets);
+
+        var snapshot = A.Fake<ICompleteCcuDevice>();
+        A.CallTo(() => snapshot.DeviceData).Returns(deviceData);
+        A.CallTo(() => snapshot.Channels).Returns(channelParamSets.Length == 0
+            ? []
+            : [CreateSnapshotChannel(channelParamSets)]);
+
+        return snapshot;
+    }
+
+    private static ICompleteCcuDeviceChannel CreateSnapshotChannel(string[] paramSets)
+    {
+        var channelData = A.Fake<ICcuDeviceChannel>();
+        A.CallTo(() => channelData.ParamSets).Returns(paramSets);
+
+        var channel = A.Fake<ICompleteCcuDeviceChannel>();
+        A.CallTo(() => channel.ChannelData).Returns(channelData);
+
+        return channel;
     }
 
     private sealed class SutContext(StringWriter output)

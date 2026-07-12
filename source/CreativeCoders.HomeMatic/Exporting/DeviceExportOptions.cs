@@ -1,4 +1,5 @@
 using CreativeCoders.HomeMatic.Core;
+using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Links;
 using JetBrains.Annotations;
 
@@ -11,6 +12,10 @@ public class DeviceExportOptions
     /// Whitelist of ParamSet keys to include in the export (e.g. "MASTER", "VALUES").
     /// If empty or null, all ParamSets are exported.
     /// </summary>
+    /// <remarks>
+    /// The whitelist applies to the exported ParamSet values as well as to the exported ParamSet key lists, so a
+    /// filtered ParamSet is absent from the export entirely.
+    /// </remarks>
     public ICollection<string>? ParamSetWhitelist { get; set; }
 
     /// <summary>
@@ -41,13 +46,29 @@ public class DeviceExportOptions
     public GetLinksFlags LinksFlags { get; set; } = GetLinksFlags.None;
 
     /// <summary>
-    /// Determines whether a ParamSet key is allowed based on the <see cref="ParamSetWhitelist"/>.
+    /// Gets or sets a value indicating whether the <see cref="ParamSetKey.Service"/> ParamSet is skipped.
     /// </summary>
-    /// <param name="paramSetKey">The ParamSet key to check.</param>
-    /// <returns><c>true</c> if the key is allowed or no whitelist is configured; otherwise <c>false</c>.</returns>
+    /// <value><see langword="true"/> to skip the SERVICE ParamSet; otherwise, <see langword="false"/>.
+    /// Default is <see langword="false"/>.</value>
+    /// <remarks>
+    /// The value is applied twice: it is forwarded to <see cref="CompleteCcuDeviceBuildOptions.SkipServiceParamSet"/>
+    /// by <see cref="ToBuildOptions"/> so the SERVICE ParamSet is not fetched from the CCU, and it excludes the
+    /// SERVICE ParamSet from the export data even when the snapshot already contains it. Skipping takes precedence
+    /// over <see cref="ParamSetWhitelist"/>.
+    /// </remarks>
+    public bool SkipServiceParamSet { get; set; }
+
+    /// <summary>
+    /// Determines whether a ParamSet may be included in the export.
+    /// </summary>
+    /// <param name="paramSetKey">The ParamSet key to check. The comparison is case-insensitive.</param>
+    /// <returns><see langword="true"/> if the ParamSet may be included; otherwise, <see langword="false"/>.
+    /// The SERVICE ParamSet is never allowed while <see cref="SkipServiceParamSet"/> is <see langword="true"/>,
+    /// even when the <see cref="ParamSetWhitelist"/> contains it.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="paramSetKey"/> is <see langword="null"/>.</exception>
     public bool IsParamSetAllowed(string paramSetKey)
     {
-        return WhitelistFilter.IsAllowed(ParamSetWhitelist, paramSetKey);
+        return ParamSetFilter.IsParamSetAllowed(ParamSetWhitelist, SkipServiceParamSet, paramSetKey);
     }
 
     /// <summary>
@@ -64,14 +85,16 @@ public class DeviceExportOptions
     /// Builds a <see cref="CompleteCcuDeviceBuildOptions"/> matching this export configuration.
     /// </summary>
     /// <returns>A <see cref="CompleteCcuDeviceBuildOptions"/> that includes links iff <see cref="IncludeLinks"/> is set
-    /// and forwards the <see cref="ParamSetWhitelist"/> so filtered ParamSets are not fetched at all.</returns>
+    /// and forwards the <see cref="ParamSetWhitelist"/> and <see cref="SkipServiceParamSet"/> so filtered ParamSets
+    /// are not fetched at all.</returns>
     public CompleteCcuDeviceBuildOptions ToBuildOptions()
     {
         return new CompleteCcuDeviceBuildOptions
         {
             IncludeLinks = IncludeLinks,
             LinksFlags = LinksFlags,
-            ParamSetWhitelist = ParamSetWhitelist
+            ParamSetWhitelist = ParamSetWhitelist,
+            SkipServiceParamSet = SkipServiceParamSet
         };
     }
 }

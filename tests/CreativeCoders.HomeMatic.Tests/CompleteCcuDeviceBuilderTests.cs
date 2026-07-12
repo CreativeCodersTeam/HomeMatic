@@ -383,6 +383,99 @@ public class CompleteCcuDeviceBuilderTests
     }
 
     [Fact]
+    public async Task BuildAsync_WithSkipServiceParamSet_DoesNotFetchServiceParamSet()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+        var channel = A.Fake<ICcuDeviceChannel>();
+
+        A.CallTo(() => device.Channels).Returns([channel]);
+        A.CallTo(() => device.ParamSets).Returns(["MASTER", "SERVICE"]);
+        A.CallTo(() => channel.ParamSets).Returns(["MASTER", "VALUES", "SERVICE"]);
+
+        SetupParamSet(device, "MASTER", "A", 1);
+        SetupParamSet(channel, "MASTER", "B", 2);
+        SetupParamSet(channel, "VALUES", "C", 3);
+
+        var builder = new CompleteCcuDeviceBuilder();
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        var completeDevice = await builder.BuildAsync(device, options);
+
+        // Assert - SERVICE must not be requested at all, neither on the device nor on the channel.
+        A.CallTo(() => device.GetParamSetValuesAsync("SERVICE")).MustNotHaveHappened();
+        A.CallTo(() => device.GetParamSetDescriptionsAsync("SERVICE")).MustNotHaveHappened();
+        A.CallTo(() => channel.GetParamSetValuesAsync("SERVICE")).MustNotHaveHappened();
+        A.CallTo(() => channel.GetParamSetDescriptionsAsync("SERVICE")).MustNotHaveHappened();
+
+        completeDevice.ParamSetValues.Select(x => x.ParamSetKey)
+            .Should().BeEquivalentTo("MASTER");
+        completeDevice.Channels.Single().ParamSetValues.Select(x => x.ParamSetKey)
+            .Should().BeEquivalentTo("MASTER", "VALUES");
+    }
+
+    [Fact]
+    public async Task BuildAsync_WithSkipServiceParamSetAndWhitelistContainingService_DoesNotFetchServiceParamSet()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+
+        A.CallTo(() => device.Channels).Returns([]);
+        A.CallTo(() => device.ParamSets).Returns(["MASTER", "SERVICE"]);
+
+        SetupParamSet(device, "MASTER", "A", 1);
+
+        var builder = new CompleteCcuDeviceBuilder();
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = true,
+            ParamSetWhitelist = ["MASTER", "SERVICE"]
+        };
+
+        // Act
+        var completeDevice = await builder.BuildAsync(device, options);
+
+        // Assert - skipping wins over an explicit whitelist entry.
+        A.CallTo(() => device.GetParamSetValuesAsync("SERVICE")).MustNotHaveHappened();
+        A.CallTo(() => device.GetParamSetDescriptionsAsync("SERVICE")).MustNotHaveHappened();
+
+        completeDevice.ParamSetValues.Select(x => x.ParamSetKey)
+            .Should().BeEquivalentTo("MASTER");
+    }
+
+    [Fact]
+    public async Task BuildAsync_WithoutSkipServiceParamSet_FetchesServiceParamSet()
+    {
+        // Arrange
+        var device = A.Fake<ICcuDevice>();
+
+        A.CallTo(() => device.Channels).Returns([]);
+        A.CallTo(() => device.ParamSets).Returns(["MASTER", "SERVICE"]);
+
+        SetupParamSet(device, "MASTER", "A", 1);
+        SetupParamSet(device, "SERVICE", "ERROR_CODE", 0);
+
+        var builder = new CompleteCcuDeviceBuilder();
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = false
+        };
+
+        // Act
+        var completeDevice = await builder.BuildAsync(device, options);
+
+        // Assert
+        A.CallTo(() => device.GetParamSetValuesAsync("SERVICE")).MustHaveHappenedOnceExactly();
+
+        completeDevice.ParamSetValues.Select(x => x.ParamSetKey)
+            .Should().BeEquivalentTo("MASTER", "SERVICE");
+    }
+
+    [Fact]
     public async Task BuildAsync_WhenParamSetReadThrowsNonFaultException_PropagatesException()
     {
         // Arrange

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using CreativeCoders.HomeMatic.Core.Parameters;
 using CreativeCoders.HomeMatic.XmlRpc.Links;
 using JetBrains.Annotations;
 
@@ -31,12 +33,29 @@ public class CompleteCcuDeviceBuildOptions
     public ICollection<string>? ParamSetWhitelist { get; set; }
 
     /// <summary>
-    /// Determines whether a ParamSet key is allowed based on the <see cref="ParamSetWhitelist"/>.
+    /// Gets or sets a value indicating whether the <see cref="ParamSetKey.Service"/> ParamSet is skipped
+    /// instead of being fetched from the CCU.
     /// </summary>
-    /// <param name="paramSetKey">The ParamSet key to check.</param>
-    /// <returns><c>true</c> if the key is allowed or no whitelist is configured; otherwise <c>false</c>.</returns>
+    /// <value><see langword="true"/> to skip the SERVICE ParamSet; otherwise, <see langword="false"/>.
+    /// Default is <see langword="false"/>.</value>
+    /// <remarks>
+    /// Skipping takes precedence over <see cref="ParamSetWhitelist"/>: the SERVICE ParamSet is skipped even
+    /// when the whitelist explicitly contains it. Reading the SERVICE ParamSet frequently fails for
+    /// battery-powered devices that are not reachable, so skipping it avoids both the request and the resulting
+    /// read error.
+    /// </remarks>
+    public bool SkipServiceParamSet { get; set; }
+
+    /// <summary>
+    /// Determines whether a ParamSet may be fetched from the CCU.
+    /// </summary>
+    /// <param name="paramSetKey">The ParamSet key to check. The comparison is case-insensitive.</param>
+    /// <returns><see langword="true"/> if the ParamSet may be fetched; otherwise, <see langword="false"/>.
+    /// The SERVICE ParamSet is never allowed while <see cref="SkipServiceParamSet"/> is <see langword="true"/>,
+    /// even when the <see cref="ParamSetWhitelist"/> contains it.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="paramSetKey"/> is <see langword="null"/>.</exception>
     public bool IsParamSetAllowed(string paramSetKey)
     {
-        return WhitelistFilter.IsAllowed(ParamSetWhitelist, paramSetKey);
+        return ParamSetFilter.IsParamSetAllowed(ParamSetWhitelist, SkipServiceParamSet, paramSetKey);
     }
 }

@@ -69,4 +69,75 @@ public class CompleteCcuDeviceBuildOptionsTests
         // Assert
         result.Should().Be(expected);
     }
+
+    [Fact]
+    public void SkipServiceParamSet_NotConfigured_IsFalse()
+    {
+        // Arrange
+        var options = new CompleteCcuDeviceBuildOptions();
+
+        // Act
+        var result = options.SkipServiceParamSet;
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("SERVICE", false)]
+    [InlineData("service", false)]
+    [InlineData("MASTER", true)]
+    [InlineData("VALUES", true)]
+    public void IsParamSetAllowed_SkipServiceParamSetWithoutWhitelist_ReturnsExpected(string paramSetKey,
+        bool expected)
+    {
+        // Arrange
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = true
+        };
+
+        // Act
+        var result = options.IsParamSetAllowed(paramSetKey);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("SERVICE", false)]
+    [InlineData("MASTER", true)]
+    [InlineData("VALUES", false)]
+    public void IsParamSetAllowed_SkipServiceParamSetAndWhitelistContainsService_SkipWins(string paramSetKey,
+        bool expected)
+    {
+        // Arrange
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = true,
+            ParamSetWhitelist = ["SERVICE", "MASTER"]
+        };
+
+        // Act
+        var result = options.IsParamSetAllowed(paramSetKey);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Fact]
+    public void IsParamSetAllowed_SkipServiceParamSetIsFalse_ServiceIsAllowed()
+    {
+        // Arrange
+        var options = new CompleteCcuDeviceBuildOptions
+        {
+            SkipServiceParamSet = false
+        };
+
+        // Act
+        var result = options.IsParamSetAllowed("SERVICE");
+
+        // Assert
+        result.Should().BeTrue();
+    }
 }
