@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="CreativeCoders.CakeBuild"/>
+        <PackageReference Include="CreativeCoders.Core" />
     </ItemGroup>
 
 </Project>
