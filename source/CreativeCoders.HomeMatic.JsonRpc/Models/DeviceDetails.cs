@@ -22,4 +22,10 @@ public class DeviceDetails
 
     [JsonConverter(typeof(BooleanConverter))]
     public bool IsReady { get; set; }
+
+    /// <summary>
+    /// Gets or sets the channels of the device.
+    /// </summary>
+    /// <value>The channels returned by <c>Device.listAllDetail</c>, or <see langword="null"/> if the CCU returned none.</value>
+    public ChannelDetails[]? Channels { get; set; }
 }

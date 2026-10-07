@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.XmlRpc.Server;
@@ -11,9 +12,12 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 /// and dispatches them to all registered <see cref="ICcuEventHandler"/> instances.
 /// Register with the CCU by calling <see cref="Client.IHomeMaticXmlRpcApi.InitAsync"/> with the
 /// server's URL and an interface identifier.
+/// <para>
+/// Dispose the server with <see cref="IAsyncDisposable.DisposeAsync"/> to stop it and release its HTTP listener.
+/// </para>
 /// </remarks>
 [PublicAPI]
-public interface ICcuXmlRpcEventServer
+public interface ICcuXmlRpcEventServer : IAsyncDisposable
 {
     /// <summary>
     /// Starts the XML-RPC event server and begins listening for CCU callbacks.

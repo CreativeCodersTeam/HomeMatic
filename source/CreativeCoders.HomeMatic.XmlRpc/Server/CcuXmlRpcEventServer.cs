@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
@@ -31,6 +32,10 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     private readonly ILogger<CcuXmlRpcEventServer> _logger;
 
     private readonly ConcurrentList<ICcuEventHandler> _eventHandlers;
+
+    private volatile bool _isStarted;
+
+    private bool _isDisposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CcuXmlRpcEventServer"/> class.
@@ -63,12 +68,46 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         }
 
         await _xmlRpcServer.StartAsync().ConfigureAwait(false);
+
+        _isStarted = true;
     }
 
     /// <inheritdoc/>
     public async Task StopAsync()
     {
         await _xmlRpcServer.StopAsync().ConfigureAwait(false);
+
+        _isStarted = false;
+    }
+
+    /// <summary>
+    /// Stops the server if it has been started and releases the underlying XML-RPC server and its HTTP listener.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous dispose operation.</returns>
+    /// <remarks>
+    /// The underlying XML-RPC server is disposed even if stopping fails; the stop exception is then rethrown.
+    /// Calling this method more than once has no effect.
+    /// </remarks>
+    public async ValueTask DisposeAsync()
+    {
+        if (Interlocked.Exchange(ref _isDisposed, true))
+        {
+            return;
+        }
+
+        try
+        {
+            if (_isStarted)
+            {
+                await StopAsync().ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            _xmlRpcServer.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <inheritdoc/>
@@ -87,7 +126,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             "Event from CCU received. InterfaceId = {InterfaceId}; Address = {Address}; ValueKey = {ValueKey}; Value = {Value}",
             interfaceId, address, valueKey, value);
 
-        await _eventHandlers.ForEachAsync(x => x.Event(address, valueKey, value)).ConfigureAwait(false);
+        await _eventHandlers.ForEachAsync(x => x.Event(interfaceId, address, valueKey, value)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -117,7 +156,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         deviceDescriptions.ForEach(deviceDescription =>
             _logger.LogTrace("New device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.NewDevices(deviceDescriptions)).ConfigureAwait(false);
+        await _eventHandlers.ForEachAsync(x => x.NewDevices(interfaceId, deviceDescriptions)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -135,7 +174,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         deviceDescriptions.ForEach(deviceDescription =>
             _logger.LogTrace("Deleted device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(deviceDescriptions)).ConfigureAwait(false);
+        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(interfaceId, deviceDescriptions)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -150,7 +189,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             "CCU device is updated. InterfaceId = {InterfaceId}; Address = {Address}; Hint = {Hint}",
             interfaceId, address, hint);
 
-        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(address, hint)).ConfigureAwait(false);
+        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(interfaceId, address, hint)).ConfigureAwait(false);
 
         return string.Empty;
     }

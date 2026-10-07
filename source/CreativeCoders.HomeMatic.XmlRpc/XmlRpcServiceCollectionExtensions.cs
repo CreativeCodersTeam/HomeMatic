@@ -1,4 +1,5 @@
 ﻿using CreativeCoders.HomeMatic.XmlRpc.Client;
+using CreativeCoders.HomeMatic.XmlRpc.Server;
 using CreativeCoders.Net.XmlRpc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -17,12 +18,15 @@ public static class XmlRpcServiceCollectionExtensions
     /// <remarks>
     /// Registers the underlying XML-RPC infrastructure and the <see cref="Client.IHomeMaticXmlRpcApiBuilder"/>
     /// so that callers can construct typed <see cref="Client.IHomeMaticXmlRpcApi"/> instances
-    /// for individual CCU interface processes.
+    /// for individual CCU interface processes, and the <see cref="ICcuXmlRpcEventServerFactory"/> that creates
+    /// servers for receiving CCU event callbacks. The factory requires an <c>ILoggerFactory</c> registration.
     /// </remarks>
     public static void AddHomeMaticXmlRpc(this IServiceCollection services)
     {
         services.AddXmlRpc();
         
         services.TryAddTransient<IHomeMaticXmlRpcApiBuilder, HomeMaticXmlRpcApiBuilder>();
+
+        services.TryAddTransient<ICcuXmlRpcEventServerFactory, CcuXmlRpcEventServerFactory>();
     }
 }
