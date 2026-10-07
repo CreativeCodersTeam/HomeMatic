@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -19,6 +20,8 @@ using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Ccu.Events;
 
+[SuppressMessage("csharpsquid", "S6608:Prefer indexing instead of \"Enumerable\" methods on types implementing \"IList\"",
+    Justification = "Performance rule is not relevant for tests.")]
 public class MonitorCcuEventsCommandTests
 {
     private const string ConnectionName = "test-ccu";
