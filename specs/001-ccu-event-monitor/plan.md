@@ -74,7 +74,7 @@ Details: [research.md](./research.md).
 | XML docs on all public members | PASS | PASS | Needed for every new and changed public API, including the `ICcuEventHandler` change. |
 | Tests for every change (`dotnet-tester`) | PASS | PASS | Test plan in research R10. |
 | Simplicity / no speculative features (CLAUDE.md §2) | PASS | PASS with justification | Own HTTP server and breaking interface change: see Complexity Tracking. |
-| No new packages without need | PASS | PASS | Key tests fake `IAnsiConsoleInput` instead of adding `Spectre.Console.Testing`. |
+| No new packages without need | PASS | PASS | `Spectre.Console.Testing` (test project only) is needed for CI-stable console output: see research R10. Key tests still fake `IAnsiConsoleInput`. |
 
 ## Project Structure
 

@@ -15,6 +15,7 @@ using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.HomeMatic.XmlRpc.Server;
 using FakeItEasy;
 using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Ccu.Events;
 
@@ -953,20 +954,19 @@ public class MonitorCcuEventsCommandTests
                 A.CallTo(() => output.Height).Returns(24);
             }
 
-            var console = AnsiConsole.Create(new AnsiConsoleSettings
-            {
-                Ansi = AnsiSupport.No,
-                ColorSystem = ColorSystemSupport.NoColors,
-                Interactive = InteractionSupport.No,
-                Out = output
-            });
-            console.Profile.Width = width;
+            // The thread-safe writer replaces the StringWriter of the TestConsole, because the tests read the output
+            // while the command writes it. Setting a terminal output resets the width, so the width is set afterwards.
+            var testConsole = new TestConsole();
+            testConsole.Profile.Out = output;
+            testConsole.Width(width);
+
+            IAnsiConsole console = testConsole;
 
             if (interactive)
             {
-                // Writes go to the real test console; only the key input is faked.
-                console.Profile.Capabilities.Interactive = true;
-                console = A.Fake<IAnsiConsole>(x => x.Wrapping(console));
+                // Writes go to the test console; only the key input is faked.
+                testConsole.Interactive();
+                console = A.Fake<IAnsiConsole>(x => x.Wrapping(testConsole));
                 A.CallTo(() => console.Input).Returns(Input);
                 A.CallTo(() => Input.IsKeyAvailable()).ReturnsLazily(() => !_pressedKeys.IsEmpty);
                 A.CallTo(() => Input.ReadKey(true))

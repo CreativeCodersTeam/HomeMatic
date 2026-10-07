@@ -151,7 +151,8 @@ Once a Core release with these fixes is referenced, `CreativeCoders.HomeMatic.Xm
 
 **Decision**:
 - xUnit + FakeItEasy + AwesomeAssertions, as the existing test projects use (**FACT**).
-- Command tests use the existing pattern: a real `AnsiConsole` writing to a `StringWriter`, Ansi off, not interactive (**FACT**, `BackupCcuCommandTests.cs:130-139`).
-- Key input is tested with `A.Fake<IAnsiConsoleInput>()`, so no new `Spectre.Console.Testing` dependency is needed.
+- Command tests use `TestConsole` from `Spectre.Console.Testing` (same version as Spectre.Console). Earlier tests created a real `AnsiConsole` with `AnsiSupport.No`, but on GitHub Actions Spectre's default `GitHubEnricher` switches ANSI back on (`GITHUB_ACTIONS=true`), which broke exact output assertions in CI. `TestConsole` turns the default enrichers off.
+- The monitor tests keep their thread-safe `LockedTextWriter` as `Profile.Out` of the `TestConsole`, because they read the output while the command writes it.
+- Key input is still tested with `A.Fake<IAnsiConsoleInput>()`. `TestConsoleInput` is not thread-safe and cannot simulate input errors.
 - `HttpListenerServer` and `CcuXmlRpcEventServer` get loopback integration tests in `CreativeCoders.HomeMatic.XmlRpc.Tests`: a real listener on a free port, plus an `HttpClient` POST of an XML-RPC `system.multicall` with two `event` calls. **FACT** — there are no server tests yet.
 - End-to-end checks against a real CCU are manual ([quickstart.md](./quickstart.md)).

@@ -6,7 +6,7 @@ using CreativeCoders.HomeMatic.FirmwareBackup;
 using CreativeCoders.HomeMatic.Tools.Cli.Base.Connections;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Backup;
 using FakeItEasy;
-using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Ccu.Backup;
 
@@ -67,7 +67,7 @@ public class BackupCcuCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("Backup verification is skipped.");
+        sut.Console.Output.Should().Contain("Backup verification is skipped.");
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class BackupCcuCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().NotContain("Backup verification is skipped.");
+        sut.Console.Output.Should().NotContain("Backup verification is skipped.");
     }
 
     [Fact]
@@ -103,8 +103,8 @@ public class BackupCcuCommandTests
 
         // Assert
         result.ExitCode.Should().Be(-1);
-        sut.Output.ToString().Should().Contain("Backup verification is skipped.");
-        sut.Output.ToString().Should().Contain("backup broken");
+        sut.Console.Output.Should().Contain("Backup verification is skipped.");
+        sut.Console.Output.Should().Contain("backup broken");
     }
 
     [Fact]
@@ -124,19 +124,12 @@ public class BackupCcuCommandTests
 
         // Assert
         result.ExitCode.Should().Be(-1);
-        sut.Output.ToString().Should().NotContain("Backup verification is skipped.");
+        sut.Console.Output.Should().NotContain("Backup verification is skipped.");
     }
 
     private static SutContext CreateSut()
     {
-        var output = new StringWriter();
-        var console = AnsiConsole.Create(new AnsiConsoleSettings
-        {
-            Ansi = AnsiSupport.No,
-            ColorSystem = ColorSystemSupport.NoColors,
-            Interactive = InteractionSupport.No,
-            Out = new AnsiConsoleOutput(output)
-        });
+        var console = new TestConsole();
 
         var connection = new CcuConnectionInfo(new Uri("https://ccu.example.local"), ConnectionName);
 
@@ -150,7 +143,7 @@ public class BackupCcuCommandTests
         A.CallTo(() => client.CreateBackupToFileAsync(A<string>._, A<CancellationToken>._))
             .Returns("/backups/ccu_backup.sbk");
 
-        var context = new SutContext(output);
+        var context = new SutContext(console);
 
         var factory = A.Fake<IFirmwareBackupClientFactory>();
         A.CallTo(() => factory.Create(A<FirmwareBackupOptions>._))
@@ -172,13 +165,13 @@ public class BackupCcuCommandTests
         return context;
     }
 
-    private sealed class SutContext(StringWriter output)
+    private sealed class SutContext(TestConsole console)
     {
         public BackupCcuCommand Command { get; set; } = null!;
 
         public IFirmwareBackupClient Client { get; set; } = null!;
 
-        public StringWriter Output { get; } = output;
+        public TestConsole Console { get; } = console;
 
         public FirmwareBackupOptions? CapturedOptions { get; set; }
     }

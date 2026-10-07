@@ -4,7 +4,7 @@ using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 using FakeItEasy;
-using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Device.Export;
 
@@ -97,16 +97,9 @@ public class ExportDevicesCommandTests : IDisposable
 
     private static SutContext CreateSut()
     {
-        var output = new StringWriter();
-        var console = AnsiConsole.Create(new AnsiConsoleSettings
-        {
-            Ansi = AnsiSupport.No,
-            ColorSystem = ColorSystemSupport.NoColors,
-            Interactive = InteractionSupport.No,
-            Out = new AnsiConsoleOutput(output)
-        });
+        var console = new TestConsole();
 
-        var context = new SutContext(output);
+        var context = new SutContext(console);
 
         var multiCcuClient = A.Fake<IMultiCcuClient>();
         A.CallTo(() => multiCcuClient.GetCompleteDeviceAsync(DeviceAddress, A<CompleteCcuDeviceBuildOptions>._))
@@ -144,11 +137,11 @@ public class ExportDevicesCommandTests : IDisposable
         };
     }
 
-    private sealed class SutContext(StringWriter output)
+    private sealed class SutContext(TestConsole console)
     {
         public ExportDevicesCommand Command { get; set; } = null!;
 
-        public StringWriter Output { get; } = output;
+        public TestConsole Console { get; } = console;
 
         public CompleteCcuDeviceBuildOptions? CapturedBuildOptions { get; set; }
 
