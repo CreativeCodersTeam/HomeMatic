@@ -71,9 +71,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert - whitelist entries are split and trimmed, and reach both the build and the export options.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
+        sut.CapturedBuildOptions.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
+        sut.CapturedExportOptions.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
     }
 
     [Fact]
@@ -88,9 +88,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.ParamSetWhitelist.Should().BeNull();
+        sut.CapturedBuildOptions.ParamSetWhitelist.Should().BeNull();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.ParamSetWhitelist.Should().BeNull();
+        sut.CapturedExportOptions.ParamSetWhitelist.Should().BeNull();
     }
 
     [Fact]
@@ -236,9 +236,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert - the flag must reach the fetch (build options) and the export options.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeTrue();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeTrue();
     }
 
     [Fact]
@@ -253,9 +253,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeFalse();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeFalse();
     }
 
     [Theory]

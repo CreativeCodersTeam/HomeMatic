@@ -38,21 +38,6 @@ public class ChannelNameDirectoryTests
         name.Should().BeNull();
     }
 
-    [Theory]
-    [InlineData("000A1B2C3D4E")]
-    [InlineData("000A1B2C3D4E:1")]
-    public void Lookup_AddressIsPrefixOfKnownDeviceAddress_ReturnsNull(string address)
-    {
-        // Arrange
-        var sut = CreateDirectory();
-
-        // Act
-        var name = sut.Lookup(address);
-
-        // Assert
-        name.Should().BeNull();
-    }
-
     [Fact]
     public void Lookup_OnlyDeviceAddressKnown_ReturnsDeviceName()
     {
@@ -97,6 +82,9 @@ public class ChannelNameDirectoryTests
     [InlineData("FFFFFFFFFFFFFF")]
     [InlineData(":1")]
     [InlineData("")]
+    // Prefix of a known device address
+    [InlineData("000A1B2C3D4E")]
+    [InlineData("000A1B2C3D4E:1")]
     public void Lookup_UnknownAddress_ReturnsNull(string address)
     {
         // Arrange

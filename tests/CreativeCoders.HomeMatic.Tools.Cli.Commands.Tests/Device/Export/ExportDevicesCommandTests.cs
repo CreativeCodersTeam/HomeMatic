@@ -8,7 +8,7 @@ using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Device.Export;
 
-public class ExportDevicesCommandTests : IDisposable
+public sealed class ExportDevicesCommandTests : IDisposable
 {
     private const string DeviceAddress = "00019F2999BE83";
 
@@ -42,9 +42,9 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert - the flag must reach the CCU fetch and the export data building.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeTrue();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeTrue();
     }
 
     [Fact]
@@ -63,9 +63,9 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeFalse();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeFalse();
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.WriteIndented.Should().BeTrue();
+        sut.CapturedExportOptions.WriteIndented.Should().BeTrue();
     }
 
     private string CreateOutputFileName()

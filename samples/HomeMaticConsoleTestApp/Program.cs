@@ -16,7 +16,7 @@ var api = apiBuilder.ForUrl(new Uri("http://192.168.2.210/api/homematic.cgi")).B
 
 var password = Console.ReadLine() ?? string.Empty;
 
-var loginResponse = await api.LoginAsync("Admin", password ?? string.Empty);
+var loginResponse = await api.LoginAsync("Admin", password);
 
 Console.WriteLine(JsonSerializer.Serialize(loginResponse));
 

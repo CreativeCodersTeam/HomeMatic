@@ -27,7 +27,7 @@ public class BackupCcuCommandTests
         // Assert
         result.Should().Be(CommandResult.Success);
         sut.CapturedOptions.Should().NotBeNull();
-        sut.CapturedOptions!.VerifyBackup.Should().BeTrue();
+        sut.CapturedOptions.VerifyBackup.Should().BeTrue();
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class BackupCcuCommandTests
         // Assert
         result.Should().Be(CommandResult.Success);
         sut.CapturedOptions.Should().NotBeNull();
-        sut.CapturedOptions!.VerifyBackup.Should().BeFalse();
+        sut.CapturedOptions.VerifyBackup.Should().BeFalse();
     }
 
     [Fact]

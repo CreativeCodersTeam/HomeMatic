@@ -1,2 +1,5 @@
 ﻿[*.{cs,vb}]
 configure_await_analysis_mode = disabled
+
+# S6608: Performance rule (prefer indexing over Enumerable.Last/First) is not relevant for tests
+dotnet_diagnostic.S6608.severity = none

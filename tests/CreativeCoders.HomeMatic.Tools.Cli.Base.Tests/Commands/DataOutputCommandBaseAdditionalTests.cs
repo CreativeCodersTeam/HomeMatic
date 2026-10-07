@@ -88,7 +88,7 @@ public class DataOutputCommandBaseAdditionalTests
         var writer = A.Fake<IDataOutputWriter>();
         A.CallTo(() => writer.ResolveFormat(A<DataOutputFormat>._, A<string?>._))
             .Returns(DataOutputFormat.Json);
-        A.CallTo(() => writer.WriteAsync(A<string>._, A<string?>._))
+        A.CallTo(() => writer.WriteAsync(A<string>.Ignored, A<string?>._))
             .ThrowsAsync(new IOException("write failed"));
 
         var sut = new ConfigurableCommand(A.Fake<IAnsiConsole>(), factory, writer);

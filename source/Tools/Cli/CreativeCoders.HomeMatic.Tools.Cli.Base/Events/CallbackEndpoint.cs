@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 
@@ -14,6 +15,8 @@ public sealed record CallbackEndpoint(string Host, int Port)
     /// Gets the HTTP listener prefix that binds the endpoint to all local addresses.
     /// </summary>
     /// <value>The prefix in the form <c>http://+:&lt;Port&gt;/</c>.</value>
+    [SuppressMessage("csharpsquid", "S5332:Using clear-text protocols is security-sensitive",
+        Justification = "The CCU delivers XML-RPC event callbacks over plain HTTP in the local network.")]
     public string ListenPrefix => $"http://+:{Port}/";
 
     /// <summary>
@@ -23,6 +26,8 @@ public sealed record CallbackEndpoint(string Host, int Port)
     /// The URL in the form <c>http://&lt;Host&gt;:&lt;Port&gt;/</c>. An IPv6 address in <see cref="Host"/> is
     /// enclosed in square brackets, for example <c>http://[fe80::1]:&lt;Port&gt;/</c>, unless it is already enclosed.
     /// </value>
+    [SuppressMessage("csharpsquid", "S5332:Using clear-text protocols is security-sensitive",
+        Justification = "The CCU delivers XML-RPC event callbacks over plain HTTP in the local network.")]
     public string CallbackUrl => $"http://{UrlHost}:{Port}/";
 
     private string UrlHost =>

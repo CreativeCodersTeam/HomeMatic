@@ -169,7 +169,7 @@ public sealed class CcuXmlRpcEventServerTests : IAsyncLifetime
         var responseXml = XDocument.Load(responseStream);
         var array = responseXml.Descendants("param").Single().Element("value")?.Element("array");
         array.Should().NotBeNull();
-        array!.Element("data")?.Elements().Should().BeEmpty();
+        array.Element("data")?.Elements().Should().BeEmpty();
     }
 
     [Fact]
@@ -199,8 +199,10 @@ public sealed class CcuXmlRpcEventServerTests : IAsyncLifetime
         // Act
         var act = async () =>
         {
-            await sut.DisposeAsync().AsTask().WaitAsync(OperationTimeout);
-            await sut.DisposeAsync().AsTask().WaitAsync(OperationTimeout);
+            await DisposeOnceAsync().WaitAsync(OperationTimeout);
+            await DisposeOnceAsync().WaitAsync(OperationTimeout);
+
+            Task DisposeOnceAsync() => sut.DisposeAsync().AsTask();
         };
 
         // Assert

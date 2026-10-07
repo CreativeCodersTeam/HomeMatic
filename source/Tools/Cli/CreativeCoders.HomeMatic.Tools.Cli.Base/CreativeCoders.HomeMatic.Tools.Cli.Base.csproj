@@ -11,6 +11,10 @@
         <PackageReference Include="CreativeCoders.Cli.Core"/>
         <PackageReference Include="CreativeCoders.SysConsole.Cli.Actions"/>
         <PackageReference Include="Devlooped.CredentialManager"/>
+        <PackageReference Include="SonarAnalyzer.CSharp">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Spectre.Console"/>
         <PackageReference Include="YamlDotNet"/>
     </ItemGroup>

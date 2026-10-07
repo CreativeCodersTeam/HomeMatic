@@ -86,7 +86,7 @@ public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, ID
 
         var stopTokenSource = new CancellationTokenSource();
         _stopTokenSource = stopTokenSource;
-        _acceptLoopTask = Task.Run(() => RunAcceptLoopAsync(stopTokenSource.Token));
+        _acceptLoopTask = Task.Run(() => RunAcceptLoopAsync(stopTokenSource.Token), CancellationToken.None);
 
         return Task.CompletedTask;
     }
@@ -138,7 +138,7 @@ public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, ID
     /// <inheritdoc />
     protected override async Task FlushAndCloseOutputStreamAsync(HttpListenerContext httpContext)
     {
-        await httpContext.Response.OutputStream.FlushAsync().ConfigureAwait(false);
+        await httpContext.Response.OutputStream.FlushAsync(CancellationToken.None).ConfigureAwait(false);
 
         httpContext.Response.Close();
     }

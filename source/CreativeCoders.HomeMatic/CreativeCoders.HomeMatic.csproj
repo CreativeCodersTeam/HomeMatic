@@ -8,6 +8,10 @@
     <ItemGroup>
         <PackageReference Include="CreativeCoders.Net.XmlRpc" />
         <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="SonarAnalyzer.CSharp">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

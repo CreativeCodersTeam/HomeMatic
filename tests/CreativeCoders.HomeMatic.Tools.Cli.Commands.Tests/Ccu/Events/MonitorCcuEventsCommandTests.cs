@@ -457,7 +457,7 @@ public class MonitorCcuEventsCommandTests
             .ReturnsLazily((string callbackUrl, string interfaceId) =>
             {
                 _ = sut.EventHandler!.Event(interfaceId, "0011223344:1", "STATE", false);
-                _ = sut.EventHandler!.Event(interfaceId, "0011223344:2", "LEVEL", 0.5);
+                _ = sut.EventHandler.Event(interfaceId, "0011223344:2", "LEVEL", 0.5);
                 sut.RaiseCancel();
                 return Task.CompletedTask;
             });
@@ -663,9 +663,9 @@ public class MonitorCcuEventsCommandTests
         await sut.WaitForOutputAsync("Press Ctrl+C, Q or Esc to stop.");
         var interfaceId = sut.InterfaceIdOf(CcuDeviceKind.HomeMaticIp);
         await sut.EventHandler!.Event(interfaceId, "0011223344:1", "STATE", true);
-        await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:1", "STATE", false);
-        await sut.EventHandler!.Event(interfaceId, "0011223344:2", "LEVEL", 0.5);
-        await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:2", "LEVEL", 1.0);
+        await sut.EventHandler.Event(interfaceId, "000A1B2C3D4E5F:1", "STATE", false);
+        await sut.EventHandler.Event(interfaceId, "0011223344:2", "LEVEL", 0.5);
+        await sut.EventHandler.Event(interfaceId, "000A1B2C3D4E5F:2", "LEVEL", 1.0);
         await sut.WaitForOutputAsync("LEVEL = 1");
         sut.RaiseCancel();
         var result = await run.WaitAsync(TestTimeout);
@@ -696,8 +696,8 @@ public class MonitorCcuEventsCommandTests
         await sut.WaitForOutputAsync("Press Ctrl+C, Q or Esc to stop.");
         var interfaceId = sut.InterfaceIdOf(CcuDeviceKind.HomeMatic);
         await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:1", "LEVEL", 0.5);
-        await sut.EventHandler!.Event(interfaceId, "0011223344:1", "STATE", true);
-        await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:1", "STATE", false);
+        await sut.EventHandler.Event(interfaceId, "0011223344:1", "STATE", true);
+        await sut.EventHandler.Event(interfaceId, "000A1B2C3D4E5F:1", "STATE", false);
         await sut.WaitForOutputAsync("STATE = false");
         sut.RaiseCancel();
         var result = await run.WaitAsync(TestTimeout);
@@ -718,8 +718,8 @@ public class MonitorCcuEventsCommandTests
             .ReturnsLazily((string callbackUrl, string interfaceId) =>
             {
                 _ = sut.EventHandler!.Event(interfaceId, "0011223344:1", "STATE", false);
-                _ = sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:2", "LEVEL", 0.5);
-                _ = sut.EventHandler!.Event(interfaceId, "0011223344:2", "STATE", true);
+                _ = sut.EventHandler.Event(interfaceId, "000A1B2C3D4E5F:2", "LEVEL", 0.5);
+                _ = sut.EventHandler.Event(interfaceId, "0011223344:2", "STATE", true);
                 sut.RaiseCancel();
                 return Task.CompletedTask;
             });
@@ -820,8 +820,8 @@ public class MonitorCcuEventsCommandTests
         await sut.WaitForOutputAsync("Press Ctrl+C, Q or Esc to stop.");
         var interfaceId = sut.InterfaceIdOf(CcuDeviceKind.HomeMaticIp);
         await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:1", "STATE", true);
-        await sut.EventHandler!.Event(interfaceId, "000A1B2C3D4E5F:1", "LEVEL", 0.25);
-        await sut.EventHandler!.Event(interfaceId, "0011223344:2", "LEVEL", 0.75);
+        await sut.EventHandler.Event(interfaceId, "000A1B2C3D4E5F:1", "LEVEL", 0.25);
+        await sut.EventHandler.Event(interfaceId, "0011223344:2", "LEVEL", 0.75);
         await sut.WaitForOutputAsync("LEVEL = 0.75");
         sut.RaiseCancel();
         var result = await run.WaitAsync(TestTimeout);

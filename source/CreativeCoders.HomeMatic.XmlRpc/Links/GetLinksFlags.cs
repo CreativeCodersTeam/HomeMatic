@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.XmlRpc.Links;
@@ -12,6 +13,8 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Links;
 /// </remarks>
 [PublicAPI]
 [Flags]
+[SuppressMessage("csharpsquid", "S2344:Enumeration type names should not have \"Flags\" or \"Enum\" suffixes",
+    Justification = "Name mirrors the HomeMatic XML-RPC specification; renaming would break the public API.")]
 public enum GetLinksFlags
 {
     /// <summary>

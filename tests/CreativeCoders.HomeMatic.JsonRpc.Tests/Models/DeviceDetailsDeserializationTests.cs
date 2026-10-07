@@ -35,8 +35,8 @@ public class DeviceDetailsDeserializationTests
 
         // Assert
         deviceDetails.Should().NotBeNull();
-        deviceDetails!.Channels.Should().ContainSingle();
-        deviceDetails.Channels![0].Id.Should().Be("1235");
+        deviceDetails.Channels.Should().ContainSingle();
+        deviceDetails.Channels[0].Id.Should().Be("1235");
         deviceDetails.Channels[0].Name.Should().Be("Living room light:1");
         deviceDetails.Channels[0].Address.Should().Be("000A1B2C3D4E5F:1");
     }
@@ -55,7 +55,7 @@ public class DeviceDetailsDeserializationTests
 
         // Assert
         deviceDetails.Should().NotBeNull();
-        deviceDetails!.Channels.Should().BeNull();
+        deviceDetails.Channels.Should().BeNull();
     }
 
     [Fact]
@@ -84,8 +84,8 @@ public class DeviceDetailsDeserializationTests
 
         // Assert
         deviceDetails.Should().NotBeNull();
-        deviceDetails!.Channels.Should().ContainSingle();
-        deviceDetails.Channels![0].Name.Should().Be("Living room light:1");
+        deviceDetails.Channels.Should().ContainSingle();
+        deviceDetails.Channels[0].Name.Should().Be("Living room light:1");
         deviceDetails.Channels[0].Address.Should().Be("000A1B2C3D4E5F:1");
     }
 }
