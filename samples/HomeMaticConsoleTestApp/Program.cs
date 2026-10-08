@@ -12,7 +12,9 @@ var sp = services.BuildServiceProvider();
 
 var apiBuilder = sp.GetRequiredService<IHomeMaticJsonRpcApiBuilder>();
 
+#pragma warning disable S5332, S1075 // Sample app: local CCU address over plain HTTP is intended
 var api = apiBuilder.ForUrl(new Uri("http://192.168.2.210/api/homematic.cgi")).Build();
+#pragma warning restore S5332, S1075
 
 var password = Console.ReadLine() ?? string.Empty;
 
