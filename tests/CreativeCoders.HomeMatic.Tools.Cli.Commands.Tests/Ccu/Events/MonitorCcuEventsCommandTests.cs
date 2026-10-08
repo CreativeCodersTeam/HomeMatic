@@ -570,10 +570,13 @@ public class MonitorCcuEventsCommandTests
         // Arrange
         var sut = new SutContext();
 
+        // The second key press happens while the stop flow is still running (during unsubscribing).
+        A.CallTo(() => sut.XmlRpcApi.InitAsync(Endpoint.CallbackUrl, string.Empty))
+            .Invokes(() => sut.RaiseCancel());
+
         // Act
         var run = sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
         await sut.WaitForOutputAsync("Press Ctrl+C, Q or Esc to stop.");
-        sut.RaiseCancel();
         sut.RaiseCancel();
         var result = await run.WaitAsync(TestTimeout);
 
