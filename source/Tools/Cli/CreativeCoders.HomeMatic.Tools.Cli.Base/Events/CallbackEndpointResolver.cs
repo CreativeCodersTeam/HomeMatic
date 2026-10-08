@@ -54,15 +54,12 @@ public sealed class CallbackEndpointResolver : ICallbackEndpointResolver
         try
         {
             listener.Start();
+
+            return ((IPEndPoint)listener.LocalEndpoint).Port;
         }
         catch (SocketException ex)
         {
             throw new CallbackPortAllocationException(ex.Message, ex);
-        }
-
-        try
-        {
-            return ((IPEndPoint)listener.LocalEndpoint).Port;
         }
         finally
         {

@@ -20,7 +20,7 @@ public sealed class ChannelNameDirectory
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="names"/> is <see langword="null"/>.</exception>
     public ChannelNameDirectory(IReadOnlyDictionary<string, string> names)
-        : this(ToCaseInsensitive(Ensure.NotNull(names)), true)
+        : this(Ensure.NotNull(names).ToFrozenDictionary(StringComparer.OrdinalIgnoreCase), true)
     {
     }
 
@@ -139,18 +139,6 @@ public sealed class ChannelNameDirectory
         return _names.TryGetValue(deviceAddress, out var name)
             ? name
             : null;
-    }
-
-    private static FrozenDictionary<string, string> ToCaseInsensitive(IReadOnlyDictionary<string, string> names)
-    {
-        var caseInsensitiveNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var (address, name) in names)
-        {
-            caseInsensitiveNames[address] = name;
-        }
-
-        return caseInsensitiveNames.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
     private static async Task TryLogoutAsync(IAsyncDisposable logout)

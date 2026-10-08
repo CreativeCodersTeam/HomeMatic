@@ -19,8 +19,9 @@ public static class CcuEventLineFormatter
 
     private const string NamesNotAvailable = "<n/a>";
 
-    // Length of the longest label, "BidCos-Wired".
-    private const int InterfaceLabelWidth = 12;
+    private static readonly int InterfaceLabelWidth =
+        new[] { CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp, CcuDeviceKind.HomeMaticWired }
+            .Max(x => InterfaceLabel(x).Length);
 
     /// <summary>
     /// Formats an event as one line in the form

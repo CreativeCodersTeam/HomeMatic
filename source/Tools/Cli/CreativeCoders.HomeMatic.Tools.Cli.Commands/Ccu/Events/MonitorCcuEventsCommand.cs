@@ -131,8 +131,8 @@ public class MonitorCcuEventsCommand(
         catch (OperationCanceledException) when (stopToken.IsCancellationRequested)
         {
             // Stopped while the names were loading: nothing is subscribed yet, so there is nothing to clean up.
-            _console.MarkupLine("Stopping ...");
-            _console.MarkupLine("[bold lime]Event monitor stopped.[/]");
+            PrintStopping();
+            PrintStopped();
 
             return CommandResult.Success;
         }
@@ -205,13 +205,13 @@ public class MonitorCcuEventsCommand(
                 channel.Writer.TryComplete();
                 PrintQueuedEvents(channel.Reader, names, filter);
 
-                _console.MarkupLine("Stopping ...");
+                PrintStopping();
 
                 await UnsubscribeAsync(subscriptions).ConfigureAwait(false);
             }
         }
 
-        _console.MarkupLine("[bold lime]Event monitor stopped.[/]");
+        PrintStopped();
 
         return CommandResult.Success;
     }
@@ -373,6 +373,16 @@ public class MonitorCcuEventsCommand(
         // Spectre.Console wraps at the profile width, which is 80 for redirected output. Writing the plain text
         // directly keeps exactly one line per event in a file or pipe.
         _console.Profile.Out.Writer.WriteLine(Markup.Remove(line));
+    }
+
+    private void PrintStopping()
+    {
+        _console.MarkupLine("Stopping ...");
+    }
+
+    private void PrintStopped()
+    {
+        _console.MarkupLine("[bold lime]Event monitor stopped.[/]");
     }
 
     private void PrintError(string message)
