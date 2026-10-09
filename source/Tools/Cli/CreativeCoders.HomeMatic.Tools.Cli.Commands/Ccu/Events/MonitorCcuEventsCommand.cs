@@ -394,17 +394,15 @@ public class MonitorCcuEventsCommand(
             return;
         }
 
-        var line = CcuEventLineFormatter.Format(record, names);
-
         if (_console.Profile.Out.IsTerminal)
         {
-            _console.WriteLine(line);
+            _console.MarkupLine(CcuEventLineFormatter.FormatMarkup(record, names));
             return;
         }
 
         // Spectre.Console wraps at the profile width, which is 80 for redirected output. Writing the text directly
         // keeps exactly one line per event in a file or pipe.
-        _console.Profile.Out.Writer.WriteLine(line);
+        _console.Profile.Out.Writer.WriteLine(CcuEventLineFormatter.Format(record, names));
     }
 
     private void PrintStopping()

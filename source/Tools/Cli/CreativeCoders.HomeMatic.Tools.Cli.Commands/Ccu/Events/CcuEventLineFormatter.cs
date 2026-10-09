@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.XmlRpc;
+using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 
@@ -17,6 +18,10 @@ public static class CcuEventLineFormatter
     private const string UnknownName = "<unknown>";
 
     private const string NamesNotAvailable = "<n/a>";
+
+    private const string MetadataStyle = "grey";
+
+    private const string PlaceholderStyle = "grey italic";
 
     private static readonly int InterfaceLabelWidth =
         new[] { CcuDeviceKind.HomeMatic, CcuDeviceKind.HomeMaticIp, CcuDeviceKind.HomeMaticWired }
@@ -43,21 +48,58 @@ public static class CcuEventLineFormatter
     /// <exception cref="ArgumentNullException"><paramref name="record"/> or <paramref name="names"/> is <see langword="null"/>.</exception>
     public static string Format(CcuEventRecord record, DeviceNameDirectory names)
     {
+        return string.Concat(CreateSegments(record, names).Select(x => x.Text));
+    }
+
+    /// <summary>
+    /// Formats an event as one line of Spectre.Console markup with the same text as <see cref="Format"/>.
+    /// </summary>
+    /// <param name="record">The event to format.</param>
+    /// <param name="names">The directory used to look up the name of the event address.</param>
+    /// <returns>The formatted line as Spectre.Console markup.</returns>
+    /// <remarks>
+    /// Time, interface and address are grey, the name is bold, the value key is italic, and the value is bold and
+    /// colored by type: <c>true</c> lime, <c>false</c> red, numbers aqua and strings yellow. Placeholders such as
+    /// <c>&lt;unknown&gt;</c>, <c>&lt;n/a&gt;</c> and <c>&lt;empty&gt;</c> are grey italic. All texts are escaped,
+    /// so markup characters from the CCU are printed as they are.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException"><paramref name="record"/> or <paramref name="names"/> is <see langword="null"/>.</exception>
+    public static string FormatMarkup(CcuEventRecord record, DeviceNameDirectory names)
+    {
+        return string.Concat(CreateSegments(record, names)
+            .Select(x => x.Style is null
+                ? Markup.Escape(x.Text)
+                : $"[{x.Style}]{Markup.Escape(x.Text)}[/]"));
+    }
+
+    private static IEnumerable<(string Text, string? Style)> CreateSegments(CcuEventRecord record,
+        DeviceNameDirectory names)
+    {
         Ensure.NotNull(record);
         Ensure.NotNull(names);
 
-        var name = names.IsAvailable
+        var (name, nameStyle) = names.IsAvailable
             ? FormatName(record.Address, names)
-            : NamesNotAvailable;
+            : (NamesNotAvailable, PlaceholderStyle);
 
-        var line = string.Join(Separator,
-            record.ReceivedAt.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture),
-            InterfaceLabel(record.Interface).PadRight(InterfaceLabelWidth),
-            record.Address,
-            name,
-            $"{record.ValueKey} = {FormatValue(record.Value)}");
+        var (value, valueStyle) = FormatValue(record.Value);
 
-        return EscapeControlCharacters(line);
+        (string Text, string? Style)[] segments =
+        [
+            (record.ReceivedAt.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), MetadataStyle),
+            (Separator, null),
+            (InterfaceLabel(record.Interface).PadRight(InterfaceLabelWidth), MetadataStyle),
+            (Separator, null),
+            (record.Address, MetadataStyle),
+            (Separator, null),
+            (name, nameStyle),
+            (Separator, null),
+            (record.ValueKey, "italic"),
+            (" = ", null),
+            (value, valueStyle)
+        ];
+
+        return segments.Select(x => (EscapeControlCharacters(x.Text), x.Style));
     }
 
     /// <summary>
@@ -79,20 +121,20 @@ public static class CcuEventLineFormatter
         };
     }
 
-    private static string FormatName(string address, DeviceNameDirectory names)
+    private static (string Text, string Style) FormatName(string address, DeviceNameDirectory names)
     {
         var deviceName = names.Lookup(address);
 
         if (deviceName is null)
         {
-            return UnknownName;
+            return (UnknownName, PlaceholderStyle);
         }
 
         var channel = CcuAddress.GetChannel(address);
 
         return channel is null
-            ? deviceName
-            : $"{deviceName} (Channel {channel})";
+            ? (deviceName, "bold")
+            : ($"{deviceName} (Channel {channel})", "bold");
     }
 
     private static string EscapeControlCharacters(string text)
@@ -118,16 +160,17 @@ public static class CcuEventLineFormatter
         return builder.ToString();
     }
 
-    private static string FormatValue(object? value)
+    private static (string Text, string Style) FormatValue(object? value)
     {
         return value switch
         {
-            null => EmptyValue,
-            bool boolValue => boolValue ? "true" : "false",
-            string { Length: 0 } => EmptyValue,
-            string stringValue => $"\"{stringValue}\"",
-            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-            _ => value.ToString() ?? EmptyValue
+            null => (EmptyValue, PlaceholderStyle),
+            true => ("true", "bold lime"),
+            false => ("false", "bold red"),
+            string { Length: 0 } => (EmptyValue, PlaceholderStyle),
+            string stringValue => ($"\"{stringValue}\"", "bold yellow"),
+            IFormattable formattable => (formattable.ToString(null, CultureInfo.InvariantCulture), "bold aqua"),
+            _ => value.ToString() is { } text ? (text, "bold") : (EmptyValue, PlaceholderStyle)
         };
     }
 }

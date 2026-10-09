@@ -2,6 +2,8 @@ using System.Globalization;
 using AwesomeAssertions;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 using CreativeCoders.HomeMatic.XmlRpc;
+using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Ccu.Events;
 
@@ -348,6 +350,125 @@ public class CcuEventLineFormatterTests
 
         // Assert
         line.Should().Be(@"21:15:03.412  HmIP-RF       ADDR\x0A:1  <unknown>  STA\x0DTE = true");
+    }
+
+    [Fact]
+    public void FormatMarkup_KnownChannel_ReturnsStyledLine()
+    {
+        // Arrange
+        var record = CreateRecord(true);
+
+        // Act
+        var markup = CcuEventLineFormatter.FormatMarkup(record, Names);
+
+        // Assert
+        markup.Should().Be(
+            "[grey]21:15:03.412[/]  [grey]HmIP-RF     [/]  [grey]000A1B2C3D4E5F:1[/]  " +
+            "[bold]Living room light (Channel 1)[/]  [italic]STATE[/] = [bold lime]true[/]");
+    }
+
+    [Theory]
+    [InlineData(true, "[bold lime]true[/]")]
+    [InlineData(false, "[bold red]false[/]")]
+    [InlineData(42, "[bold aqua]42[/]")]
+    [InlineData(21.5, "[bold aqua]21.5[/]")]
+    [InlineData("Küche", "[bold yellow]\"Küche\"[/]")]
+    [InlineData("", "[grey italic]<empty>[/]")]
+    [InlineData(null, "[grey italic]<empty>[/]")]
+    public void FormatMarkup_Value_StylesValueByType(object? value, string expectedEnding)
+    {
+        // Arrange
+        var record = CreateRecord(value);
+
+        // Act
+        var markup = CcuEventLineFormatter.FormatMarkup(record, Names);
+
+        // Assert
+        markup.Should().EndWith($"[italic]STATE[/] = {expectedEnding}");
+    }
+
+    [Fact]
+    public void FormatMarkup_AddressNotInDirectory_ShowsUnknownNameAsPlaceholder()
+    {
+        // Arrange
+        var record = CreateRecord(true) with { Address = "FFFFFFFFFFFFFF:3" };
+
+        // Act
+        var markup = CcuEventLineFormatter.FormatMarkup(record, Names);
+
+        // Assert
+        markup.Should().Contain("  [grey italic]<unknown>[/]  ");
+    }
+
+    [Fact]
+    public void FormatMarkup_NamesUnavailable_ShowsNotAvailableNameAsPlaceholder()
+    {
+        // Arrange
+        var record = CreateRecord(true);
+
+        // Act
+        var markup = CcuEventLineFormatter.FormatMarkup(record, DeviceNameDirectory.Unavailable);
+
+        // Assert
+        markup.Should().Contain("  [grey italic]<n/a>[/]  ");
+    }
+
+    [Fact]
+    public void FormatMarkup_NameAndValueWithMarkupCharacters_EscapesMarkupCharacters()
+    {
+        // Arrange
+        var names = new DeviceNameDirectory(new Dictionary<string, string> { [DeviceAddress] = "[Test]" });
+        var record = CreateRecord("[red]");
+
+        // Act
+        var markup = CcuEventLineFormatter.FormatMarkup(record, names);
+
+        // Assert
+        markup.Should().Contain("  [bold][[Test]] (Channel 1)[/]  ");
+        markup.Should().EndWith("[bold yellow]\"[[red]]\"[/]");
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(0.5)]
+    [InlineData("[red]")]
+    [InlineData("[/]")]
+    [InlineData("Esc\u001b[2Jape")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void FormatMarkup_RenderedWithoutAnsi_PrintsSameTextAsFormat(object? value)
+    {
+        // Arrange
+        var names = new DeviceNameDirectory(new Dictionary<string, string> { [DeviceAddress] = "[b]Name[/b]" });
+        var record = new CcuEventRecord(ReceivedAt, CcuDeviceKind.HomeMaticWired, ChannelAddress, "VAL[UE]\n",
+            value);
+        var console = new TestConsole().Width(500);
+
+        // Act
+        console.Markup(CcuEventLineFormatter.FormatMarkup(record, names));
+
+        // Assert
+        console.Output.Should().Be(CcuEventLineFormatter.Format(record, names));
+    }
+
+    [Fact]
+    public void FormatMarkup_RecordIsNull_ThrowsArgumentNullException()
+    {
+        // Act
+        var act = () => CcuEventLineFormatter.FormatMarkup(null!, Names);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void FormatMarkup_NamesIsNull_ThrowsArgumentNullException()
+    {
+        // Act
+        var act = () => CcuEventLineFormatter.FormatMarkup(CreateRecord(true), null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
     }
 
     private static CcuEventRecord CreateRecord(object? value, CcuDeviceKind kind = CcuDeviceKind.HomeMaticIp)
