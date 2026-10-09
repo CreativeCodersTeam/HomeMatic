@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Text;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.XmlRpc;
-using Spectre.Console;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 
@@ -29,7 +28,7 @@ public static class CcuEventLineFormatter
     /// </summary>
     /// <param name="record">The event to format.</param>
     /// <param name="names">The directory used to look up the name of the event address.</param>
-    /// <returns>The formatted line, escaped so that it can be printed as Spectre.Console markup.</returns>
+    /// <returns>The formatted line as plain text, which must not be printed as Spectre.Console markup.</returns>
     /// <remarks>
     /// The interface label is padded to the width of the longest label so that the columns line up.
     /// Booleans are printed as <c>true</c>/<c>false</c>, numbers in the invariant culture, strings in double
@@ -42,7 +41,7 @@ public static class CcuEventLineFormatter
     /// terminal sequences.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="record"/> or <paramref name="names"/> is <see langword="null"/>.</exception>
-    public static string Format(CcuEventRecord record, ChannelNameDirectory names)
+    public static string Format(CcuEventRecord record, DeviceNameDirectory names)
     {
         Ensure.NotNull(record);
         Ensure.NotNull(names);
@@ -58,7 +57,7 @@ public static class CcuEventLineFormatter
             name,
             $"{record.ValueKey} = {FormatValue(record.Value)}");
 
-        return Markup.Escape(EscapeControlCharacters(line));
+        return EscapeControlCharacters(line);
     }
 
     /// <summary>
@@ -80,7 +79,7 @@ public static class CcuEventLineFormatter
         };
     }
 
-    private static string FormatName(string address, ChannelNameDirectory names)
+    private static string FormatName(string address, DeviceNameDirectory names)
     {
         var deviceName = names.Lookup(address);
 
@@ -89,11 +88,11 @@ public static class CcuEventLineFormatter
             return UnknownName;
         }
 
-        var separatorIndex = address.IndexOf(':');
+        var channel = CcuAddress.GetChannel(address);
 
-        return separatorIndex >= 0
-            ? $"{deviceName} (Channel {address[(separatorIndex + 1)..]})"
-            : deviceName;
+        return channel is null
+            ? deviceName
+            : $"{deviceName} (Channel {channel})";
     }
 
     private static string EscapeControlCharacters(string text)

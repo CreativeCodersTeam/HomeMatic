@@ -57,6 +57,8 @@ public class MonitorCcuEventsCommandTests
     {
         // Arrange
         var sut = new SutContext();
+        A.CallTo(() => sut.EndpointResolver.Resolve(CcuUrl, null, callbackPort))
+            .Throws(new ArgumentOutOfRangeException("callbackPort", callbackPort, "Port out of range"));
 
         // Act
         var result = await sut.Command.ExecuteAsync(
@@ -95,7 +97,7 @@ public class MonitorCcuEventsCommandTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_ConnectionNameInOtherCase_UsesConnectionAndStartsServerOnListenPrefix()
+    public async Task ExecuteAsync_KnownConnectionName_UsesConnectionAndStartsServerOnListenPrefix()
     {
         // Arrange
         var sut = new SutContext();
@@ -105,7 +107,7 @@ public class MonitorCcuEventsCommandTests
         // Act
         await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions
         {
-            Name = ConnectionName.ToUpperInvariant(),
+            Name = ConnectionName,
             CallbackHost = "my-host",
             CallbackPort = 1234
         });
@@ -119,16 +121,13 @@ public class MonitorCcuEventsCommandTests
             .Then(A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._)).MustHaveHappened());
     }
 
-    [Theory]
-    [InlineData(98)]
-    [InlineData(48)]
-    [InlineData(10048)]
-    [InlineData(183)]
-    public async Task ExecuteAsync_StartThrowsAddressInUse_PrintsPortInUseAndReturnsError(int errorCode)
+    [Fact]
+    public async Task ExecuteAsync_StartThrowsAddressInUse_PrintsPortInUseAndReturnsError()
     {
         // Arrange
         var sut = new SutContext();
-        A.CallTo(() => sut.EventServer.StartAsync()).ThrowsAsync(new HttpListenerException(errorCode));
+        A.CallTo(() => sut.EventServer.StartAsync())
+            .ThrowsAsync(StartException(CcuEventServerStartFailure.AddressInUse, "Address already in use"));
 
         // Act
         var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
@@ -142,20 +141,22 @@ public class MonitorCcuEventsCommandTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_StartThrowsAccessDenied_PrintsUrlAclHintAndReturnsError()
+    public async Task ExecuteAsync_StartThrowsAccessDenied_PrintsPlatformHintAndReturnsError()
     {
         // Arrange
         var sut = new SutContext();
-        A.CallTo(() => sut.EventServer.StartAsync()).ThrowsAsync(new HttpListenerException(5));
+        A.CallTo(() => sut.EventServer.StartAsync())
+            .ThrowsAsync(StartException(CcuEventServerStartFailure.AccessDenied, "Access is denied"));
 
         // Act
         var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
 
         // Assert
         result.ExitCode.Should().Be(-1);
-        sut.OutputText.Should().Contain(
-            $"Not allowed to listen on port {CallbackPort}. Run as administrator or add a URL ACL: " +
-            $"netsh http add urlacl url=http://+:{CallbackPort}/ user=");
+        sut.OutputText.Should().Contain(OperatingSystem.IsWindows()
+            ? $"Not allowed to listen on port {CallbackPort}. Run as administrator or add a URL ACL: " +
+              $"netsh http add urlacl url=http://+:{CallbackPort}/ user="
+            : $"Not allowed to listen on port {CallbackPort}. Use --callback-port to choose a port above 1023.");
         A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._)).MustNotHaveHappened();
         A.CallTo(() => sut.EventServer.DisposeAsync()).MustHaveHappenedOnceExactly();
     }
@@ -166,7 +167,7 @@ public class MonitorCcuEventsCommandTests
         // Arrange
         var sut = new SutContext();
         A.CallTo(() => sut.EventServer.StartAsync())
-            .ThrowsAsync(new HttpListenerException(400, "Prefix [conflict]"));
+            .ThrowsAsync(StartException(CcuEventServerStartFailure.Other, "Prefix [conflict]"));
 
         // Act
         var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
@@ -289,6 +290,27 @@ public class MonitorCcuEventsCommandTests
         sut.OutputText.Should().Contain("Device names unavailable: JSON-RPC down. Showing addresses only.");
         sut.OutputText.Should().Contain("No CCU interface could be subscribed");
         A.CallTo(() => sut.EventServer.StartAsync()).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WarningsWithMarkupCharacters_PrintsThemLiterally()
+    {
+        // Arrange
+        var sut = new SutContext();
+        A.CallTo(() => sut.JsonRpcClient.ListAllDetailsAsync())
+            .ThrowsAsync(new HttpRequestException("Connection refused [::1]:80"));
+        A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._))
+            .ThrowsAsync(new HttpRequestException("Connection refused [::1]:2001"));
+
+        // Act
+        var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
+
+        // Assert
+        result.ExitCode.Should().Be(-1);
+        sut.OutputText.Should().Contain(
+            "Device names unavailable: Connection refused [::1]:80. Showing addresses only.");
+        sut.OutputText.Should().Contain(
+            "Interface BidCos-RF not available: connection failed on port 2001 (Connection refused [::1]:2001)");
     }
 
     [Fact]
@@ -476,13 +498,30 @@ public class MonitorCcuEventsCommandTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_UnknownConnectionName_DisposesCancelKeyRegistration()
+    public async Task ExecuteAsync_UnknownConnectionName_ReturnsBeforeHandlingStopKeys()
+    {
+        // Arrange
+        var sut = new SutContext(interactive: true);
+
+        // Act
+        var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = "x" });
+
+        // Assert
+        result.ExitCode.Should().Be(-1);
+        A.CallTo(() => sut.CancelKeySource.Register(A<Action>._)).MustNotHaveHappened();
+        Fake.GetCalls(sut.Input).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_NoInterfaceSubscribed_DisposesCancelKeyRegistration()
     {
         // Arrange
         var sut = new SutContext();
+        A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._))
+            .ThrowsAsync(new HttpRequestException("Connection refused"));
 
         // Act
-        await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = "x" });
+        await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
 
         // Assert
         A.CallTo(() => sut.CancelKeySource.Register(A<Action>._)).MustHaveHappenedOnceExactly();
@@ -531,13 +570,15 @@ public class MonitorCcuEventsCommandTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_InteractiveConsoleAndUnknownConnection_ReturnsErrorWithoutWaitingForKey()
+    public async Task ExecuteAsync_InteractiveConsoleAndNoInterfaceSubscribed_ReturnsErrorWithoutWaitingForKey()
     {
         // Arrange
         var sut = new SutContext(interactive: true);
+        A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._))
+            .ThrowsAsync(new HttpRequestException("Connection refused"));
 
         // Act
-        var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = "x" })
+        var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName })
             .WaitAsync(TestTimeout);
 
         // Assert
@@ -768,8 +809,8 @@ public class MonitorCcuEventsCommandTests
 
     [Theory]
     [InlineData(new[] { " 000a1b2c3d4e5f ", "", "0011223344:1" }, null,
-        "  Filter     : address 000A1B2C3D4E5F, 0011223344:1")]
-    [InlineData(null, new[] { "state", "LEVEL" }, "  Filter     : value key STATE, LEVEL")]
+        "  Filter     : address 000a1b2c3d4e5f, 0011223344:1")]
+    [InlineData(null, new[] { "state", "LEVEL" }, "  Filter     : value key state, LEVEL")]
     public async Task ExecuteAsync_OneFilterSet_PrintsOnlyThatFilterInStartupBlock(
         string[]? addresses,
         string[]? valueKeys,
@@ -841,27 +882,32 @@ public class MonitorCcuEventsCommandTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_CancelKeyBeforeNameLoading_StopsWithoutSubscribingAndReturnsSuccess()
+    public async Task ExecuteAsync_CredentialsPrompt_RunsBeforeCtrlCAndStopKeysAreHandled()
     {
         // Arrange
-        var sut = new SutContext();
+        var sut = new SutContext(interactive: true);
+        var cancelKeyRegisteredDuringPrompt = true;
+        var keysReadDuringPrompt = true;
         A.CallTo(() => sut.ConnectionsStore.GetCredentials(A<CcuConnectionInfo>._))
             .ReturnsLazily(() =>
             {
-                sut.RaiseCancel();
+                cancelKeyRegisteredDuringPrompt = Fake.GetCalls(sut.CancelKeySource).Any();
+                keysReadDuringPrompt = Fake.GetCalls(sut.Input).Any();
                 return sut.Credential;
             });
 
         // Act
-        var result = await sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName })
-            .WaitAsync(TestTimeout);
+        var run = sut.Command.ExecuteAsync(new MonitorCcuEventsOptions { Name = ConnectionName });
+        await sut.WaitForOutputAsync("Press Ctrl+C, Q or Esc to stop.");
+        sut.RaiseCancel();
+        var result = await run.WaitAsync(TestTimeout);
 
         // Assert
         result.ExitCode.Should().Be(0);
-        sut.OutputLines.Should().Equal("Stopping ...", "Event monitor stopped.");
-        A.CallTo(() => sut.JsonRpcClient.ListAllDetailsAsync()).MustNotHaveHappened();
-        A.CallTo(() => sut.EventServerFactory.Create(A<string>._)).MustNotHaveHappened();
-        A.CallTo(() => sut.XmlRpcApi.InitAsync(A<string>._, A<string>._)).MustNotHaveHappened();
+        cancelKeyRegisteredDuringPrompt.Should().BeFalse();
+        keysReadDuringPrompt.Should().BeFalse();
+        A.CallTo(() => sut.ConnectionsStore.GetCredentials(A<CcuConnectionInfo>._)).MustHaveHappenedOnceExactly()
+            .Then(A.CallTo(() => sut.CancelKeySource.Register(A<Action>._)).MustHaveHappenedOnceExactly());
     }
 
     [Fact]
@@ -938,6 +984,11 @@ public class MonitorCcuEventsCommandTests
         sut.OutputText.Should().NotContain("DTD");
     }
 
+    private static CcuEventServerStartException StartException(CcuEventServerStartFailure reason, string message)
+    {
+        return new CcuEventServerStartException(reason, message, new InvalidOperationException(message));
+    }
+
     private sealed class SutContext
     {
         private readonly LockedTextWriter _output = new();
@@ -981,7 +1032,8 @@ public class MonitorCcuEventsCommandTests
 
             var connection = new CcuConnectionInfo(CcuUrl, ConnectionName);
 
-            A.CallTo(() => ConnectionsStore.GetConnectionsAsync()).Returns(new[] { connection });
+            A.CallTo(() => ConnectionsStore.FindConnectionAsync(A<string>._)).Returns((CcuConnectionInfo?)null);
+            A.CallTo(() => ConnectionsStore.FindConnectionAsync(ConnectionName)).Returns(connection);
             A.CallTo(() => ConnectionsStore.GetCredentials(connection)).Returns(Credential);
 
             var xmlRpcApiBuilder = A.Fake<IHomeMaticXmlRpcApiBuilder>();

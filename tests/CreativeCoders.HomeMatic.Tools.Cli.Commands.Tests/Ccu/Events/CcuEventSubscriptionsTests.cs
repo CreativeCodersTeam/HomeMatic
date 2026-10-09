@@ -546,6 +546,53 @@ public class CcuEventSubscriptionsTests
     }
 
     [Fact]
+    public async Task UnsubscribeAsync_SubscribeTimedOutButStillRunning_UnsubscribesOnlyAfterSubscribeCompletes()
+    {
+        // Arrange
+        var context = new ApiContext();
+        var lateSubscribe = new TaskCompletionSource();
+        var ipApi = context.Apis[CcuDeviceKind.HomeMaticIp];
+        A.CallTo(() => ipApi.InitAsync(A<string>._, A<string>.That.StartsWith("hmc-")))
+            .Returns(lateSubscribe.Task);
+        var sut = new CcuEventSubscriptions(context.Builder, CcuUrl, SubscribeTimeout, TimeSpan.FromSeconds(10));
+        await sut.SubscribeAsync(CallbackUrl).WaitAsync(TimeSpan.FromSeconds(10));
+
+        // Act
+        var unsubscribe = sut.UnsubscribeAsync();
+        await Task.Delay(SubscribeTimeout);
+        var unsubscribedBeforeSubscribeCompleted =
+            Fake.GetCalls(ipApi).Any(x => x.Arguments.Get<string>(1) == string.Empty);
+        lateSubscribe.SetResult();
+        var failures = await unsubscribe.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // Assert
+        unsubscribedBeforeSubscribeCompleted.Should().BeFalse();
+        failures.Should().BeEmpty();
+        A.CallTo(() => ipApi.InitAsync(CallbackUrl, string.Empty)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
+    public async Task UnsubscribeAsync_SubscribeTimedOutAndFailsLater_StillUnsubscribes()
+    {
+        // Arrange
+        var context = new ApiContext();
+        var lateSubscribe = new TaskCompletionSource();
+        var ipApi = context.Apis[CcuDeviceKind.HomeMaticIp];
+        A.CallTo(() => ipApi.InitAsync(A<string>._, A<string>.That.StartsWith("hmc-")))
+            .Returns(lateSubscribe.Task);
+        var sut = context.CreateSut();
+        await sut.SubscribeAsync(CallbackUrl).WaitAsync(TimeSpan.FromSeconds(10));
+        lateSubscribe.SetException(new HttpRequestException("Connection reset"));
+
+        // Act
+        var failures = await sut.UnsubscribeAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        // Assert
+        failures.Should().BeEmpty();
+        A.CallTo(() => ipApi.InitAsync(CallbackUrl, string.Empty)).MustHaveHappenedOnceExactly();
+    }
+
+    [Fact]
     public async Task UnsubscribeAsync_SubscribeTimedOutAndUnsubscribeThrows_ReturnsFailure()
     {
         // Arrange

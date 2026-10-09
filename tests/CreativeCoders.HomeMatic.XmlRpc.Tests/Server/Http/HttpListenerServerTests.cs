@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using AwesomeAssertions;
+using CreativeCoders.HomeMatic.XmlRpc.Server;
 using CreativeCoders.HomeMatic.XmlRpc.Server.Http;
 using CreativeCoders.Net.Servers.Http;
 using FakeItEasy;
@@ -67,7 +68,7 @@ public sealed class HttpListenerServerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task StartAsync_PortAlreadyInUseByOtherServer_ThrowsHttpListenerException()
+    public async Task StartAsync_PortAlreadyInUseByOtherServer_ThrowsStartExceptionWrappingListenerError()
     {
         // Arrange
         var firstServer = CreateServer(A.Fake<IHttpRequestHandler>(), _prefix);
@@ -79,7 +80,45 @@ public sealed class HttpListenerServerTests : IAsyncLifetime
         var act = () => sut.StartAsync().WaitAsync(OperationTimeout);
 
         // Assert
-        await act.Should().ThrowAsync<HttpListenerException>();
+        // The reason depends on the platform: the managed listener on Linux and macOS reports a conflict with a
+        // listener of the same process as error 400, Windows as ERROR_ALREADY_EXISTS.
+        var exception = (await act.Should().ThrowAsync<CcuEventServerStartException>()).Which;
+        exception.InnerException.Should().BeOfType<HttpListenerException>()
+            .Which.Message.Should().Be(exception.Message);
+    }
+
+    [Theory]
+    [InlineData(183, true, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(32, true, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(10048, true, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(5, true, CcuEventServerStartFailure.AccessDenied)]
+    [InlineData(10013, true, CcuEventServerStartFailure.AccessDenied)]
+    [InlineData(98, true, CcuEventServerStartFailure.Other)]
+    [InlineData(13, true, CcuEventServerStartFailure.Other)]
+    [InlineData(400, true, CcuEventServerStartFailure.Other)]
+    [InlineData(98, false, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(48, false, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(10048, false, CcuEventServerStartFailure.AddressInUse)]
+    [InlineData(13, false, CcuEventServerStartFailure.AccessDenied)]
+    [InlineData(10013, false, CcuEventServerStartFailure.AccessDenied)]
+    [InlineData(5, false, CcuEventServerStartFailure.Other)]
+    [InlineData(32, false, CcuEventServerStartFailure.Other)]
+    [InlineData(183, false, CcuEventServerStartFailure.Other)]
+    [InlineData(400, false, CcuEventServerStartFailure.Other)]
+    [InlineData(0, false, CcuEventServerStartFailure.Other)]
+    public void ToStartException_ErrorCodeOnPlatform_MapsToReasonAndKeepsMessageAndInnerException(int errorCode,
+        bool isWindows, CcuEventServerStartFailure expectedReason)
+    {
+        // Arrange
+        var listenerException = new HttpListenerException(errorCode, "Prefix [conflict]");
+
+        // Act
+        var exception = HttpListenerServer.ToStartException(listenerException, isWindows);
+
+        // Assert
+        exception.Reason.Should().Be(expectedReason);
+        exception.Message.Should().Be("Prefix [conflict]");
+        exception.InnerException.Should().BeSameAs(listenerException);
     }
 
     [Fact]

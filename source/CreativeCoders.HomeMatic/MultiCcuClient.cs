@@ -1,6 +1,7 @@
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.Core;
 using CreativeCoders.HomeMatic.Core.Devices;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic;
 
@@ -113,9 +114,7 @@ public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable
     // on the device level, so we strip the channel part for lookups and registrations.
     private static string NormalizeAddress(string address)
     {
-        var separatorIndex = address.IndexOf(':');
-
-        return separatorIndex < 0 ? address : address[..separatorIndex];
+        return CcuAddress.GetDeviceAddress(address);
     }
 
     private async Task<List<(ICcuClient Client, IEnumerable<T> Items)>> GetDataFromClientsAsync<T>(

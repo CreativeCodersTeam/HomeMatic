@@ -1,4 +1,5 @@
 using CreativeCoders.Core;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 
@@ -26,8 +27,8 @@ public sealed class CcuEventFilter
     /// </param>
     /// <param name="valueKeys">The value keys to show, or <see langword="null"/> for no value-key restriction.</param>
     /// <returns>
-    /// A filter whose entries are trimmed and upper-cased. Entries that are <see langword="null"/>, empty or white
-    /// space are ignored.
+    /// A filter whose entries are trimmed. Entries that are <see langword="null"/>, empty or white space are
+    /// ignored.
     /// </returns>
     public static CcuEventFilter Create(IEnumerable<string>? addresses, IEnumerable<string>? valueKeys)
     {
@@ -51,42 +52,40 @@ public sealed class CcuEventFilter
         Ensure.NotNull(address);
         Ensure.NotNull(valueKey);
 
-        return (Addresses.Count == 0 || Addresses.Any(x => MatchesAddress(address, x)))
+        var deviceAddress = CcuAddress.GetDeviceAddress(address);
+
+        return (Addresses.Count == 0 || Addresses.Any(x => MatchesAddress(address, deviceAddress, x)))
                && (ValueKeys.Count == 0 ||
                    ValueKeys.Any(x => string.Equals(valueKey, x, StringComparison.OrdinalIgnoreCase)));
     }
 
-    private static bool MatchesAddress(string address, string filterAddress)
+    private static bool MatchesAddress(string address, string deviceAddress, string filterAddress)
     {
-        if (string.Equals(address, filterAddress, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
+        var comparedAddress = filterAddress.Contains(CcuAddress.ChannelSeparator)
+            ? address
+            : deviceAddress;
 
-        return !filterAddress.Contains(':')
-               && address.Length > filterAddress.Length
-               && address[filterAddress.Length] == ':'
-               && address.StartsWith(filterAddress, StringComparison.OrdinalIgnoreCase);
+        return string.Equals(comparedAddress, filterAddress, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string[] Normalize(IEnumerable<string>? entries)
     {
         return (entries ?? [])
             .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim().ToUpperInvariant())
+            .Select(x => x.Trim())
             .ToArray();
     }
 
     /// <summary>
     /// Gets the device and channel addresses to show.
     /// </summary>
-    /// <value>Upper-cased and trimmed addresses. An empty list means no address restriction.</value>
+    /// <value>The trimmed addresses as entered. An empty list means no address restriction.</value>
     public IReadOnlyList<string> Addresses { get; }
 
     /// <summary>
     /// Gets the value keys to show.
     /// </summary>
-    /// <value>Upper-cased and trimmed value keys. An empty list means no value-key restriction.</value>
+    /// <value>The trimmed value keys as entered. An empty list means no value-key restriction.</value>
     public IReadOnlyList<string> ValueKeys { get; }
 
     /// <summary>

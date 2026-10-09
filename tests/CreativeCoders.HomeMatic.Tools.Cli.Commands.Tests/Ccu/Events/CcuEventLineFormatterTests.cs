@@ -14,7 +14,7 @@ public class CcuEventLineFormatterTests
     private static readonly DateTimeOffset ReceivedAt =
         new(2026, 10, 6, 21, 15, 3, 412, TimeSpan.FromHours(2));
 
-    private static readonly ChannelNameDirectory Names = new(new Dictionary<string, string>
+    private static readonly DeviceNameDirectory Names = new(new Dictionary<string, string>
     {
         [DeviceAddress] = "Living room light"
     });
@@ -131,10 +131,10 @@ public class CcuEventLineFormatterTests
     }
 
     [Fact]
-    public void Format_ChannelNameInDirectory_ShowsDeviceNameWithChannel()
+    public void Format_DeviceNameInDirectory_ShowsDeviceNameWithChannel()
     {
         // Arrange
-        var names = new ChannelNameDirectory(new Dictionary<string, string>
+        var names = new DeviceNameDirectory(new Dictionary<string, string>
         {
             [DeviceAddress] = "Device",
             [ChannelAddress] = "HmIP-BSM 000A1B2C3D4E5F:1"
@@ -179,9 +179,10 @@ public class CcuEventLineFormatterTests
     }
 
     [Theory]
-    [InlineData(DeviceAddress + ":[x]", "Living room light (Channel [[x]])")]
+    [InlineData(DeviceAddress + ":[x]", "Living room light (Channel [x])")]
     [InlineData(DeviceAddress + ":1\n", @"Living room light (Channel 1\x0A)")]
-    public void Format_ChannelPartWithMarkupOrControlCharacters_EscapesChannel(string address, string expectedName)
+    public void Format_ChannelPartWithMarkupOrControlCharacters_KeepsMarkupAndEscapesControlCharacters(string address,
+        string expectedName)
     {
         // Arrange
         var record = CreateRecord(true) with { Address = address };
@@ -262,28 +263,28 @@ public class CcuEventLineFormatterTests
         var record = CreateRecord(true);
 
         // Act
-        var line = CcuEventLineFormatter.Format(record, ChannelNameDirectory.Unavailable);
+        var line = CcuEventLineFormatter.Format(record, DeviceNameDirectory.Unavailable);
 
         // Assert
         line.Should().Contain($"  {ChannelAddress}  <n/a>  STATE = true");
     }
 
     [Fact]
-    public void Format_NameWithMarkupCharacters_EscapesMarkup()
+    public void Format_NameWithMarkupCharacters_KeepsMarkupCharactersUnchanged()
     {
         // Arrange
-        var names = new ChannelNameDirectory(new Dictionary<string, string> { [DeviceAddress] = "[Test]" });
+        var names = new DeviceNameDirectory(new Dictionary<string, string> { [DeviceAddress] = "[Test]" });
         var record = CreateRecord(true);
 
         // Act
         var line = CcuEventLineFormatter.Format(record, names);
 
         // Assert
-        line.Should().Contain("  [[Test]] (Channel 1)  ");
+        line.Should().Contain("  [Test] (Channel 1)  ");
     }
 
     [Fact]
-    public void Format_StringValueWithMarkupCharacters_EscapesMarkup()
+    public void Format_StringValueWithMarkupCharacters_KeepsMarkupCharactersUnchanged()
     {
         // Arrange
         var record = CreateRecord("[red]");
@@ -292,19 +293,19 @@ public class CcuEventLineFormatterTests
         var line = CcuEventLineFormatter.Format(record, Names);
 
         // Assert
-        line.Should().EndWith("STATE = \"[[red]]\"");
+        line.Should().EndWith("STATE = \"[red]\"");
     }
 
     [Theory]
     [InlineData("Line\rbreak", @"Line\x0Dbreak")]
     [InlineData("Line\nbreak", @"Line\x0Abreak")]
-    [InlineData("Esc\u001b[2Jape", @"Esc\x1B[[2Jape")]
+    [InlineData("Esc\u001b[2Jape", @"Esc\x1B[2Jape")]
     [InlineData("Tab\tbed", @"Tab\x09bed")]
     public void Format_NameWithControlCharacters_ReplacesControlCharactersWithHexEscapes(string name,
         string expectedName)
     {
         // Arrange
-        var names = new ChannelNameDirectory(new Dictionary<string, string> { [DeviceAddress] = name });
+        var names = new DeviceNameDirectory(new Dictionary<string, string> { [DeviceAddress] = name });
         var record = CreateRecord(true);
 
         // Act
@@ -318,7 +319,7 @@ public class CcuEventLineFormatterTests
     [Theory]
     [InlineData("Line\rbreak", @"STATE = ""Line\x0Dbreak""")]
     [InlineData("Line\nbreak", @"STATE = ""Line\x0Abreak""")]
-    [InlineData("Esc\u001b[2Jape", @"STATE = ""Esc\x1B[[2Jape""")]
+    [InlineData("Esc\u001b[2Jape", @"STATE = ""Esc\x1B[2Jape""")]
     [InlineData("Tab\tbed", @"STATE = ""Tab\x09bed""")]
     [InlineData("Del\u007fete", @"STATE = ""Del\x7Fete""")]
     [InlineData("Next\u0085line", @"STATE = ""Next\x85line""")]

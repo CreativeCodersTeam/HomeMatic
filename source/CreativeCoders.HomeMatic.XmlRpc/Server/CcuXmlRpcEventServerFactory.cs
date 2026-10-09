@@ -9,11 +9,12 @@ using Microsoft.Extensions.Logging;
 namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 
 /// <summary>
-/// Creates <see cref="CcuXmlRpcEventServer"/> instances backed by an <see cref="HttpListenerServer"/>.
+/// Creates <see cref="CcuXmlRpcEventServer"/> instances backed by an <see cref="System.Net.HttpListener"/>.
 /// </summary>
 /// <remarks>
 /// The created XML-RPC server uses <see cref="Encoding.Latin1"/>, the encoding of the CCU interface processes,
-/// and owns its <see cref="HttpListenerServer"/>, so disposing the event server also releases the listener.
+/// and owns its HTTP listener, so disposing the event server also releases the listener. Bind errors are reported
+/// as <see cref="CcuEventServerStartException"/> when the server is started.
 /// </remarks>
 /// <param name="loggerFactory">The logger factory used to create the logger of each event server.</param>
 [UsedImplicitly]

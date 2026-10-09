@@ -1,30 +1,31 @@
 using System.Collections.Frozen;
 using CreativeCoders.Core;
 using CreativeCoders.HomeMatic.JsonRpc;
+using CreativeCoders.HomeMatic.XmlRpc;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 
 /// <summary>
 /// Provides an immutable lookup from device and channel addresses to the device names configured on the CCU.
 /// </summary>
-public sealed class ChannelNameDirectory
+public sealed class DeviceNameDirectory
 {
     private readonly FrozenDictionary<string, string> _names;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ChannelNameDirectory"/> class with the specified names.
+    /// Initializes a new instance of the <see cref="DeviceNameDirectory"/> class with the specified names.
     /// </summary>
     /// <param name="names">
     /// The names keyed by device address. Keys are compared ignoring case; if keys differ only in case, the last
     /// one wins.
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="names"/> is <see langword="null"/>.</exception>
-    public ChannelNameDirectory(IReadOnlyDictionary<string, string> names)
+    public DeviceNameDirectory(IReadOnlyDictionary<string, string> names)
         : this(Ensure.NotNull(names).ToFrozenDictionary(StringComparer.OrdinalIgnoreCase), true)
     {
     }
 
-    private ChannelNameDirectory(FrozenDictionary<string, string> names, bool isAvailable)
+    private DeviceNameDirectory(FrozenDictionary<string, string> names, bool isAvailable)
     {
         _names = names;
         IsAvailable = isAvailable;
@@ -39,12 +40,12 @@ public sealed class ChannelNameDirectory
     /// <see cref="Unavailable"/> and the error message if the names could not be loaded.
     /// </returns>
     /// <remarks>
-    /// Channel names are ignored. Devices whose address or name is <see langword="null"/> or white space are
+    /// Devices whose address or name is <see langword="null"/> or white space are
     /// skipped. If an address occurs more than once, the last name wins. A failed logout is ignored and does not
     /// discard the loaded names. This method does not throw for CCU or transport errors.
     /// </remarks>
     /// <exception cref="ArgumentNullException"><paramref name="client"/> is <see langword="null"/>.</exception>
-    public static async Task<(ChannelNameDirectory Directory, string? Error)> LoadAsync(
+    public static async Task<(DeviceNameDirectory Directory, string? Error)> LoadAsync(
         IHomeMaticJsonRpcClient client)
     {
         Ensure.NotNull(client);
@@ -69,7 +70,7 @@ public sealed class ChannelNameDirectory
                 await TryLogoutAsync(logout).ConfigureAwait(false);
             }
 
-            return (new ChannelNameDirectory(names), null);
+            return (new DeviceNameDirectory(names), null);
         }
         catch (Exception ex)
         {
@@ -100,7 +101,7 @@ public sealed class ChannelNameDirectory
     /// <exception cref="OperationCanceledException">
     /// <paramref name="cancellationToken"/> is canceled before the names are loaded.
     /// </exception>
-    public static async Task<(ChannelNameDirectory Directory, string? Error)> LoadAsync(
+    public static async Task<(DeviceNameDirectory Directory, string? Error)> LoadAsync(
         IHomeMaticJsonRpcClient client,
         TimeSpan timeout,
         CancellationToken cancellationToken = default)
@@ -130,13 +131,7 @@ public sealed class ChannelNameDirectory
     /// <exception cref="ArgumentNullException"><paramref name="address"/> is <see langword="null"/>.</exception>
     public string? Lookup(string address)
     {
-        Ensure.NotNull(address);
-
-        var separatorIndex = address.IndexOf(':');
-
-        var deviceAddress = separatorIndex >= 0 ? address[..separatorIndex] : address;
-
-        return _names.TryGetValue(deviceAddress, out var name)
+        return _names.TryGetValue(CcuAddress.GetDeviceAddress(address), out var name)
             ? name
             : null;
     }
@@ -167,7 +162,7 @@ public sealed class ChannelNameDirectory
     /// Gets a directory that contains no names and reports that names could not be loaded.
     /// </summary>
     /// <value>An empty directory whose <see cref="IsAvailable"/> is <see langword="false"/>.</value>
-    public static ChannelNameDirectory Unavailable { get; } = new(FrozenDictionary<string, string>.Empty, false);
+    public static DeviceNameDirectory Unavailable { get; } = new(FrozenDictionary<string, string>.Empty, false);
 
     /// <summary>
     /// Gets a value indicating whether the names could be loaded from the CCU.

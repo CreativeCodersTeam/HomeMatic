@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Net.Servers.Http;
-using JetBrains.Annotations;
 
 namespace CreativeCoders.HomeMatic.XmlRpc.Server.Http;
 
@@ -15,20 +14,33 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server.Http;
 /// <para>
 /// All entries of <see cref="HttpServerBase{THttpContext}.Urls"/> are registered as <see cref="HttpListener"/>
 /// prefixes before the listener starts, so bind errors such as a port that is already in use surface as
-/// <see cref="HttpListenerException"/> from <see cref="StartAsync"/>.
+/// <see cref="CcuEventServerStartException"/> from <see cref="StartAsync"/>.
 /// </para>
 /// <para>
 /// Requests are processed sequentially in arrival order. A request whose processing fails is answered with
-/// HTTP 500 and does not end the accept loop. A request that exceeds <see cref="RequestTimeout"/>, or is still in
+/// HTTP 500 and does not end the accept loop. A failed accept is retried after a short pause. A request that exceeds <see cref="RequestTimeout"/>, or is still in
 /// progress when the server stops, is aborted by dropping its connection.
 /// </para>
 /// <para>
 /// A stopped server cannot be started again; create a new instance instead.
 /// </para>
 /// </remarks>
-[PublicAPI]
-public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, IDisposable
+internal sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, IDisposable
 {
+    private static readonly TimeSpan AcceptRetryDelay = TimeSpan.FromMilliseconds(100);
+
+    // ERROR_ALREADY_EXISTS (183), ERROR_SHARING_VIOLATION (32) and WSAEADDRINUSE (10048).
+    private static readonly int[] WindowsAddressInUseErrorCodes = [183, 32, 10048];
+
+    // ERROR_ACCESS_DENIED (5) and WSAEACCES (10013).
+    private static readonly int[] WindowsAccessDeniedErrorCodes = [5, 10013];
+
+    // EADDRINUSE on Linux (98) and macOS (48), and SocketError.AddressAlreadyInUse (10048).
+    private static readonly int[] UnixAddressInUseErrorCodes = [98, 48, 10048];
+
+    // EACCES (13) and SocketError.AccessDenied (10013).
+    private static readonly int[] UnixAccessDeniedErrorCodes = [13, 10013];
+
     private readonly HttpListener _httpListener = new();
 
     private CancellationTokenSource? _stopTokenSource;
@@ -65,7 +77,7 @@ public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, ID
     } = TimeSpan.FromSeconds(30);
 
     /// <inheritdoc />
-    /// <exception cref="HttpListenerException">The listener cannot bind to one of the URL prefixes.</exception>
+    /// <exception cref="CcuEventServerStartException">The listener cannot bind to one of the URL prefixes.</exception>
     /// <exception cref="InvalidOperationException">The server has already been started, even if it has been stopped since.</exception>
     /// <exception cref="ObjectDisposedException">The server has been disposed.</exception>
     public override Task StartAsync()
@@ -77,18 +89,59 @@ public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, ID
             throw new InvalidOperationException("The HTTP server has already been started.");
         }
 
-        foreach (var url in Urls)
+        try
         {
-            _httpListener.Prefixes.Add(url);
-        }
+            foreach (var url in Urls)
+            {
+                _httpListener.Prefixes.Add(url);
+            }
 
-        _httpListener.Start();
+            _httpListener.Start();
+        }
+        catch (HttpListenerException ex)
+        {
+            throw ToStartException(ex, OperatingSystem.IsWindows());
+        }
 
         var stopTokenSource = new CancellationTokenSource();
         _stopTokenSource = stopTokenSource;
         _acceptLoopTask = Task.Run(() => RunAcceptLoopAsync(stopTokenSource.Token), CancellationToken.None);
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Translates a bind error of the <see cref="HttpListener"/> into a <see cref="CcuEventServerStartException"/>.
+    /// </summary>
+    /// <param name="exception">The bind error.</param>
+    /// <param name="isWindows">
+    /// <see langword="true"/> to interpret the error code as a Windows error code; <see langword="false"/> to
+    /// interpret it as an error code of the managed listener on Linux or macOS.
+    /// </param>
+    /// <returns>
+    /// An exception with the message of <paramref name="exception"/> and the reason derived from its error code:
+    /// <see cref="CcuEventServerStartFailure.AddressInUse"/> or <see cref="CcuEventServerStartFailure.AccessDenied"/>
+    /// for the address-in-use and access-denied codes of the platform, and
+    /// <see cref="CcuEventServerStartFailure.Other"/> for any other code.
+    /// </returns>
+    internal static CcuEventServerStartException ToStartException(HttpListenerException exception, bool isWindows)
+    {
+        var (addressInUseErrorCodes, accessDeniedErrorCodes) = isWindows
+            ? (WindowsAddressInUseErrorCodes, WindowsAccessDeniedErrorCodes)
+            : (UnixAddressInUseErrorCodes, UnixAccessDeniedErrorCodes);
+
+        var reason = CcuEventServerStartFailure.Other;
+
+        if (addressInUseErrorCodes.Contains(exception.ErrorCode))
+        {
+            reason = CcuEventServerStartFailure.AddressInUse;
+        }
+        else if (accessDeniedErrorCodes.Contains(exception.ErrorCode))
+        {
+            reason = CcuEventServerStartFailure.AccessDenied;
+        }
+
+        return new CcuEventServerStartException(reason, exception.Message, exception);
     }
 
     /// <inheritdoc />
@@ -171,7 +224,17 @@ public sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, ID
             }
             catch (HttpListenerException)
             {
-                // A single failed accept (e.g. a client that aborted the connection) must not end the loop.
+                // A single failed accept (e.g. a client that aborted the connection) must not end the loop. The pause
+                // keeps an accept that fails again and again from spinning the loop at full CPU.
+                try
+                {
+                    await Task.Delay(AcceptRetryDelay, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+
                 continue;
             }
 

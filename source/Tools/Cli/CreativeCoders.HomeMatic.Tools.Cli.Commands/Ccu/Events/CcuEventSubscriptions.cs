@@ -109,7 +109,9 @@ public sealed class CcuEventSubscriptions
     /// <remarks>
     /// An interface is unsubscribed by calling the CCU <c>init</c> method with the callback URL and an empty
     /// interface id. An interface whose subscribe call timed out is unsubscribed as well, because the CCU may have
-    /// registered it late; an interface whose subscribe call failed with an error is not. An interface is not
+    /// registered it late; an interface whose subscribe call failed with an error is not. Before such an interface is
+    /// unsubscribed, its subscribe call is awaited for up to the unsubscribe timeout, so the CCU cannot process the
+    /// unsubscribe call before the late subscribe call. An interface is not
     /// unsubscribed again after a completed call, even if that call failed, so further calls do nothing. This method
     /// is not meant to be called concurrently. It does not throw for CCU or transport errors.
     /// </remarks>
@@ -148,27 +150,34 @@ public sealed class CcuEventSubscriptions
 
     private async Task SubscribeAsync(Subscription subscription, string callbackUrl)
     {
+        Task? subscribeTask = null;
+
         try
         {
-            await subscription.Api
-                .InitAsync(callbackUrl, subscription.InterfaceId)
-                .WaitAsync(_subscribeTimeout)
-                .ConfigureAwait(false);
+            subscribeTask = subscription.Api.InitAsync(callbackUrl, subscription.InterfaceId);
 
-            subscription.State = SubscriptionState.Subscribed;
+            await subscribeTask.WaitAsync(_subscribeTimeout).ConfigureAwait(false);
+
+            subscription.SetState(SubscriptionState.Subscribed);
         }
         catch (TimeoutException)
         {
-            subscription.TimeOut();
+            subscription.SetState(SubscriptionState.SubscribeTimedOut, "timeout");
+            subscription.LateSubscribe = subscribeTask;
         }
         catch (Exception ex)
         {
-            subscription.Fail(DescribeError(ex, subscription.Kind));
+            subscription.SetState(SubscriptionState.Failed, DescribeError(ex, subscription.Kind));
         }
     }
 
     private async Task UnsubscribeAsync(Subscription subscription, string callbackUrl)
     {
+        if (subscription.LateSubscribe is not null)
+        {
+            await WaitForLateSubscribeAsync(subscription.LateSubscribe).ConfigureAwait(false);
+        }
+
         try
         {
             await subscription.Api
@@ -176,16 +185,36 @@ public sealed class CcuEventSubscriptions
                 .WaitAsync(_unsubscribeTimeout)
                 .ConfigureAwait(false);
 
-            subscription.State = SubscriptionState.Unsubscribed;
+            subscription.SetState(SubscriptionState.Unsubscribed);
         }
         catch (TimeoutException)
         {
-            subscription.FailUnsubscribe("timeout");
+            subscription.SetState(SubscriptionState.UnsubscribeFailed, "timeout");
         }
         catch (Exception ex)
         {
-            subscription.FailUnsubscribe(DescribeError(ex, subscription.Kind));
+            subscription.SetState(SubscriptionState.UnsubscribeFailed, DescribeError(ex, subscription.Kind));
         }
+    }
+
+    private async Task WaitForLateSubscribeAsync(Task lateSubscribe)
+    {
+        try
+        {
+            await lateSubscribe.WaitAsync(_unsubscribeTimeout).ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // Whether the subscribe call completed, failed or is still running, the interface is unsubscribed anyway.
+            ObserveFault(lateSubscribe);
+        }
+    }
+
+    private static void ObserveFault(Task task)
+    {
+        task.ContinueWith(t => _ = t.Exception, CancellationToken.None,
+            TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+            TaskScheduler.Default);
     }
 
     private static string DescribeError(Exception exception, CcuDeviceKind kind)
@@ -218,22 +247,10 @@ public sealed class CcuEventSubscriptions
 
     private sealed class Subscription(CcuDeviceKind kind, string interfaceId, IHomeMaticXmlRpcApi api)
     {
-        public void Fail(string error)
+        public void SetState(SubscriptionState state, string? error = null)
         {
+            State = state;
             Error = error;
-            State = SubscriptionState.Failed;
-        }
-
-        public void TimeOut()
-        {
-            Error = "timeout";
-            State = SubscriptionState.SubscribeTimedOut;
-        }
-
-        public void FailUnsubscribe(string error)
-        {
-            Error = error;
-            State = SubscriptionState.UnsubscribeFailed;
         }
 
         public CcuDeviceKind Kind { get; } = kind;
@@ -242,8 +259,10 @@ public sealed class CcuEventSubscriptions
 
         public IHomeMaticXmlRpcApi Api { get; } = api;
 
-        public SubscriptionState State { get; set; } = SubscriptionState.Pending;
+        public SubscriptionState State { get; private set; } = SubscriptionState.Pending;
 
         public string? Error { get; private set; }
+
+        public Task? LateSubscribe { get; set; }
     }
 }

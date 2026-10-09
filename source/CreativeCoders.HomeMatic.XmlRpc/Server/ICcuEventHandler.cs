@@ -17,8 +17,9 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 /// interfaces apart.
 /// </para>
 /// <para>
-/// Implementations must not throw. The CCU sends events in <c>system.multicall</c> batches, and a single
-/// throwing callback fails the whole batch with HTTP 500.
+/// The CCU sends events in <c>system.multicall</c> batches. <see cref="CcuXmlRpcEventServer"/> logs an exception
+/// thrown by a callback and still answers the CCU request, so a failing handler neither fails the batch nor
+/// prevents other handlers from being called.
 /// </para>
 /// </remarks>
 public interface ICcuEventHandler

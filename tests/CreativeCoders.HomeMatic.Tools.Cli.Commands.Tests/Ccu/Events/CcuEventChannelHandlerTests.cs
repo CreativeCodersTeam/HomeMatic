@@ -245,7 +245,7 @@ public class CcuEventChannelHandlerTests
     }
 
     [Fact]
-    public async Task Event_TimeProviderThrows_DoesNotThrow()
+    public async Task Event_TimeProviderThrows_PropagatesExceptionAndWritesNothing()
     {
         // Arrange
         var timeProvider = A.Fake<TimeProvider>();
@@ -257,7 +257,7 @@ public class CcuEventChannelHandlerTests
         var act = () => sut.Event(interfaceId, Address, "STATE", true);
 
         // Assert
-        await act.Should().NotThrowAsync();
+        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("clock broken");
         _channel.Reader.TryRead(out _).Should().BeFalse();
     }
 

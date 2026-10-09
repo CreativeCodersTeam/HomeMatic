@@ -40,10 +40,7 @@ public class BackupCcuCommand(
             return -1;
         }
 
-        var connections = await _ccuConnectionsStore.GetConnectionsAsync().ConfigureAwait(false);
-
-        var connection = connections
-            .FirstOrDefault(x => string.Equals(x.Name, options.Name, StringComparison.OrdinalIgnoreCase));
+        var connection = await _ccuConnectionsStore.FindConnectionAsync(options.Name).ConfigureAwait(false);
 
         if (connection is null)
         {

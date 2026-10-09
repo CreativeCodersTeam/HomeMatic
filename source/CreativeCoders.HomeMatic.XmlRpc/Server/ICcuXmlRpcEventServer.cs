@@ -23,6 +23,9 @@ public interface ICcuXmlRpcEventServer : IAsyncDisposable
     /// Starts the XML-RPC event server and begins listening for CCU callbacks.
     /// </summary>
     /// <returns>A task that completes when the server has started.</returns>
+    /// <exception cref="CcuEventServerStartException">
+    /// The server cannot listen on its URL, for example because the port is already in use.
+    /// </exception>
     Task StartAsync();
 
     /// <summary>

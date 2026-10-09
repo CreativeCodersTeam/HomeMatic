@@ -134,8 +134,8 @@ public class BackupCcuCommandTests
         var connection = new CcuConnectionInfo(new Uri("https://ccu.example.local"), ConnectionName);
 
         var connectionsStore = A.Fake<ICcuConnectionsStore>();
-        A.CallTo(() => connectionsStore.GetConnectionsAsync())
-            .Returns(new[] { connection });
+        A.CallTo(() => connectionsStore.FindConnectionAsync(A<string>._)).Returns((CcuConnectionInfo?)null);
+        A.CallTo(() => connectionsStore.FindConnectionAsync(ConnectionName)).Returns(connection);
         A.CallTo(() => connectionsStore.GetCredentials(connection))
             .Returns(new NetworkCredential("Admin", "secret"));
 

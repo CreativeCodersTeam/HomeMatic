@@ -35,7 +35,7 @@ public class MonitorCcuEventsOptionsTests
 
         // Assert
         filter.Addresses.Should().Equal("A", "B");
-        filter.ValueKeys.Should().Equal("STATE", "LEVEL");
+        filter.ValueKeys.Should().Equal("state", "level");
     }
 
     [Fact]

@@ -123,23 +123,23 @@ public class CcuEventFilterTests
     }
 
     [Fact]
-    public void Create_Addresses_AreUpperCasedAndTrimmed()
+    public void Create_Addresses_AreTrimmedAndKeepTheirCase()
     {
         // Act
         var sut = CcuEventFilter.Create([" 000a1b2c3d4e5f ", "0011223344:1 "], null);
 
         // Assert
-        sut.Addresses.Should().Equal("000A1B2C3D4E5F", "0011223344:1");
+        sut.Addresses.Should().Equal("000a1b2c3d4e5f", "0011223344:1");
     }
 
     [Fact]
-    public void Create_ValueKeys_AreUpperCasedAndTrimmed()
+    public void Create_ValueKeys_AreTrimmedAndKeepTheirCase()
     {
         // Act
         var sut = CcuEventFilter.Create(null, [" STATE ", "level"]);
 
         // Assert
-        sut.ValueKeys.Should().Equal("STATE", "LEVEL");
+        sut.ValueKeys.Should().Equal("STATE", "level");
     }
 
     [Theory]

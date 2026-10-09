@@ -10,6 +10,7 @@ using CreativeCoders.HomeMatic.Tools.Cli.Base.Events;
 using CreativeCoders.HomeMatic.XmlRpc;
 using CreativeCoders.HomeMatic.XmlRpc.Client;
 using CreativeCoders.HomeMatic.XmlRpc.Server;
+using CreativeCoders.SysConsole.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -21,7 +22,7 @@ namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Ccu.Events;
 /// <param name="console">The console used for all output.</param>
 /// <param name="ccuConnectionsStore">The store that provides the CCU connections and their credentials.</param>
 /// <param name="xmlRpcApiBuilder">The builder used to create the XML-RPC clients that subscribe the interfaces.</param>
-/// <param name="jsonRpcClientBuilder">The builder used to create the JSON-RPC client that loads the channel names.</param>
+/// <param name="jsonRpcClientBuilder">The builder used to create the JSON-RPC client that loads the device names.</param>
 /// <param name="eventServerFactory">The factory that creates the server receiving the CCU callbacks.</param>
 /// <param name="endpointResolver">The resolver that determines the local callback endpoint.</param>
 /// <param name="cancelKeySource">The source that reports Ctrl+C, so the monitor can stop cleanly.</param>
@@ -38,8 +39,6 @@ public class MonitorCcuEventsCommand(
     IConsoleCancelKeySource cancelKeySource)
     : ICliCommand<MonitorCcuEventsOptions>
 {
-    private const int AccessDeniedErrorCode = 5;
-
     private static readonly TimeSpan SubscribeTimeout = TimeSpan.FromSeconds(5);
 
     private static readonly TimeSpan UnsubscribeTimeout = TimeSpan.FromSeconds(2);
@@ -47,9 +46,6 @@ public class MonitorCcuEventsCommand(
     private static readonly TimeSpan NameLoadTimeout = TimeSpan.FromSeconds(10);
 
     private static readonly TimeSpan KeyPollInterval = TimeSpan.FromMilliseconds(50);
-
-    // EADDRINUSE on Linux (98) and macOS (48), WSAEADDRINUSE (10048) and ERROR_ALREADY_EXISTS (183) on Windows.
-    private static readonly int[] AddressInUseErrorCodes = [98, 48, 10048, 183];
 
     private readonly IAnsiConsole _console = Ensure.NotNull(console);
 
@@ -79,14 +75,34 @@ public class MonitorCcuEventsCommand(
     /// Only events that pass the address and value-key filter of <paramref name="options"/> are printed. When the
     /// output is not a terminal, for example redirected to a file or pipe, every event is written as exactly one
     /// line without wrapping at the console width.
-    /// Loading the channel names is limited to ten seconds; a stop while they are loading ends the command
+    /// The connection, the credentials and the callback endpoint are determined before Q, Esc and Ctrl+C stop the
+    /// monitor, so a credentials prompt reads the console alone and Ctrl+C during the prompt ends the process as
+    /// usual. Loading the device names is limited to ten seconds; a stop while they are loading ends the command
     /// before anything is subscribed. On a stop, the events that are still queued are printed first. Then every
     /// interface that is subscribed or whose subscribe call timed out is unsubscribed in parallel, each limited to
-    /// two seconds, and the callback server is stopped. Timed-out interfaces are unsubscribed also when no interface
+    /// two seconds, and the callback server is stopped. A timed-out subscribe call is awaited for up to two more
+    /// seconds before its interface is unsubscribed. Timed-out interfaces are unsubscribed also when no interface
     /// could be subscribed.
     /// </remarks>
     public async Task<CommandResult> ExecuteAsync(MonitorCcuEventsOptions options)
     {
+        var connection = await _ccuConnectionsStore.FindConnectionAsync(options.Name).ConfigureAwait(false);
+
+        if (connection is null)
+        {
+            PrintError($"CCU connection '{options.Name}' not found");
+            return -1;
+        }
+
+        var credential = TryGetCredentials(connection);
+
+        var endpoint = TryResolveEndpoint(connection, options);
+
+        if (endpoint is null)
+        {
+            return -1;
+        }
+
         using var stopSource = new CancellationTokenSource();
         using var cancelKeyRegistration = _cancelKeySource.Register(stopSource.Cancel);
 
@@ -94,7 +110,8 @@ public class MonitorCcuEventsCommand(
 
         try
         {
-            return await MonitorAsync(options, stopSource.Token).ConfigureAwait(false);
+            return await MonitorAsync(options, connection, credential, endpoint, stopSource.Token)
+                .ConfigureAwait(false);
         }
         finally
         {
@@ -103,30 +120,57 @@ public class MonitorCcuEventsCommand(
         }
     }
 
-    private async Task<CommandResult> MonitorAsync(MonitorCcuEventsOptions options, CancellationToken stopToken)
+    private NetworkCredential? TryGetCredentials(CcuConnectionInfo connection)
     {
-        if (options.CallbackPort is < 0 or > IPEndPoint.MaxPort)
+        try
+        {
+            return _ccuConnectionsStore.GetCredentials(connection);
+        }
+        catch (Exception ex)
+        {
+            PrintDeviceNamesUnavailable(ex.Message);
+
+            return null;
+        }
+    }
+
+    private CallbackEndpoint? TryResolveEndpoint(CcuConnectionInfo connection, MonitorCcuEventsOptions options)
+    {
+        try
+        {
+            return _endpointResolver.Resolve(connection.Url, options.CallbackHost, options.CallbackPort);
+        }
+        catch (ArgumentOutOfRangeException ex) when (ex.ParamName == "callbackPort")
         {
             PrintError($"--callback-port must be between 0 and {IPEndPoint.MaxPort}");
-            return -1;
         }
-
-        var connections = await _ccuConnectionsStore.GetConnectionsAsync().ConfigureAwait(false);
-
-        var connection = connections
-            .FirstOrDefault(x => string.Equals(x.Name, options.Name, StringComparison.OrdinalIgnoreCase));
-
-        if (connection is null)
+        catch (SocketException ex)
         {
-            PrintError($"CCU connection '{options.Name}' not found");
-            return -1;
+            PrintError($"Cannot determine the callback address for {connection.Url.Host}: {ex.Message}. " +
+                       "Use --callback-host to set it.");
+        }
+        catch (CallbackPortAllocationException ex)
+        {
+            PrintError($"Cannot allocate a callback port: {ex.Message}. Use --callback-port to choose a port.");
         }
 
-        ChannelNameDirectory names;
+        return null;
+    }
+
+    private async Task<CommandResult> MonitorAsync(
+        MonitorCcuEventsOptions options,
+        CcuConnectionInfo connection,
+        NetworkCredential? credential,
+        CallbackEndpoint endpoint,
+        CancellationToken stopToken)
+    {
+        DeviceNameDirectory names;
 
         try
         {
-            names = await LoadChannelNamesAsync(connection, stopToken).ConfigureAwait(false);
+            names = credential is null
+                ? DeviceNameDirectory.Unavailable
+                : await LoadDeviceNamesAsync(connection, credential, stopToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (stopToken.IsCancellationRequested)
         {
@@ -135,24 +179,6 @@ public class MonitorCcuEventsCommand(
             PrintStopped();
 
             return CommandResult.Success;
-        }
-
-        CallbackEndpoint endpoint;
-
-        try
-        {
-            endpoint = _endpointResolver.Resolve(connection.Url, options.CallbackHost, options.CallbackPort);
-        }
-        catch (SocketException ex)
-        {
-            PrintError($"Cannot determine the callback address for {connection.Url.Host}: {ex.Message}. " +
-                       "Use --callback-host to set it.");
-            return -1;
-        }
-        catch (CallbackPortAllocationException ex)
-        {
-            PrintError($"Cannot allocate a callback port: {ex.Message}. Use --callback-port to choose a port.");
-            return -1;
         }
 
         var filter = CcuEventFilter.Create(options.Addresses, options.ValueKeys);
@@ -226,23 +252,22 @@ public class MonitorCcuEventsCommand(
         }
     }
 
-    private async Task<ChannelNameDirectory> LoadChannelNamesAsync(
+    private async Task<DeviceNameDirectory> LoadDeviceNamesAsync(
         CcuConnectionInfo connection,
+        NetworkCredential credential,
         CancellationToken stopToken)
     {
-        ChannelNameDirectory names;
+        DeviceNameDirectory names;
         string? error;
 
         try
         {
-            var credential = _ccuConnectionsStore.GetCredentials(connection);
-
             var client = _jsonRpcClientBuilder
                 .ForUrl(connection.Url)
                 .WithCredentials(credential)
                 .Build();
 
-            (names, error) = await ChannelNameDirectory
+            (names, error) = await DeviceNameDirectory
                 .LoadAsync(client, NameLoadTimeout, stopToken)
                 .ConfigureAwait(false);
         }
@@ -252,15 +277,20 @@ public class MonitorCcuEventsCommand(
         }
         catch (Exception ex)
         {
-            (names, error) = (ChannelNameDirectory.Unavailable, ex.Message);
+            (names, error) = (DeviceNameDirectory.Unavailable, ex.Message);
         }
 
         if (error is not null)
         {
-            PrintWarning($"Device names unavailable: {error}. Showing addresses only.");
+            PrintDeviceNamesUnavailable(error);
         }
 
         return names;
+    }
+
+    private void PrintDeviceNamesUnavailable(string error)
+    {
+        PrintWarning($"Device names unavailable: {error}. Showing addresses only.");
     }
 
     private async Task<bool> TryStartEventServerAsync(ICcuXmlRpcEventServer eventServer, CallbackEndpoint endpoint)
@@ -271,16 +301,18 @@ public class MonitorCcuEventsCommand(
 
             return true;
         }
-        catch (HttpListenerException ex)
+        catch (CcuEventServerStartException ex)
         {
-            PrintError(ex.ErrorCode switch
+            PrintError(ex.Reason switch
             {
-                _ when AddressInUseErrorCodes.Contains(ex.ErrorCode) =>
+                CcuEventServerStartFailure.AddressInUse =>
                     $"Callback port {endpoint.Port} is already in use. Use --callback-port to choose another port.",
-                AccessDeniedErrorCode =>
+                CcuEventServerStartFailure.AccessDenied when OperatingSystem.IsWindows() =>
                     $"Not allowed to listen on port {endpoint.Port}. Run as administrator or add a URL ACL: " +
                     $"netsh http add urlacl url={endpoint.ListenPrefix} " +
                     $@"user={Environment.UserDomainName}\{Environment.UserName}",
+                CcuEventServerStartFailure.AccessDenied =>
+                    $"Not allowed to listen on port {endpoint.Port}. Use --callback-port to choose a port above 1023.",
                 _ => $"Cannot listen on callback port {endpoint.Port}: {ex.Message}"
             });
 
@@ -327,7 +359,7 @@ public class MonitorCcuEventsCommand(
 
     private async Task PrintEventsAsync(
         ChannelReader<CcuEventRecord> reader,
-        ChannelNameDirectory names,
+        DeviceNameDirectory names,
         CcuEventFilter filter,
         CancellationToken cancellationToken)
     {
@@ -346,7 +378,7 @@ public class MonitorCcuEventsCommand(
 
     private void PrintQueuedEvents(
         ChannelReader<CcuEventRecord> reader,
-        ChannelNameDirectory names,
+        DeviceNameDirectory names,
         CcuEventFilter filter)
     {
         while (reader.TryRead(out var record))
@@ -355,7 +387,7 @@ public class MonitorCcuEventsCommand(
         }
     }
 
-    private void PrintEvent(CcuEventRecord record, ChannelNameDirectory names, CcuEventFilter filter)
+    private void PrintEvent(CcuEventRecord record, DeviceNameDirectory names, CcuEventFilter filter)
     {
         if (!filter.Matches(record.Address, record.ValueKey))
         {
@@ -366,13 +398,13 @@ public class MonitorCcuEventsCommand(
 
         if (_console.Profile.Out.IsTerminal)
         {
-            _console.MarkupLine(line);
+            _console.WriteLine(line);
             return;
         }
 
-        // Spectre.Console wraps at the profile width, which is 80 for redirected output. Writing the plain text
-        // directly keeps exactly one line per event in a file or pipe.
-        _console.Profile.Out.Writer.WriteLine(Markup.Remove(line));
+        // Spectre.Console wraps at the profile width, which is 80 for redirected output. Writing the text directly
+        // keeps exactly one line per event in a file or pipe.
+        _console.Profile.Out.Writer.WriteLine(line);
     }
 
     private void PrintStopping()
@@ -392,6 +424,6 @@ public class MonitorCcuEventsCommand(
 
     private void PrintWarning(string message)
     {
-        _console.MarkupLine($"[yellow]{Markup.Escape(message)}[/]");
+        _console.MarkupLine(message.ToEscapedMarkup().ToWarningMarkup());
     }
 }

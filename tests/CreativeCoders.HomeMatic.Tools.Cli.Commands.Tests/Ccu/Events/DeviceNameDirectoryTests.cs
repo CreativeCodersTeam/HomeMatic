@@ -6,7 +6,7 @@ using FakeItEasy;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Ccu.Events;
 
-public class ChannelNameDirectoryTests
+public class DeviceNameDirectoryTests
 {
     private const string DeviceAddress = "000A1B2C3D4E5F";
 
@@ -29,7 +29,7 @@ public class ChannelNameDirectoryTests
     public void Lookup_OnlyChannelAddressInDirectory_ReturnsNull()
     {
         // Arrange
-        var sut = new ChannelNameDirectory(new Dictionary<string, string> { [ChannelAddress] = "Channel name" });
+        var sut = new DeviceNameDirectory(new Dictionary<string, string> { [ChannelAddress] = "Channel name" });
 
         // Act
         var name = sut.Lookup(ChannelAddress);
@@ -101,7 +101,7 @@ public class ChannelNameDirectoryTests
     public void Unavailable_IsAvailable_IsFalse()
     {
         // Act
-        var isAvailable = ChannelNameDirectory.Unavailable.IsAvailable;
+        var isAvailable = DeviceNameDirectory.Unavailable.IsAvailable;
 
         // Assert
         isAvailable.Should().BeFalse();
@@ -118,24 +118,15 @@ public class ChannelNameDirectoryTests
     }
 
     [Fact]
-    public async Task LoadAsync_DevicesWithChannels_ContainsDeviceNamesOnly()
+    public async Task LoadAsync_SeveralDevices_ReturnsDeviceNameForDeviceAndChannelAddresses()
     {
         // Arrange
         var client = CreateClient(
-            new DeviceDetails
-            {
-                Address = DeviceAddress,
-                Name = "Device name",
-                Channels =
-                [
-                    new ChannelDetails { Address = ChannelAddress, Name = "Channel name" },
-                    new ChannelDetails { Address = DeviceAddress + ":2", Name = "Second channel" }
-                ]
-            },
+            new DeviceDetails { Address = DeviceAddress, Name = "Device name" },
             new DeviceDetails { Address = "0011223344", Name = "Other device" });
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -151,24 +142,13 @@ public class ChannelNameDirectoryTests
     {
         // Arrange
         var client = CreateClient(
-            new DeviceDetails
-            {
-                Address = DeviceAddress,
-                Name = " ",
-                Channels =
-                [
-                    new ChannelDetails { Address = ChannelAddress, Name = null },
-                    new ChannelDetails { Address = null, Name = "No address" },
-                    new ChannelDetails { Address = " ", Name = "Blank address" },
-                    new ChannelDetails { Address = DeviceAddress + ":2", Name = "Second channel" }
-                ]
-            },
+            new DeviceDetails { Address = DeviceAddress, Name = " " },
             new DeviceDetails { Address = null, Name = "Device without address" },
             new DeviceDetails { Address = " ", Name = "Device with blank address" },
             new DeviceDetails { Address = "0011223344", Name = "Other device" });
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -188,7 +168,7 @@ public class ChannelNameDirectoryTests
             new DeviceDetails { Address = DeviceAddress.ToLowerInvariant(), Name = "Second" });
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -202,7 +182,7 @@ public class ChannelNameDirectoryTests
         var client = CreateClient();
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -220,7 +200,7 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.ListAllDetailsAsync()).ThrowsAsync(new HttpRequestException("CCU unreachable"));
 
         // Act
-        await ChannelNameDirectory.LoadAsync(client);
+        await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         A.CallTo(() => logout.DisposeAsync()).MustHaveHappenedOnceExactly();
@@ -236,7 +216,7 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.AutoLogout()).Returns(logout);
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -255,7 +235,7 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.AutoLogout()).Returns(logout);
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         error.Should().BeNull();
@@ -273,10 +253,10 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.ListAllDetailsAsync()).ThrowsAsync(new HttpRequestException("CCU unreachable"));
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("CCU unreachable");
     }
 
@@ -288,10 +268,10 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.AutoLogout()).Throws(new InvalidOperationException("no session"));
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("no session");
         A.CallTo(() => client.ListAllDetailsAsync()).MustNotHaveHappened();
     }
@@ -307,7 +287,7 @@ public class ChannelNameDirectoryTests
         };
 
         // Act
-        var sut = new ChannelNameDirectory(names);
+        var sut = new DeviceNameDirectory(names);
 
         // Assert
         sut.Lookup(ChannelAddress).Should().Be("Lower");
@@ -330,7 +310,7 @@ public class ChannelNameDirectoryTests
     public void Lookup_Unavailable_ReturnsNull()
     {
         // Act
-        var name = ChannelNameDirectory.Unavailable.Lookup(ChannelAddress);
+        var name = DeviceNameDirectory.Unavailable.Lookup(ChannelAddress);
 
         // Assert
         name.Should().BeNull();
@@ -357,10 +337,10 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.ListAllDetailsAsync()).ThrowsAsync(new HttpRequestException("CCU unreachable"));
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client);
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("CCU unreachable");
     }
 
@@ -373,7 +353,7 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.AutoLogout()).Returns(logout);
 
         // Act
-        await ChannelNameDirectory.LoadAsync(client);
+        await DeviceNameDirectory.LoadAsync(client);
 
         // Assert
         A.CallTo(() => logout.DisposeAsync()).MustHaveHappenedOnceExactly();
@@ -386,7 +366,7 @@ public class ChannelNameDirectoryTests
         var client = CreateClient(new DeviceDetails { Address = DeviceAddress, Name = "Device name" });
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
 
         // Assert
         error.Should().BeNull();
@@ -402,10 +382,10 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.ListAllDetailsAsync()).ThrowsAsync(new HttpRequestException("CCU unreachable"));
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("CCU unreachable");
     }
 
@@ -418,11 +398,11 @@ public class ChannelNameDirectoryTests
             .Returns(new TaskCompletionSource<IEnumerable<DeviceDetails>>().Task);
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client, TimeSpan.FromMilliseconds(100))
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client, TimeSpan.FromMilliseconds(100))
             .WaitAsync(TimeSpan.FromSeconds(10));
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("timeout");
     }
 
@@ -440,7 +420,7 @@ public class ChannelNameDirectoryTests
             });
 
         // Act
-        var act = () => ChannelNameDirectory
+        var act = () => DeviceNameDirectory
             .LoadAsync(client, TimeSpan.FromSeconds(10), cancellationTokenSource.Token)
             .WaitAsync(TimeSpan.FromSeconds(10));
 
@@ -455,7 +435,7 @@ public class ChannelNameDirectoryTests
         var client = CreateClient();
 
         // Act
-        var act = () => ChannelNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10), new CancellationToken(true));
+        var act = () => DeviceNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10), new CancellationToken(true));
 
         // Assert
         await act.Should().ThrowAsync<OperationCanceledException>();
@@ -466,7 +446,7 @@ public class ChannelNameDirectoryTests
     public async Task LoadAsyncWithTimeout_NullClient_ThrowsArgumentNullException()
     {
         // Act
-        var act = () => ChannelNameDirectory.LoadAsync(null!, TimeSpan.FromSeconds(10));
+        var act = () => DeviceNameDirectory.LoadAsync(null!, TimeSpan.FromSeconds(10));
 
         // Assert
         await act.Should().ThrowAsync<ArgumentNullException>();
@@ -481,7 +461,7 @@ public class ChannelNameDirectoryTests
         var client = A.Fake<IHomeMaticJsonRpcClient>();
         A.CallTo(() => client.AutoLogout()).Returns(logout);
         A.CallTo(() => client.ListAllDetailsAsync()).Returns(pendingDevices.Task);
-        var (_, error) = await ChannelNameDirectory.LoadAsync(client, TimeSpan.FromMilliseconds(50))
+        var (_, error) = await DeviceNameDirectory.LoadAsync(client, TimeSpan.FromMilliseconds(50))
             .WaitAsync(TimeSpan.FromSeconds(10));
 
         // Act
@@ -500,16 +480,16 @@ public class ChannelNameDirectoryTests
         A.CallTo(() => client.ListAllDetailsAsync()).ThrowsAsync(new TaskCanceledException("HTTP timeout"));
 
         // Act
-        var (directory, error) = await ChannelNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
+        var (directory, error) = await DeviceNameDirectory.LoadAsync(client, TimeSpan.FromSeconds(10));
 
         // Assert
-        directory.Should().BeSameAs(ChannelNameDirectory.Unavailable);
+        directory.Should().BeSameAs(DeviceNameDirectory.Unavailable);
         error.Should().Be("HTTP timeout");
     }
 
-    private static ChannelNameDirectory CreateDirectory()
+    private static DeviceNameDirectory CreateDirectory()
     {
-        return new ChannelNameDirectory(new Dictionary<string, string>
+        return new DeviceNameDirectory(new Dictionary<string, string>
         {
             [DeviceAddress] = "Device name",
             [ChannelAddress] = "Channel name"

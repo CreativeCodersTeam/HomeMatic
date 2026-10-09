@@ -128,7 +128,7 @@ public class CallbackEndpointResolverTests
     [InlineData(65536)]
     [InlineData(int.MinValue)]
     [InlineData(int.MaxValue)]
-    public void Resolve_PortOutOfRange_ThrowsArgumentOutOfRangeException(int callbackPort)
+    public void Resolve_PortOutOfRange_ThrowsArgumentOutOfRangeExceptionForCallbackPort(int callbackPort)
     {
         // Arrange
         var sut = new CallbackEndpointResolver();
@@ -137,7 +137,7 @@ public class CallbackEndpointResolverTests
         var act = () => sut.Resolve(LoopbackCcuUrl, "127.0.0.1", callbackPort);
 
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("callbackPort");
     }
 
     [Theory]
