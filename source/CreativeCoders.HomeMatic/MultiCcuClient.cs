@@ -19,7 +19,7 @@ namespace CreativeCoders.HomeMatic;
 public class MultiCcuClient(IEnumerable<ICcuClient> ccuClients, ICcuRoutingTable routingTable)
     : IMultiCcuClient
 {
-    private readonly IReadOnlyList<ICcuClient> _ccuClients = Ensure.NotNull(ccuClients).ToList();
+    private readonly IReadOnlyList<ICcuClient> _ccuClients = [.. Ensure.NotNull(ccuClients)];
 
     private readonly ICcuRoutingTable _routingTable = Ensure.NotNull(routingTable);
 

@@ -42,7 +42,7 @@ public class DeviceExporter : IDeviceExporter
             FirmwareVersion = device.DeviceData.Firmware,
             Ccu = device.DeviceData.Uri.HostDisplayName,
             ParamSetValues = BuildParamSetExportData(device.ParamSetValues, options),
-            Channels = device.Channels.Select(ch => BuildChannelExportData(ch, options)).ToList()
+            Channels = [.. device.Channels.Select(ch => BuildChannelExportData(ch, options))]
         };
     }
 
@@ -65,42 +65,49 @@ public class DeviceExporter : IDeviceExporter
     {
         return options is null
             ? paramSetKeys
-            : paramSetKeys.Where(options.IsParamSetAllowed).ToArray();
+            : [.. paramSetKeys.Where(options.IsParamSetAllowed)];
     }
 
     private static IEnumerable<LinkExportData> BuildLinkExportData(IEnumerable<Link> links)
     {
-        return links
-            .Select(link => new LinkExportData
-            {
-                Sender = link.Sender,
-                Receiver = link.Receiver,
-                Name = link.Name,
-                Description = link.Description
-            })
-            .ToList();
+        return
+        [
+            .. links
+                .Select(link => new LinkExportData
+                {
+                    Sender = link.Sender,
+                    Receiver = link.Receiver,
+                    Name = link.Name,
+                    Description = link.Description
+                })
+        ];
     }
 
     private static ParamSetExportData[] BuildParamSetExportData(
         IEnumerable<ParamSetValuesWithDescriptions> paramSetValues,
         DeviceExportOptions? options)
     {
-        return paramSetValues
-            .Where(ps => options?.IsParamSetAllowed(ps.ParamSetKey) ?? true)
-            .Select(ps => new ParamSetExportData
-            {
-                ParamSetKey = ps.ParamSetKey,
-                Values = ps.ParamSetValues
-                    .Where(v => options?.IsParamValueNameAllowed(v.ParamSetValue.Name) ?? true)
-                    .Select(v => new ParamValueExportData
-                    {
-                        Key = v.ParamSetValue.Name,
-                        Name = v.Description?.Id == v.ParamSetValue.Name ? null : v.Description?.Id,
-                        Value = v.ParamSetValue.Value
-                    }).ToList(),
-                Error = ps.ReadError
-            })
-            .ToArray();
+        return
+        [
+            .. paramSetValues
+                .Where(ps => options?.IsParamSetAllowed(ps.ParamSetKey) ?? true)
+                .Select(ps => new ParamSetExportData
+                {
+                    ParamSetKey = ps.ParamSetKey,
+                    Values =
+                    [
+                        .. ps.ParamSetValues
+                            .Where(v => options?.IsParamValueNameAllowed(v.ParamSetValue.Name) ?? true)
+                            .Select(v => new ParamValueExportData
+                            {
+                                Key = v.ParamSetValue.Name,
+                                Name = v.Description?.Id == v.ParamSetValue.Name ? null : v.Description?.Id,
+                                Value = v.ParamSetValue.Value
+                            })
+                    ],
+                    Error = ps.ReadError
+                })
+        ];
     }
 
     private static string Serialize<T>(T data, DeviceExportOptions? options)
