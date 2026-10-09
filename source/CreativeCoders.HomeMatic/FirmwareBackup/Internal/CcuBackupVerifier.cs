@@ -55,7 +55,8 @@ internal sealed class CcuBackupVerifier : ICcuBackupVerifier
 
         try
         {
-            await using var tarReader = new TarReader(content, leaveOpen: true);
+            var tarReader = new TarReader(content, leaveOpen: true);
+            await using var reader = tarReader.ConfigureAwait(false);
 
             while (await tarReader.GetNextEntryAsync(copyData: true, cancellationToken).ConfigureAwait(false)
                    is { } entry)
@@ -201,8 +202,10 @@ internal sealed class CcuBackupVerifier : ICcuBackupVerifier
 
         try
         {
-            await using var gzip = new GZipStream(dataStream, CompressionMode.Decompress, leaveOpen: true);
-            await using var innerTarReader = new TarReader(gzip, leaveOpen: true);
+            var gzip = new GZipStream(dataStream, CompressionMode.Decompress, leaveOpen: true);
+            await using var gzip1 = gzip.ConfigureAwait(false);
+            var innerTarReader = new TarReader(gzip, leaveOpen: true);
+            await using var tarReader = innerTarReader.ConfigureAwait(false);
 
             var usrLocalContentFound = false;
 

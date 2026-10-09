@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using CreativeCoders.Core;
 using CreativeCoders.Core.Collections;
@@ -21,6 +22,10 @@ namespace CreativeCoders.HomeMatic.XmlRpc.Server;
 /// This server exposes the XML-RPC methods required by the HomeMatic logic layer protocol
 /// (<c>event</c>, <c>listDevices</c>, <c>newDevices</c>, <c>deleteDevices</c>, <c>updateDevice</c>).
 /// Register with the CCU using <see cref="M:CreativeCoders.HomeMatic.XmlRpc.Client.IHomeMaticXmlRpcApi.InitAsync(System.String,System.String)">Client.IHomeMaticXmlRpcApi.InitAsync</see> after starting.
+/// <para>
+/// Each callback is passed to the registered handlers in registration order. An exception thrown by a handler
+/// is logged as an error and does not fail the CCU request; the remaining handlers are still called.
+/// </para>
 /// </remarks>
 [PublicAPI]
 [SuppressMessage("Performance", "CA1873:Avoid potentially expensive logging")]
@@ -31,6 +36,10 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
     private readonly ILogger<CcuXmlRpcEventServer> _logger;
 
     private readonly ConcurrentList<ICcuEventHandler> _eventHandlers;
+
+    private volatile bool _isStarted;
+
+    private bool _isDisposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CcuXmlRpcEventServer"/> class.
@@ -63,17 +72,54 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         }
 
         await _xmlRpcServer.StartAsync().ConfigureAwait(false);
+
+        _isStarted = true;
     }
 
     /// <inheritdoc/>
     public async Task StopAsync()
     {
         await _xmlRpcServer.StopAsync().ConfigureAwait(false);
+
+        _isStarted = false;
+    }
+
+    /// <summary>
+    /// Stops the server if it has been started and releases the underlying XML-RPC server and its HTTP listener.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous dispose operation.</returns>
+    /// <remarks>
+    /// The underlying XML-RPC server is disposed even if stopping fails; the stop exception is then rethrown.
+    /// Calling this method more than once has no effect.
+    /// </remarks>
+    public async ValueTask DisposeAsync()
+    {
+        if (Interlocked.Exchange(ref _isDisposed, true))
+        {
+            return;
+        }
+
+        try
+        {
+            if (_isStarted)
+            {
+                await StopAsync().ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            _xmlRpcServer.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException"><paramref name="eventHandler"/> is <see langword="null"/>.</exception>
     public void RegisterEventHandler(ICcuEventHandler eventHandler)
     {
+        Ensure.NotNull(eventHandler);
+
         _eventHandlers.Add(eventHandler);
     }
 
@@ -87,7 +133,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             "Event from CCU received. InterfaceId = {InterfaceId}; Address = {Address}; ValueKey = {ValueKey}; Value = {Value}",
             interfaceId, address, valueKey, value);
 
-        await _eventHandlers.ForEachAsync(x => x.Event(address, valueKey, value)).ConfigureAwait(false);
+        await DispatchAsync("event", x => x.Event(interfaceId, address, valueKey, value)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -117,7 +163,7 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         deviceDescriptions.ForEach(deviceDescription =>
             _logger.LogTrace("New device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.NewDevices(deviceDescriptions)).ConfigureAwait(false);
+        await DispatchAsync("newDevices", x => x.NewDevices(interfaceId, deviceDescriptions)).ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -135,7 +181,8 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
         deviceDescriptions.ForEach(deviceDescription =>
             _logger.LogTrace("Deleted device: Address = {Address}", deviceDescription.Address));
 
-        await _eventHandlers.ForEachAsync(x => x.DeleteDevices(deviceDescriptions)).ConfigureAwait(false);
+        await DispatchAsync("deleteDevices", x => x.DeleteDevices(interfaceId, deviceDescriptions))
+            .ConfigureAwait(false);
 
         return string.Empty;
     }
@@ -150,9 +197,32 @@ public class CcuXmlRpcEventServer : ICcuXmlRpcEventServer
             "CCU device is updated. InterfaceId = {InterfaceId}; Address = {Address}; Hint = {Hint}",
             interfaceId, address, hint);
 
-        await _eventHandlers.ForEachAsync(x => x.UpdateDevice(address, hint)).ConfigureAwait(false);
+        await DispatchAsync("updateDevice", x => x.UpdateDevice(interfaceId, address, hint)).ConfigureAwait(false);
 
         return string.Empty;
+    }
+
+    private Task DispatchAsync(string methodName, Func<ICcuEventHandler, Task> callback)
+    {
+        return _eventHandlers.ForEachAsync(x => InvokeEventHandlerAsync(x, methodName, callback));
+    }
+
+    private async Task InvokeEventHandlerAsync(
+        ICcuEventHandler eventHandler,
+        string methodName,
+        Func<ICcuEventHandler, Task> callback)
+    {
+        try
+        {
+            await callback(eventHandler).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // A throwing handler must not fail the CCU request, which may be a whole system.multicall batch.
+            _logger.LogError(ex,
+                "Event handler {EventHandler} failed to handle the CCU callback {MethodName}",
+                eventHandler.GetType().FullName, methodName);
+        }
     }
 
     /// <inheritdoc/>

@@ -17,7 +17,7 @@ public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
     {
         var connections = await GetConnectionsAsync().ConfigureAwait(false);
 
-        if (connections.Any(x => x.Url == connectionInfo.Url || x.Name == connectionInfo.Name))
+        if (connections.Any(x => x.Url == connectionInfo.Url || HasName(x, connectionInfo.Name)))
         {
             return false;
         }
@@ -40,7 +40,7 @@ public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
     {
         Ensure.NotNull(name);
 
-        return RemoveConnectionAsync(x => x.Name == name);
+        return RemoveConnectionAsync(x => HasName(x, name));
     }
 
     private async Task<bool> RemoveConnectionAsync(Func<CcuConnectionInfo, bool> predicate)
@@ -77,6 +77,16 @@ public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
         }
     }
 
+    /// <inheritdoc />
+    public async Task<CcuConnectionInfo?> FindConnectionAsync(string name)
+    {
+        Ensure.NotNull(name);
+
+        var connections = await GetConnectionsAsync().ConfigureAwait(false);
+
+        return connections.FirstOrDefault(x => HasName(x, name));
+    }
+
     public IReadOnlyCollection<CcuConnectionInfo> GetConnections()
     {
         if (!FileSys.File.Exists(GetConnectionsFileName()))
@@ -107,6 +117,11 @@ public class CcuConnectionsStore(IAnsiConsole console) : ICcuConnectionsStore
         _credentialStore.AddOrUpdate($"ccu://{ccuConnectionInfo.Url.Host}", userName, password);
 
         return new NetworkCredential(userName, password);
+    }
+
+    private static bool HasName(CcuConnectionInfo connection, string name)
+    {
+        return string.Equals(connection.Name, name, StringComparison.OrdinalIgnoreCase);
     }
 
     private Task SaveConnectionsAsync(IEnumerable<CcuConnectionInfo> connections)

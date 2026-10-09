@@ -4,7 +4,7 @@ using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.ShowDetails;
 using FakeItEasy;
-using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Device.ShowDetails;
 
@@ -29,7 +29,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should()
+        sut.Console.Output.Should()
             .Contain("Values could not be read: XML-RPC fault -321");
     }
 
@@ -52,7 +52,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("LONG_PRESS_TIME").And.NotContain("could not be read");
+        sut.Console.Output.Should().Contain("LONG_PRESS_TIME").And.NotContain("could not be read");
     }
 
     [Fact]
@@ -71,9 +71,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert - whitelist entries are split and trimmed, and reach both the build and the export options.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
+        sut.CapturedBuildOptions.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
+        sut.CapturedExportOptions.ParamSetWhitelist.Should().BeEquivalentTo("master", "values");
     }
 
     [Fact]
@@ -88,9 +88,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.ParamSetWhitelist.Should().BeNull();
+        sut.CapturedBuildOptions.ParamSetWhitelist.Should().BeNull();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.ParamSetWhitelist.Should().BeNull();
+        sut.CapturedExportOptions.ParamSetWhitelist.Should().BeNull();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert - errored values are suppressed, but the loop continues with the next ParamSet.
-        var output = sut.Output.ToString();
+        var output = sut.Console.Output;
         output.Should().NotContain("MUST_NOT_APPEAR");
         output.Should().Contain("LONG_PRESS_TIME");
     }
@@ -145,7 +145,7 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert - markup characters in the error must be escaped, not interpreted.
         await act.Should().NotThrowAsync();
-        sut.Output.ToString().Should().Contain("fault [brackets] included");
+        sut.Console.Output.Should().Contain("fault [brackets] included");
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("No ParamSets matched the --param-sets filter.");
+        sut.Console.Output.Should().Contain("No ParamSets matched the --param-sets filter.");
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().NotContain("No ParamSets matched");
+        sut.Console.Output.Should().NotContain("No ParamSets matched");
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().NotContain("No ParamSets matched");
+        sut.Console.Output.Should().NotContain("No ParamSets matched");
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().NotContain("No ParamSets matched");
+        sut.Console.Output.Should().NotContain("No ParamSets matched");
     }
 
     [Fact]
@@ -236,9 +236,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert - the flag must reach the fetch (build options) and the export options.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeTrue();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeTrue();
     }
 
     [Fact]
@@ -253,9 +253,9 @@ public class ShowDeviceDetailsCommandTests
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeFalse();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeFalse();
     }
 
     [Theory]
@@ -281,7 +281,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
+        sut.Console.Output.Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
     }
 
     [Fact]
@@ -304,7 +304,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert - no contradiction, so no warning.
-        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+        sut.Console.Output.Should().NotContain("overrides SERVICE");
     }
 
     [Fact]
@@ -326,7 +326,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+        sut.Console.Output.Should().NotContain("overrides SERVICE");
     }
 
     [Fact]
@@ -348,7 +348,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert - nothing to override without a --param-sets whitelist.
-        sut.Output.ToString().Should().NotContain("overrides SERVICE");
+        sut.Console.Output.Should().NotContain("overrides SERVICE");
     }
 
     [Fact]
@@ -367,7 +367,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert - blaming the --param-sets filter would be wrong; the override warning already explains it.
-        var output = sut.Output.ToString();
+        var output = sut.Console.Output;
         output.Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
         output.Should().NotContain("No ParamSets matched");
     }
@@ -388,7 +388,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert - the override note must not swallow the legitimate filter warning for MASTER.
-        var output = sut.Output.ToString();
+        var output = sut.Console.Output;
         output.Should().Contain("--skip-service-params overrides SERVICE in --param-sets.");
         output.Should().Contain("No ParamSets matched the --param-sets filter.");
     }
@@ -409,7 +409,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("No ParamSets matched the --param-sets filter.");
+        sut.Console.Output.Should().Contain("No ParamSets matched the --param-sets filter.");
     }
 
     [Fact]
@@ -428,7 +428,7 @@ public class ShowDeviceDetailsCommandTests
         await sut.Command.ExecuteAsync(options);
 
         // Assert
-        sut.Output.ToString().Should().Contain("No ParamSets matched the --param-sets filter.");
+        sut.Console.Output.Should().Contain("No ParamSets matched the --param-sets filter.");
     }
 
     private static DeviceExportData BuildExportData(params ParamSetExportData[] paramSets)
@@ -455,16 +455,9 @@ public class ShowDeviceDetailsCommandTests
     private static SutContext CreateSut(DeviceExportData exportData, string[]? snapshotParamSets = null,
         string[]? snapshotChannelParamSets = null)
     {
-        var output = new StringWriter();
-        var console = AnsiConsole.Create(new AnsiConsoleSettings
-        {
-            Ansi = AnsiSupport.No,
-            ColorSystem = ColorSystemSupport.NoColors,
-            Interactive = InteractionSupport.No,
-            Out = new AnsiConsoleOutput(output)
-        });
+        var console = new TestConsole();
 
-        var context = new SutContext(output);
+        var context = new SutContext(console);
         var snapshot = CreateSnapshot(snapshotParamSets ?? ["MASTER", "SERVICE"], snapshotChannelParamSets ?? []);
 
         var multiCcuClient = A.Fake<IMultiCcuClient>();
@@ -517,11 +510,11 @@ public class ShowDeviceDetailsCommandTests
         return channel;
     }
 
-    private sealed class SutContext(StringWriter output)
+    private sealed class SutContext(TestConsole console)
     {
         public ShowDeviceDetailsCommand Command { get; set; } = null!;
 
-        public StringWriter Output { get; } = output;
+        public TestConsole Console { get; } = console;
 
         public CompleteCcuDeviceBuildOptions? CapturedBuildOptions { get; set; }
 

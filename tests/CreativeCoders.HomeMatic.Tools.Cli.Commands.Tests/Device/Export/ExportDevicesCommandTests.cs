@@ -4,11 +4,11 @@ using CreativeCoders.HomeMatic.Core.Devices;
 using CreativeCoders.HomeMatic.Exporting;
 using CreativeCoders.HomeMatic.Tools.Cli.Commands.Device.Export;
 using FakeItEasy;
-using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace CreativeCoders.HomeMatic.Tools.Cli.Commands.Tests.Device.Export;
 
-public class ExportDevicesCommandTests : IDisposable
+public sealed class ExportDevicesCommandTests : IDisposable
 {
     private const string DeviceAddress = "00019F2999BE83";
 
@@ -42,9 +42,9 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert - the flag must reach the CCU fetch and the export data building.
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeTrue();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeTrue();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeTrue();
     }
 
     [Fact]
@@ -63,9 +63,9 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert
         sut.CapturedBuildOptions.Should().NotBeNull();
-        sut.CapturedBuildOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedBuildOptions.SkipServiceParamSet.Should().BeFalse();
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.SkipServiceParamSet.Should().BeFalse();
+        sut.CapturedExportOptions.SkipServiceParamSet.Should().BeFalse();
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class ExportDevicesCommandTests : IDisposable
 
         // Assert
         sut.CapturedExportOptions.Should().NotBeNull();
-        sut.CapturedExportOptions!.WriteIndented.Should().BeTrue();
+        sut.CapturedExportOptions.WriteIndented.Should().BeTrue();
     }
 
     private string CreateOutputFileName()
@@ -97,16 +97,9 @@ public class ExportDevicesCommandTests : IDisposable
 
     private static SutContext CreateSut()
     {
-        var output = new StringWriter();
-        var console = AnsiConsole.Create(new AnsiConsoleSettings
-        {
-            Ansi = AnsiSupport.No,
-            ColorSystem = ColorSystemSupport.NoColors,
-            Interactive = InteractionSupport.No,
-            Out = new AnsiConsoleOutput(output)
-        });
+        var console = new TestConsole();
 
-        var context = new SutContext(output);
+        var context = new SutContext(console);
 
         var multiCcuClient = A.Fake<IMultiCcuClient>();
         A.CallTo(() => multiCcuClient.GetCompleteDeviceAsync(DeviceAddress, A<CompleteCcuDeviceBuildOptions>._))
@@ -144,11 +137,11 @@ public class ExportDevicesCommandTests : IDisposable
         };
     }
 
-    private sealed class SutContext(StringWriter output)
+    private sealed class SutContext(TestConsole console)
     {
         public ExportDevicesCommand Command { get; set; } = null!;
 
-        public StringWriter Output { get; } = output;
+        public TestConsole Console { get; } = console;
 
         public CompleteCcuDeviceBuildOptions? CapturedBuildOptions { get; set; }
 

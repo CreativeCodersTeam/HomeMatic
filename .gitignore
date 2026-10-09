@@ -324,3 +324,7 @@ ASALocalRun/
 
 .tests
 .tokensave
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -606,7 +606,7 @@ public class DeviceExporterTests
 
         // Assert
         deserialized.Should().NotBeNull();
-        deserialized!.Name.Should().Be("RoundTripDevice");
+        deserialized.Name.Should().Be("RoundTripDevice");
         deserialized.Address.Should().Be("RT001");
         deserialized.DeviceType.Should().Be("HM-CC-RT-DN");
         deserialized.FirmwareVersion.Should().Be("1.4");
@@ -672,7 +672,7 @@ public class DeviceExporterTests
             json,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         deserialized.Should().NotBeNull();
-        deserialized!.Select(d => d.Name).Should().ContainInOrder("Device1", "Device2", "Device3");
+        deserialized.Select(d => d.Name).Should().ContainInOrder("Device1", "Device2", "Device3");
     }
 
     [Fact]
@@ -700,7 +700,7 @@ public class DeviceExporterTests
             json,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         deserialized.Should().NotBeNull();
-        var paramSet = deserialized!.Single().ParamSetValues.Single();
+        var paramSet = deserialized.Single().ParamSetValues.Single();
         paramSet.ParamSetKey.Should().Be("MASTER");
         paramSet.Values.Select(v => v.Key).Should().BeEquivalentTo("BOOST_TIME");
     }

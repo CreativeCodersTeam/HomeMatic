@@ -48,7 +48,7 @@ public sealed class FirmwareBackupClient : IFirmwareBackupClient
 
             try
             {
-                await using (var httpResources = download.HttpResources.ConfigureAwait(false))
+                await using (var _ = download.HttpResources.ConfigureAwait(false))
                 {
                     await download.Content.CopyToAsync(content, cancellationToken).ConfigureAwait(false);
                 }
