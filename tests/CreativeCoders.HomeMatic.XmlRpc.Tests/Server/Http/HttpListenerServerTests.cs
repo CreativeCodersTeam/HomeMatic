@@ -362,6 +362,149 @@ public sealed class HttpListenerServerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task StopAsync_StalledRequestInFlight_ClosesStalledConnectionWithoutSuccessResponse()
+    {
+        // Arrange
+        var stalledRequestReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handler = CreateEchoHandler(stalledRequestReceived);
+
+        var sut = CreateServer(handler, _prefix);
+        sut.RequestTimeout = TimeSpan.FromMinutes(5);
+        await sut.StartAsync().WaitAsync(OperationTimeout);
+
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        await stalledRequestReceived.Task.WaitAsync(OperationTimeout);
+
+        // Act
+        await sut.StopAsync().WaitAsync(OperationTimeout);
+        var receivedText = await ReadUntilConnectionClosedAsync(stalledClient).WaitAsync(OperationTimeout);
+
+        // Assert
+        receivedText.Should().NotStartWith("HTTP/1.1 2");
+    }
+
+    [Fact]
+    public async Task StopAsync_CalledConcurrentlyWithStalledRequestInFlight_AllCallsComplete()
+    {
+        // Arrange
+        var stalledRequestReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handler = CreateEchoHandler(stalledRequestReceived);
+
+        var sut = CreateServer(handler, _prefix);
+        sut.RequestTimeout = TimeSpan.FromMinutes(5);
+        await sut.StartAsync().WaitAsync(OperationTimeout);
+
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        await stalledRequestReceived.Task.WaitAsync(OperationTimeout);
+
+        // Act
+        var act = () => Task.WhenAll(sut.StopAsync(), sut.StopAsync()).WaitAsync(OperationTimeout);
+
+        // Assert
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_AfterStop_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var sut = CreateServer(A.Fake<IHttpRequestHandler>(), _prefix);
+        await sut.StartAsync().WaitAsync(OperationTimeout);
+        await sut.StopAsync().WaitAsync(OperationTimeout);
+
+        // Act
+        var act = () => sut.StartAsync();
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task Dispose_StalledRequestInFlightWithoutStop_DoesNotThrowAndClosesStalledConnection()
+    {
+        // Arrange
+        var stalledRequestReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handler = CreateEchoHandler(stalledRequestReceived);
+
+        var sut = CreateServer(handler, _prefix);
+        sut.RequestTimeout = TimeSpan.FromMinutes(5);
+        await sut.StartAsync().WaitAsync(OperationTimeout);
+
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        await stalledRequestReceived.Task.WaitAsync(OperationTimeout);
+
+        // Act
+        var act = () => sut.Dispose();
+
+        // Assert
+        act.Should().NotThrow();
+        var readUntilClosed = () => ReadUntilConnectionClosedAsync(stalledClient);
+        await readUntilClosed.Should().CompleteWithinAsync(OperationTimeout);
+    }
+
+    [Fact]
+    public async Task TryAbort_CalledTwice_DoesNotThrow()
+    {
+        // Arrange
+        using var listener = new HttpListener();
+        listener.Prefixes.Add(_prefix);
+        listener.Start();
+
+        var contextTask = listener.GetContextAsync();
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        var context = await contextTask.WaitAsync(OperationTimeout);
+
+        HttpListenerServer.TryAbort(context.Response);
+
+        // Act
+        var act = () => HttpListenerServer.TryAbort(context.Response);
+
+        // Assert
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public async Task TryAbort_ListenerClosedWhileRequestInFlight_DoesNotThrow()
+    {
+        // Arrange
+        using var listener = new HttpListener();
+        listener.Prefixes.Add(_prefix);
+        listener.Start();
+
+        var contextTask = listener.GetContextAsync();
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        var context = await contextTask.WaitAsync(OperationTimeout);
+
+        listener.Close();
+
+        // Act
+        var act = () => HttpListenerServer.TryAbort(context.Response);
+
+        // Assert
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public async Task TryAbort_ListenerOpen_ClosesConnection()
+    {
+        // Arrange
+        using var listener = new HttpListener();
+        listener.Prefixes.Add(_prefix);
+        listener.Start();
+
+        var contextTask = listener.GetContextAsync();
+        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
+        var context = await contextTask.WaitAsync(OperationTimeout);
+
+        // Act
+        HttpListenerServer.TryAbort(context.Response);
+
+        // Assert
+        var readUntilClosed = () => ReadUntilConnectionClosedAsync(stalledClient);
+        await readUntilClosed.Should().CompleteWithinAsync(OperationTimeout);
+    }
+
+    [Fact]
     public void RequestTimeout_NotSet_IsThirtySeconds()
     {
         // Arrange

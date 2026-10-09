@@ -279,7 +279,7 @@ internal sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, 
             // Headers have already been sent; only the connection can be dropped.
         }
 
-        response.Abort();
+        TryAbort(response);
     }
 
     private static void ObserveFault(Task task)
@@ -299,7 +299,28 @@ internal sealed class HttpListenerServer : HttpServerBase<HttpListenerContext>, 
         catch (Exception)
         {
             // Headers may already have been sent or the connection may be gone; drop the connection instead.
+            TryAbort(response);
+        }
+    }
+
+    /// <summary>
+    /// Drops the connection of <paramref name="response"/>, tolerating a listener that has already been closed.
+    /// </summary>
+    /// <param name="response">The response whose connection is dropped.</param>
+    /// <remarks>
+    /// On Windows, <see cref="HttpListenerResponse.Abort"/> throws <see cref="ObjectDisposedException"/> once
+    /// <see cref="HttpListener.Close"/> has released the http.sys request queue, which happens when the server is
+    /// stopped while a request is in flight. The connection is gone at that point anyway.
+    /// </remarks>
+    internal static void TryAbort(HttpListenerResponse response)
+    {
+        try
+        {
             response.Abort();
+        }
+        catch (ObjectDisposedException)
+        {
+            // The listener has already been closed and with it the connection.
         }
     }
 
