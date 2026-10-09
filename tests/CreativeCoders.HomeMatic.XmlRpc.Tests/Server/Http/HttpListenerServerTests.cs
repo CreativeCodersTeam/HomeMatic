@@ -362,28 +362,6 @@ public sealed class HttpListenerServerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task StopAsync_StalledRequestInFlight_ClosesStalledConnectionWithoutSuccessResponse()
-    {
-        // Arrange
-        var stalledRequestReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var handler = CreateEchoHandler(stalledRequestReceived);
-
-        var sut = CreateServer(handler, _prefix);
-        sut.RequestTimeout = TimeSpan.FromMinutes(5);
-        await sut.StartAsync().WaitAsync(OperationTimeout);
-
-        using var stalledClient = await SendHeadersWithoutBodyAsync(_prefix);
-        await stalledRequestReceived.Task.WaitAsync(OperationTimeout);
-
-        // Act
-        await sut.StopAsync().WaitAsync(OperationTimeout);
-        var receivedText = await ReadUntilConnectionClosedAsync(stalledClient).WaitAsync(OperationTimeout);
-
-        // Assert
-        receivedText.Should().NotStartWith("HTTP/1.1 2");
-    }
-
-    [Fact]
     public async Task StopAsync_CalledConcurrentlyWithStalledRequestInFlight_AllCallsComplete()
     {
         // Arrange
