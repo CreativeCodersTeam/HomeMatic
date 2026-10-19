@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="CreativeCoders.Core"/>
         <PackageReference Include="CreativeCoders.Net.JsonRpc"/>
+        <PackageReference Include="JetBrains.Annotations" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
         <PackageReference Include="Microsoft.Extensions.Http"/>
 
