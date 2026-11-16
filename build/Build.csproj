@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <PackageReference Include="CreativeCoders.CakeBuild"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" VersionOverride="11.0.0" />
     </ItemGroup>
 
 </Project>
